@@ -1,0 +1,7 @@
+/*senha segue o regex */
+#senha:valid{
+    border: 2px solid green;
+}
+#senha:invalid:not(:placeholder-shown){
+    border: 2px solid red;
+}
