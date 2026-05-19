@@ -1,7 +1,149 @@
-/*senha segue o regex */
-#senha:valid{
+/*--- Cores da página ---*/
+:root {
+    --blue: #2664EB;
+    --red: #dc3545;
+}
+
+/*--- Reset básico ---*/
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+
+/*--- Layout geral da página ---*/
+main {
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: 50% 50%;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/*--- Lado direito da página (Substitui o antigo .right-panel) ---*/
+main > div:last-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fafbfd;
+}
+
+/*--- Container do conteúdo (Substitui o antigo .signup-content) ---*/
+main > div:last-child > div {
+    width: 300px;
+    background: white;
+    border-radius: 1em;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 2em;
+}
+
+main > div:last-child > div h1 {
+    margin: 0;
+}
+
+main > div:last-child > div h2 {
+    all: unset;
+    font-size: 0.8em;
+    color: rgb(51, 51, 51);
+    margin: 0;
+}
+
+/*--- Estilização do formulário ---*/
+main > div:last-child > div form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+    margin-top: 1em;
+}
+
+/*--- Grupos de input de texto/senha (Substitui o antigo .input-group) ---*/
+form > div:has(input[type="text"]),
+form > div:has(input[type="email"]),
+form > div:has(input[type="password"]) {
+    display: flex;
+    flex-direction: column;
+}
+
+form > div label {
+    display: block;
+    font-size: 0.8em;
+    margin-bottom: 0.2em;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+    height: 2.5em;
+    border: 1px solid lightgray;
+    border-radius: 0.5em;
+    margin: 1px; /* Compensa a diferença de tamanho da borda no focus */
+    outline: none;
+    padding-left: 1em;
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="password"]:focus {
+    border: 2px solid var(--blue);
+    border-radius: 0.5em;
+    margin: 0;
+}
+
+/*--- Checkboxes do Flask (dev e pessoa) ---*/
+form > div:has(input[type="checkbox"]) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.8em;
+    color: rgb(51, 51, 51);
+    margin: 0.2em 0;
+}
+
+/*--- Mensagens de erro vindas do Flask-WTF ---*/
+form span {
+    color: var(--red);
+    font-size: 0.75em;
+    display: block;
+    margin-top: -0.2em;
+    margin-bottom: 0.4em;
+}
+
+/*--- Botão de Envio ---*/
+form button[type="submit"] {
+    border: 1px solid transparent;
+    border-radius: 0.5em;
+    background: var(--blue);
+    width: 100%;
+    height: 2.5em;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 0.5em;
+}
+
+/*--- Redirecionamento para Login ---*/
+main > div:last-child > div p {
+    display: flex;
+    justify-content: center;
+    font-size: 0.8em;
+    color: rgb(51, 51, 51);
+    margin-top: 1.5em;
+}
+
+main > div:last-child > div p a {
+    margin-left: 0.3em;
+    text-decoration: none;
+    color: var(--blue);
+    cursor: pointer;
+}
+
+/*--- Validação visual da senha ---*/
+#senha:valid {
     border: 2px solid green;
 }
-#senha:invalid:not(:placeholder-shown){
+#senha:invalid:not(:placeholder-shown) {
     border: 2px solid red;
 }

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - 99Dev</title>
+    <link rel="stylesheet" href="../static/css/cadastro.css">
 </head>
 
 <body>
@@ -28,14 +29,14 @@
                     </div>
                     <div>
                         {{ form.email.label }}
-                        {{ form.email() }}
+                        {{ form.email(placeholder="you@example.com") }}
                     </div>
                     {% for error in form.email.errors %}
                         <span>{{ error }}</span>
                     {% endfor %}
                     <div>
                         {{ form.senha.label }}
-                        {{ form.senha() }}
+                        {{ form.senha(placeholder="Brpbjp1@")}}
                     </div>
                     {% for error in form.senha.errors %}
                         <span>{{ error }}</span>
