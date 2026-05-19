@@ -16,8 +16,8 @@ app.config['SECRET_KEY'] = 'abc'
 class CadastroForm(FlaskForm):
     email = StringField('Email', validators=[Email(message="Email inválido")])
     senha = PasswordField('senha', validators=[input_required()])
-    dev = BooleanField('I\'m a dev')
-    pessoa = BooleanField('I need a dev')
+    dev = BooleanField('Eu sou um dev')
+    pessoa = BooleanField('Eu preciso de um dev')
 
 # rota provisoria
 @app.route('/cadastro', methods=['GET', 'POST'])
@@ -26,7 +26,7 @@ def cadastro():
     
     #cadastro valido
     if form.validate_on_submit():
-        cadastrar_usuario(form.email.data, form.senha.data)
+        cadastrar_usuario(form.email.data, form.senha.data, form.dev.data, form.pessoa.data)
         return redirect('/login')
     
     return render_template('cadastro.html', form=form)

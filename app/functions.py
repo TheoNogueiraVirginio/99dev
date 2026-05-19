@@ -5,15 +5,15 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 usuarios = os.path.join(BASE_DIR, "..", "data", "usuarios.csv")
 
-def cadastrar_usuario(email, senha):
-    id_novo =1
+def cadastrar_usuario(email, senha, dev, pessoa):
+    id_novo = 1
 
     with open(usuarios, "r") as f:
         linhas = f.readlines()
 
         ids = []
 
-        for linha in linhas[1:]:
+        for linha in linhas:
             dados = linha.strip().split(",")
 
             if dados[0]:
@@ -22,4 +22,4 @@ def cadastrar_usuario(email, senha):
         if ids:
             id_novo = max(ids) + 1
     with open(usuarios, "a") as f:
-        f.write(f"{id_novo},{email},{senha}\n")
+        f.write(f"{id_novo},{email},{senha},{dev},{pessoa}\n")
