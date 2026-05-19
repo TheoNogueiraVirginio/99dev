@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <title>Tela login</title>
+    <title>Login - 99Dev</title>
 </head>
 <body>
     <main>
@@ -31,11 +31,11 @@
         <div class="formulario">
             <h1>Bem vindo(a)</h1>
             <h2>Logue para continuar</h2>
-            <form method="post]">
+            <form action="" method="post">
                 <label for="email">Email</label>
-                <input type="email" placeholder="exemplo@gmail.com" required>
-                <label>Senha</label>
-                <input type="password" placeholder="*****" required>
+                <input type="email" name="email" placeholder="exemplo@gmail.com" id="email" required>
+                <label for="senha">Senha</label>
+                <input type="password" name="password" placeholder="******" id="senha" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$" required>
                 <button type="submit">Entrar</button>
             </form>
             <p>Não tem uma conta?
