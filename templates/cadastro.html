@@ -36,7 +36,7 @@
                     {% endfor %}
                     <div>
                         {{ form.senha.label }}
-                        {{ form.senha(placeholder="Brpbjp1@")}}
+                        {{ form.senha(placeholder="Brpbjp1@", pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$")}}
                     </div>
                     {% for error in form.senha.errors %}
                         <span>{{ error }}</span>
