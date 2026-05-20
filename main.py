@@ -7,7 +7,20 @@ from wtforms.validators import input_required, Email
 #importando a função de cadastro do usuário
 from app.functions import cadastrar_usuario
 
+import os
+from app.models import db, Usuario
+
 app = Flask(__name__)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, 'data', '99dev.db')}"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
+
 
 ## extremamente provisório, só pra testar o formulário de cadastro, depois a gente tira isso daqui
 app.config['SECRET_KEY'] = 'abc'
@@ -26,9 +39,21 @@ def cadastro():
     
     #cadastro valido
     if form.validate_on_submit():
-        cadastrar_usuario(form.email.data, form.senha.data, form.dev.data, form.pessoa.data)
-        return redirect('/login')
-    
+        
+        if form.dev.data:
+            cargo_definido = 'dev'
+        else:
+            cargo_definido = 'cliente'
+            
+        novo_usuario = Usuario(
+            email=form.email.data,
+            senha=form.senha.data, 
+            cargo=cargo_definido
+        )
+        
+        db.session.add(novo_usuario)
+        db.session.commit()
+        
     return render_template('cadastro.html', form=form)
 
 @app.route('/login')
