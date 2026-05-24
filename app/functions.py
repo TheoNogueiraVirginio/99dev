@@ -1,25 +1,22 @@
-import os
+from app.models import db, Usuario
 
-## pegar o caminho do arquivo atual e depois navegar para o arquivo de dados
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+def cadastrar_usuario(email, senha, cargo_definido):
+    novo_usuario = Usuario(
+        email=email,
+        senha=senha,
+        cargo=cargo_definido
+    )
+    db.session.add(novo_usuario)
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
 
-usuarios = os.path.join(BASE_DIR, "..", "data", "usuarios.csv")
+    return novo_usuario
 
-def cadastrar_usuario(email, senha, dev, pessoa):
-    id_novo = 1
+    
 
-    with open(usuarios, "r") as f:
-        linhas = f.readlines()
+    
 
-        ids = []
 
-        for linha in linhas:
-            dados = linha.strip().split(",")
-
-            if dados[0]:
-                ids.append(int(dados[0]))
-
-        if ids:
-            id_novo = max(ids) + 1
-    with open(usuarios, "a") as f:
-        f.write(f"{id_novo},{email},{senha},{dev},{pessoa}\n")

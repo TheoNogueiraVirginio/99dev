@@ -1,4 +1,6 @@
-from flask import Flask,render_template, request, redirect
+import os
+
+from flask import Flask, flash, render_template, redirect
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
@@ -6,12 +8,12 @@ from wtforms.validators import input_required, Email
 
 #importando a função de cadastro do usuário
 from app.functions import cadastrar_usuario
-
-import os
-from app.models import db, Usuario
+from app.models import db
 
 app = Flask(__name__)
 
+## extremamente provisório, só pra testar o formulário de cadastro, depois a gente tira isso daqui
+app.config['SECRET_KEY'] = 'abc'
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, 'data', '99dev.db')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -20,10 +22,6 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
-
-
-## extremamente provisório, só pra testar o formulário de cadastro, depois a gente tira isso daqui
-app.config['SECRET_KEY'] = 'abc'
 
 ## formulário de cadastro
 class CadastroForm(FlaskForm):
@@ -45,14 +43,18 @@ def cadastro():
         else:
             cargo_definido = 'cliente'
             
-        novo_usuario = Usuario(
-            email=form.email.data,
-            senha=form.senha.data, 
-            cargo=cargo_definido
-        )
+        #envia payload para a função de cadastro do usuário
+        try:
+            cadastrar_usuario(
+                email=form.email.data,
+                senha=form.senha.data,
+                cargo_definido=cargo_definido
+            )
+        except Exception as e:
+            flash(f"Falha ao cadastrar usuário: {str(e)}", "error")
+            return render_template('cadastro.html', form=form, error=str(e))
         
-        db.session.add(novo_usuario)
-        db.session.commit()
+        return redirect('/login')
         
     return render_template('cadastro.html', form=form)
 
