@@ -9,13 +9,21 @@
 </head>
 
 <body>
+    # Exibe mensagens de erro
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, msg in messages %}
+    <div class="error-message {{ category }}">{{ msg }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
     <main>
         <div>
             <div class="brand">
                 <span class="brand-icon">&lt;/&gt;</span>
                 <span class="brand-name">99 Dev</span>
             </div>
-            
+
             <div class="hero-content">
                 <h1>Fast code fixes on demand</h1>
 
@@ -53,7 +61,7 @@
                     </div>
                 </div>
 
-    </div>
+            </div>
         </div>
         <div>
             <div>
@@ -74,18 +82,19 @@
                         {{ form.email(placeholder="you@example.com") }}
                     </div>
                     {% for error in form.email.errors %}
-                        <span>{{ error }}</span>
+                    <span>{{ error }}</span>
                     {% endfor %}
                     <div>
                         {{ form.senha.label }}
-                        {{ form.senha(placeholder="Brpbjp1@", pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$")}}
+                        {{ form.senha(placeholder="Brpbjp1@",
+                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$")}}
                     </div>
                     {% for error in form.senha.errors %}
-                        <span>{{ error }}</span>
+                    <span>{{ error }}</span>
                     {% endfor %}
-                    <button type="submit">Sign Up</button>
+                    <button type="submit">Criar</button>
                 </form>
-                <p>Already have an account? <a href="login">Log in</a></p>
+                <p>Já tem uma conta? <a href="login">Log in</a></p>
             </div>
         </div>
     </main>
