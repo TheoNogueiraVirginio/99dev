@@ -8,6 +8,13 @@
     <title>Recuperar Senha - 99Dev</title>
 </head>
 <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, msg in messages %}
+      <div class="flash {{ category }}">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
     <main>
         <div class="secao-infos">
             <div class="logo">
@@ -34,8 +41,9 @@
                 <h1>Esqueci minha senha</h1>
                 <h2>Não se preocupe! Informe seu e-mail para receber as instruções de recuperação</h2>
                 <form action="" method="post">
-                    <label for="email">Email</label>
-                    <input type="email" name="email" placeholder="exemplo@gmail.com" id="email" required>
+                    {{form.hidden_tag()}}
+                    {{form.email.label}}
+                    {{form.email(placeholder="exemplo@gmail.com", id="email", required=True)}}
                     <button type="submit">Enviar Instruções</button>
                 </form>
                 <div>

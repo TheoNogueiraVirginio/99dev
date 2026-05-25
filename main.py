@@ -1,37 +1,12 @@
-import os
-
-from flask import Flask, flash, render_template, redirect
+from flask import flash, render_template, redirect
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import input_required, Email
 
 #importando a função de cadastro do usuário
-from app.functions import cadastrar_usuario
-from app.models import db
-
-from flask_mail import Mail, Message
-
-app = Flask(__name__)
-
-
-app.config['SECRET_KEY'] = 'abc'
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, 'data', '99dev.db')}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Configurações de email para recuperação de senha
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'  
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-# Email e senha do 99
-app.config['MAIL_USERNAME'] = '99desenvolvedores@gmail.com'
-app.config['MAIL_PASSWORD'] = 'lser rczm dpvo wzhf'
-
-mail = Mail(app)
-
-db.init_app(app)
+from app import app, db
+from app.functions import cadastrar_usuario, solicitar_recuperacao_senha
 
 with app.app_context():
     db.create_all()
@@ -42,6 +17,9 @@ class CadastroForm(FlaskForm):
     senha = PasswordField('senha', validators=[input_required()])
     dev = BooleanField('Eu sou um dev')
     pessoa = BooleanField('Eu preciso de um dev')
+
+class RecuperarSenhaForm(FlaskForm):
+    email = StringField('Email', validators=[Email(message="Email inválido")])
 
 # rota provisoria
 @app.route('/cadastro', methods=['GET', 'POST'])
@@ -76,25 +54,17 @@ def login():
     return render_template('login.html')
 
 #rota para a página de recuperação de senha
-@app.route('/recuperar-senha')
+@app.route('/recuperar-senha', methods=['GET', 'POST'])
 def recuperar_senha():
-    return render_template('recuperar-senha.html')
-
-@app.route('/enviar-instrucoes')
-def enviar_instrucoes():
-    try:
-        msg = Message(
-            subject="Instruções para Recuperação de Senha - 99Dev",
-            recipients=[""] # lógica para obter o email do user
-        )
-
-        msg.body = "recuperar senha"
-        mail.send(msg)
-
-        return "email enviado com sucesso"
-    except Exception as e:
-        return f"Falha ao enviar email: {str(e)}"
-    
+    form = RecuperarSenhaForm()
+    if form.validate_on_submit():
+        try:
+            solicitar_recuperacao_senha(form.email.data)
+            flash("Instruções para recuperação de senha enviadas para seu email", "success")
+        except Exception as e:
+            flash(f"Falha ao enviar email: {str(e)}", "error")
+    return render_template('recuperar-senha.html', form=form)
+ 
     
 # executa a aplicação
 if __name__ == '__main__':
