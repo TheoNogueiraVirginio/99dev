@@ -1,4 +1,7 @@
-from app.models import db, Usuario
+from flask_mail import Message
+
+from app import mail
+from app.models import Usuario, db
 
 def cadastrar_usuario(email, senha, cargo_definido):
     novo_usuario = Usuario(
@@ -15,17 +18,26 @@ def cadastrar_usuario(email, senha, cargo_definido):
 
     return novo_usuario
 
-def recuperar_senha(email):
+def solicitar_recuperacao_senha(email):
     usuario = Usuario.query.filter_by(email=email).first()
     if not usuario:
         raise ValueError("Usuário não encontrado")
     
-    # Aqui você implementaria a lógica para enviar um email de recuperação de senha
-    # Por exemplo, gerando um token e enviando um link para o email do usuário
-    
+    enviar_instrucoes(email)
+    print(f"Instruções de recuperação de senha enviadas para {email}")
     return True
 
-    
+def enviar_instrucoes(email):
+    msg = Message(
+        subject="Instruções para Recuperação de Senha - 99Dev",
+        recipients=[email],
+    )
+
+    msg.body = "recuperar senha"
+    mail.send(msg)
+    print(f"Email de recuperação de senha enviado para {email}")
+
+    return "email enviado com sucesso"
 
     
 
