@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../static/css/login.css">
-    <title>Login - 99Dev</title>
+    <link rel="stylesheet" href="../static/css/recuperar-senha.css">
+    <title>Recuperar Senha - 99Dev</title>
 </head>
 <body>
     <main>
@@ -31,20 +31,20 @@
         </div>
         <div class="formulario">
             <div class="card-login">
-                <h1>Bem vindo(a)</h1>
-                <h2>Logue para continuar</h2>
+                <h1>Esqueci minha senha</h1>
+                <h2>Não se preocupe! Informe seu e-mail para receber as instruções de recuperação</h2>
                 <form action="" method="post">
                     <label for="email">Email</label>
                     <input type="email" name="email" placeholder="exemplo@gmail.com" id="email" required>
-                    <label for="senha">Senha</label>
-                    <input type="password" name="password" placeholder="******" id="senha" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$" required>
-                    <button type="submit">Entrar</button>
+                    <button type="submit">Enviar Instruções</button>
                 </form>
-                <p>Não tem uma conta?
-                    <a href="cadastro">Cadastre-se</a>
-                </p>
-                <p>Esqueci minha senha!
-                    <a href="recuperar-senha">Recuperar Senha</a>
+                <div>
+                    <p>
+                        ou
+                    </p>
+                </div>
+                <p>Lembrou sua senha?
+                    <a href="login">Fazer Login</a>
                 </p>
             </div>
         </div>
