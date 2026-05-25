@@ -6,7 +6,7 @@ from wtforms.validators import input_required, Email
 
 #importando a função de cadastro do usuário
 from app import app, db
-from app.functions import cadastrar_usuario, solicitar_recuperacao_senha
+from app.functions import atualizar_senha, cadastrar_usuario, solicitar_recuperacao_senha, validar_token
 
 with app.app_context():
     db.create_all()
@@ -20,6 +20,10 @@ class CadastroForm(FlaskForm):
 
 class RecuperarSenhaForm(FlaskForm):
     email = StringField('Email', validators=[Email(message="Email inválido")])
+
+class NovaSenhaForm(FlaskForm):
+    password = PasswordField('Nova Senha', validators=[input_required()])
+    password_confirm = PasswordField('Confirme a Nova Senha', validators=[input_required()])
 
 # rota provisoria
 @app.route('/cadastro', methods=['GET', 'POST'])
@@ -65,7 +69,28 @@ def recuperar_senha():
             flash(f"Falha ao enviar email: {str(e)}", "error")
     return render_template('recuperar-senha.html', form=form)
  
-    
+#rota nova senha botar token de recuperação de senha depois
+@app.route('/nova-senha/<token>', methods=['GET', 'POST'])
+def nova_senha(token):
+    form = NovaSenhaForm()
+    if form.validate_on_submit():
+        
+        if form.password.data != form.password_confirm.data:
+            flash("As senhas não coincidem", "error")
+            return render_template('nova-senha.html', form=form)
+        
+        email = validar_token(token)
+        if not email:
+            flash("Token inválido ou expirado", "error")
+            return redirect('/recuperar-senha')
+
+        atualizar_senha(email=email, nova_senha=form.password.data)
+        flash("Senha atualizada com sucesso", "success")
+        return redirect('/login')
+
+    return render_template('nova-senha.html', form=form)
+
+
 # executa a aplicação
 if __name__ == '__main__':
     app.run(debug=True, port=3001)
