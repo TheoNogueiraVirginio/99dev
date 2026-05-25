@@ -62,7 +62,10 @@ def cadastro():
 def login():
     return render_template('login.html')
 
-
+#rota para a página de recuperação de senha
+@app.route('/recuperar-senha')
+def recuperar_senha():
+    return render_template('recuperar-senha.html')
 
 # executa a aplicação
 if __name__ == '__main__':
