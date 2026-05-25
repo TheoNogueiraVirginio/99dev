@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/recuperar-senha.css">
+    <title>Nova Senha - 99Dev</title>
+</head>
+<body>
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, msg in messages %}
+      <div class="flash {{ category }}">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+        <div class="secao-infos">
+            <div class="logo">
+                <i class="fa-solid fa-code"></i>
+                <h1>99 Dev</h1>
+            </div>
+            
+            <div class="icone">
+                <i class="fa-solid fa-bolt-lightning"></i>
+                <h2>Acesso Rápido a desenvolvedores</h2>
+            </div>
+
+            <div class="icone">
+                <i class="fa-solid fa-user-check"></i>
+                <h2>Trabalhe com profissionais</h2>
+            </div>
+            <div class="icone">
+                <i class="fa-regular fa-clock"></i>
+                <h2>Pagamentos apenas para o que precisa</h2>
+            </div>
+        </div>
+        <div class="formulario">
+            <div class="card-login">
+                <h1>Nova senha</h1>
+                <h2>Digite sua nova senha abaixo para acessar sua conta</h2>
+                <form action="" method="post">
+                    {{form.hidden_tag()}}
+                    {{form.password.label}}
+                    {{form.password(placeholder="Digite sua nova senha", id="password", required=True)}}
+                    {{form.password_confirm.label}}
+                    {{form.password_confirm(placeholder="Confirme sua nova senha", id="password_confirm", required=True)}}
+                    <button type="submit">Salvar Nova Senha</button>
+                </form>
+                <div>
+                    <p>
+                        ou
+                    </p>
+                </div>
+                <p>
+                    <a href="login">Voltar para o login</a>
+                </p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

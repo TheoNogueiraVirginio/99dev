@@ -5,6 +5,8 @@ from flask_mail import Mail
 
 from app.models import db
 
+from itsdangerous import URLSafeTimedSerializer
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -14,7 +16,11 @@ app = Flask(
 	static_folder=os.path.join(BASE_DIR, '..', 'static'),
 )
 
-app.config['SECRET_KEY'] = 'abc'
+# colocar em variáveis de ambiente depois
+app.config['SECRET_KEY'] = 'IFPB-99Dev'  
+
+serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, '..', 'data', '99dev.db')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
