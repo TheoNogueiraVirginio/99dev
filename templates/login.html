@@ -4,10 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../static/css/login.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <title>Login - 99Dev</title>
 </head>
 <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, msg in messages %}
+    <div class="error-message {{ category }}">{{ msg }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
     <main>
         <div class="secao-infos">
             <div class="logo">
@@ -33,18 +41,30 @@
             <div class="card-login">
                 <h1>Bem vindo(a)</h1>
                 <h2>Logue para continuar</h2>
+                
                 <form action="" method="post">
-                    <label for="email">Email</label>
-                    <input type="email" name="email" placeholder="exemplo@gmail.com" id="email" required>
-                    <label for="senha">Senha</label>
-                    <input type="password" name="password" placeholder="******" id="senha" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$" required>
+                    {{ form.hidden_tag() }}
+
+                    {{ form.email.label }}
+                    {{ form.email(placeholder="exemplo@gmail.com", id="email") }}
+                    {% for error in form.email.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+
+                    {{ form.senha.label }}
+                    {{ form.senha(placeholder="******", id="senha") }}
+                    {% for error in form.senha.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+
                     <button type="submit">Entrar</button>
                 </form>
+
                 <p>Não tem uma conta?
-                    <a href="cadastro">Cadastre-se</a>
+                    <a href="/cadastro">Cadastre-se</a>
                 </p>
                 <p>Esqueci minha senha!
-                    <a href="recuperar-senha">Recuperar Senha</a>
+                    <a href="/recuperar-senha">Recuperar Senha</a>
                 </p>
             </div>
         </div>
