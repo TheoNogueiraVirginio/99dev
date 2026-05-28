@@ -55,7 +55,8 @@ def cadastro():
 
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    form = CadastroForm()
+    return render_template('login.html', form=form)
 
 #rota para a página de recuperação de senha
 @app.route('/recuperar-senha', methods=['GET', 'POST'])
