@@ -19,7 +19,7 @@ def cadastrar_usuario(email, senha, cargo_definido):
 
     return novo_usuario
 
-def login(email,senha):
+def autenticar_usuario(email,senha):
     usuario = Usuario.query.filter_by(email=email).first()
 
     if not usuario:
@@ -29,8 +29,6 @@ def login(email,senha):
         raise ValueError("Senha incorreta")
     
     return usuario
-    
-
 
 def solicitar_recuperacao_senha(email):
     usuario = Usuario.query.filter_by(email=email).first()

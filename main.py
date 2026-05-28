@@ -1,4 +1,4 @@
-from flask import flash, render_template, redirect
+from flask import flash, render_template, redirect, session
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
@@ -6,7 +6,7 @@ from wtforms.validators import input_required, Email
 
 #importando a função de cadastro do usuário
 from app import app, db
-from app.functions import atualizar_senha, cadastrar_usuario, solicitar_recuperacao_senha, validar_token
+from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, solicitar_recuperacao_senha, validar_token
 
 with app.app_context():
     db.create_all()
@@ -53,9 +53,21 @@ def cadastro():
         
     return render_template('cadastro.html', form=form)
 
-@app.route('/login')
+@app.route('/login', methods=["GET","POST"])
 def login():
     form = CadastroForm()
+
+    if form.validate_on_submit():
+        try:
+            usuario = autenticar_usuario(form.email.data, form.senha.data)
+
+            session["id_usuario"] = usuario.id
+            flash("Login realizado com sucesso!", "success")
+            return redirect('/home')
+
+        except ValueError as e:
+            flash(str(e), "error")
+
     return render_template('login.html', form=form)
 
 #rota para a página de recuperação de senha
