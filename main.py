@@ -7,6 +7,7 @@ from wtforms.validators import input_required, Email
 #importando a função de cadastro do usuário
 from app import app, db
 from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, solicitar_recuperacao_senha, validar_token
+from app.decorators import login_required
 
 with app.app_context():
     db.create_all()
