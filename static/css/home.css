@@ -13,3 +13,41 @@ body{
     background:#081120;
     color:white;
 }
+header{
+    position:fixed;
+    top:0;
+    width:100%;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:1rem 8%;
+
+    background:rgba(8,17,32,.95);
+
+    backdrop-filter:blur(8px);
+
+    z-index:1000;
+}
+
+header img{
+    height:55px;
+}
+
+nav ul{
+    display:flex;
+    gap:2rem;
+    list-style:none;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    font-weight:500;
+    transition:.3s;
+}
+
+nav a:hover{
+    color:#7ED321;
+}
