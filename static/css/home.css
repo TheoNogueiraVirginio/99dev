@@ -283,3 +283,62 @@ footer a:hover{
     font-size:1.2rem;
     margin-bottom:1rem;
 }
+.cta{
+    padding: 7rem 8%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #081120,
+            #0d1728
+        );
+
+    text-align: center;
+}
+
+.cta-content{
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.cta h2{
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.cta p{
+    color: #d7d7d7;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.cta-buttons{
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-primary{
+    background: #7ED321;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-secondary{
+    border: 2px solid #7ED321;
+    color: #7ED321;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover{
+    transform: translateY(-3px);
+    transition: .3s;
+}
