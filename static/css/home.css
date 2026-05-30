@@ -51,3 +51,45 @@ nav a{
 nav a:hover{
     color:#7ED321;
 }
+.hero{
+    min-height:90vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+    position:relative;
+
+    background:
+    linear-gradient(
+        rgba(8,17,32,.85),
+        rgba(8,17,32,.85)
+    ),
+    url("../img/devs.jpg");
+
+    background-size:cover;
+    background-position:center;
+}
+
+.content{
+    max-width:900px;
+    padding:2rem;
+    z-index:2;
+}
+
+.content h1{
+    font-size:4rem;
+    margin-bottom:1rem;
+    line-height:1.2;
+}
+
+.content span{
+    color:#7ED321;
+}
+
+.content p{
+    font-size:1.3rem;
+    color:#d7d7d7;
+    margin-bottom:2rem;
+}
