@@ -2,7 +2,7 @@ from flask import flash, render_template, redirect, session
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import input_required, Email
+from wtforms.validators import input_required, Email, Optional
 
 #importando a função de cadastro do usuário
 from app import app, db
@@ -25,6 +25,12 @@ class RecuperarSenhaForm(FlaskForm):
 class NovaSenhaForm(FlaskForm):
     password = PasswordField('Nova Senha', validators=[input_required()])
     password_confirm = PasswordField('Confirme a Nova Senha', validators=[input_required()])
+
+class EditarPerfilForm(FlaskForm):
+    email = StringField('Email', validators=[Email(message="Email inválido")])
+    nova_senha = PasswordField('Nova Senha (opcional)', validators=[Optional()])
+    dev = BooleanField('Eu sou um dev')
+    pessoa = BooleanField('Eu preciso de um dev')
 
 # rota provisoria
 @app.route('/cadastro', methods=['GET', 'POST'])
@@ -104,6 +110,17 @@ def nova_senha(token):
 
     return render_template('nova-senha.html', form=form)
 
+@app.route('/editar-perfil', methods=['GET', 'POST'])
+# @login_required 
+def perfil():
+    form = EditarPerfilForm()
+    
+    if form.validate_on_submit():
+        #banco de dados futuro
+        flash("Perfil atualizado com sucesso!", "success")
+        return redirect('/perfil')
+        
+    return render_template('perfil-editar.html', form=form)
 
 # executa a aplicação
 if __name__ == '__main__':
