@@ -8,72 +8,34 @@
 </head>
 <body>
     <main>
-        <!-- Identidade visual -->
-        <div class="secao-infos">
+         <!-- sidebar de navegação -->
+        <div class="left-panel">
             <div class="logo">
                 <i class="fa-solid fa-code"></i>
                 <h1>99 Dev</h1>
             </div>
-            
-            <div class="status-perfil">
-                <div class="icone">
-                    <i class="fa-solid fa-user-gear"></i>
-                    <h2>Mantenha seu portfólio atualizado</h2>
-                </div>
-            </div>
+
+
+            <nav class="menu">
+                <ul>
+                    <li><a href="#"><i class="fa-solid fa-house"></i> Início</a></li>
+                    <li><a href="#"><i class="fa-solid fa-wallet"></i> My Earnings</a></li>
+                    <li><a href="#"><i class="fa-solid fa-user"></i> Profile</a></li>
+                </ul>
+            </nav>
         </div>
 
-        <!-- Seção do Formulário Customizado -->
-        <div class="formulario">
-            <div class="card-perfil">
-                <h1>Nome do desenvolvedor</h1>
-                <h2>Perfil do desenvolvedor</h2>
-                
-                <form action="" method="POST">
-                    
-                    <!-- Informações Gerais -->
-                    <div class="grupo-campos">
-                        <label for="nome">Nome Completo</label>
-                        <input type="text" id="nome" name="nome" required>
-                        
-                        <label for="titulo">Função principal do Perfil</label>
-                        <input type="text" id="titulo" name="titulo" placeholder="Ex: Desenvolvedor Backend Python">
-                    </div>
 
-                    <!-- Valor do trabalho e justificativa(qualidades) -->
-                    <div class="grupo-campos linha-dupla">
-                        <div class="campo-dividido">
-                            <label for="valor_hora">Valor Hora (R$)</label>
-                            <input type="number" id="valor_hora" name="valor_hora" placeholder="60" min="0">
-                        </div>
-                        <div class="campo-dividido">
-                            <label for="skills">Habilidades (Tags)</label>
-                            <input type="text" id="skills" name="skills" placeholder="Python, Flask, SQL">
-                        </div>
-                    </div>
-
-                    <!-- Sobre mim -->
-                    <div class="grupo-campos">
-                        <label for="resumo">Sobre Mim / Bio</label>
-                        <textarea id="resumo" name="resumo" rows="4" placeholder="Conte sobre sua experiência de trabalho e projetos desenvolvidos..."></textarea>
-                    </div>
-
-                    <!-- Links Externos (github,linkedin,etc) -->
-                    <div class="grupo-campos linha-dupla">
-                        <div class="campo-dividido">
-                            <label for="github"><i class="fa-brands fa-github"></i> GitHub</label>
-                            <input type="url" id="github" name="github" placeholder="https://github.com/...">
-                        </div>
-                        <div class="campo-dividido">
-                            <label for="linkedin"><i class="fa-brands fa-linkedin"></i> LinkedIn</label>
-                            <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/...">
-                        </div>
-                    </div>
-                    <div class="acoes-formulario">
-                        <button type="submit" class="btn-salvar">Salvar Alterações</button>
-                    </div>
-                </form>
-            </div>
+        <!-- Seção principal de perfil.html -->
+        <div class="right-panel">
+            <div class="header">
+                <h1>Avaliable Tasks</h1>
+                <div class="toggle-online">
+                    <span for="toggle" class="status">You're Offline</span>
+                    <!-- Posteriormente, criar o toggle real -->
+                    <input type="checkbox" id="toggle" class="toggle-checkbox">
+                </div>
+            </div>        
         </div>
     </main>
 </body>
