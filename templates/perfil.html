@@ -35,7 +35,55 @@
                     <!-- Posteriormente, criar o toggle real -->
                     <input type="checkbox" id="toggle" class="toggle-checkbox">
                 </div>
-            </div>        
+            </div>
+            
+            <div class="card-perfil">
+                <div class="banner ">
+                    <button class="btn-banner-edit" aria-label="Edit Banner">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                </div>  
+
+
+                <div class="general-info">
+                    <div class="avatar">
+                        <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar">
+                    </div>
+
+
+                    <div class="user-details">
+                        <h2>Sarah Chen <span class="fa-solid-circle-check verified-badge"></span></h2>
+                        <p>Senior Frontend Engineer</p>
+                    </div>
+
+
+                    <button>Edit Profile</button>
+                </div>
+
+
+                <div class="additional-info">
+                    <div class="info-item">
+                        <h3>Total Earned</h3>
+                        <p>$15,000</p>
+                    </div>
+
+                    <div class="info-item">
+                        <h3>Tasks Completed</h3>
+                        <p>25</p>
+                    </div>
+
+                    <div class="info-item">
+                        <h3>Success Rate</h3>
+                        <p>95%</p>
+                    </div>
+
+                    <div class="info-item">
+                        <h3>Rating</h3>
+                        <p>4.8</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 </body>
