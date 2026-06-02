@@ -6,7 +6,7 @@ from wtforms.validators import input_required, Email, Optional, URL
 
 #importando a função de cadastro do usuário
 from app import app, db
-from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev
+from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev
 from app.decorators import login_required
 
 with app.app_context():
@@ -174,6 +174,9 @@ def home():
 @login_required
 def dashboardCliente():
     form = DemandaForm()
+    id = session["id_usuario"]
+
+    demandas = lerDemandas()
 
     if form.validate_on_submit():
         try:
@@ -182,14 +185,15 @@ def dashboardCliente():
                 tecnologia=form.tecnologia.data,
                 descricao=form.descricao.data,
                 orcamento=form.orcamento.data,
-                status="Aberta"
+                status="Aberta",
+                id=id
             )
             flash("Demanda cadastrada com sucesso!", "success")
             return redirect('/dashboard')
         except Exception as e:
             flash(f"Falha ao cadastrar demanda: {str(e)}", "error")
 
-    return render_template('dashboardCliente.html', form=form)
+    return render_template('dashboardCliente.html', form=form, demandas=demandas)
 
 # executa a aplicação
 if __name__ == '__main__':

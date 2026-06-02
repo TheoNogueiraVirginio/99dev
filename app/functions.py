@@ -1,6 +1,7 @@
 import csv
 from pathlib import Path
 
+from flask import session
 from flask_mail import Message
 import bcrypt
 from app import mail, serializer
@@ -154,8 +155,33 @@ def validar_token(token, expiracao=1800):
     except:
         return None
 
-def salvarDemanda(titulo, tecnologia, descricao, orcamento, status):
+def salvarDemanda(titulo, tecnologia, descricao, orcamento, status, id):
     DEMANDAS_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
     with DEMANDAS_CSV_PATH.open('a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file, delimiter='\t')
-        writer.writerow([titulo, tecnologia, descricao, orcamento, status])
+        writer.writerow([titulo, tecnologia, descricao, orcamento, status, id])
+
+def lerDemandas():
+    demandas = []
+    id_usuario = session.get("id_usuario")
+
+    if DEMANDAS_CSV_PATH.exists():
+        with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as file:
+            reader = csv.reader(file, delimiter='\t')
+            for row in reader:
+                if len(row) < 6:
+                    continue
+
+                if not row[5].strip().isdigit():
+                    continue
+
+                if id_usuario is not None and int(row[5]) == id_usuario:
+                    demandas.append({
+                        'titulo': row[0],
+                        'tecnologia': row[1],
+                        'descricao': row[2],
+                        'orcamento': row[3],
+                        'status': row[4],
+                        'id': row[5]
+                    })
+    return demandas
