@@ -139,11 +139,14 @@ def perfil():
 @app.route('/perfil-dev', methods=['GET', 'POST'])
 @login_required
 def perfildev():
-    form =EditarDevForm()
+    form = EditarDevForm()
+    
     if form.validate_on_submit():
-        flash ("Perfil atualizado com sucesso!", "success")
+        
+        flash("Perfil atualizado com sucesso!", "success")
         return redirect('/perfil-dev')
-    return render_template('perfil.html',form=form)
+        
+    return render_template('perfil.html', form=form)
 
 @app.route("/")
 def home():
