@@ -122,6 +122,10 @@ def perfil():
         
     return render_template('perfil-editar.html', form=form)
 
+@app.route("/")
+def home():
+    return render_template('home.html')
+
 # executa a aplicação
 if __name__ == '__main__':
     app.run(debug=True, port=3001)
