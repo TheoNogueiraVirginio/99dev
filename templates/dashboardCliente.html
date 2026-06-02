@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - 99dev</title>
+</head>
+<body>
+    <aside>
+        <div class="logo">
+            <h1>99dev</h1>
+            <p>Portal do cliente</p>
+        </div>
+        <hr>
+        <nav>
+            <ul>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/MeusProjetos">Meus Projetos</a></li>
+                <li><a href="/carteira">Carteira</a></li>
+                <li><a href="/suporte">Suporte</a></li>
+            </ul>
+        </nav>
+        <hr>
+        <div class="user-info">
+            <p>Olá, {{ user.name }}</p>
+            <a href="/logout">Sair</a>
+        </div>
+    </aside>
+    <main>
+        <header>
+            <input type="text" placeholder="Pesquisar projetos...">
+            <div class="fotoUsuario">
+                <img src="{{ user.profile_picture }}" alt="Foto de perfil"> 
+            </div>
+        </header>
+    </main>
+</body>
+</html>

@@ -1,8 +1,8 @@
 from flask import flash, render_template, redirect, session
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import input_required, Email, Optional
+from wtforms import StringField, PasswordField, BooleanField, TextAreaField, IntegerField, URLField
+from wtforms.validators import input_required, Email, Optional, URL
 
 #importando a função de cadastro do usuário
 from app import app, db
@@ -31,6 +31,15 @@ class EditarPerfilForm(FlaskForm):
     nova_senha = PasswordField('Nova Senha (opcional)', validators=[Optional()])
     dev = BooleanField('Eu sou um dev')
     pessoa = BooleanField('Eu preciso de um dev')
+
+class EditarDevForm(FlaskForm):
+    nome = StringField('Nome Completo', validators=[input_required(message="O nome é obrigatório.")])
+    titulo = StringField('Função principal do Perfil', validators=[Optional()])
+    valor_hora = IntegerField('Valor Hora (R$)', validators=[Optional()])
+    skills = StringField('Habilidades (Tags)', validators=[Optional()])
+    resumo = TextAreaField('Sobre Mim / Bio', validators=[Optional()])
+    github = URLField('GitHub', validators=[Optional(), URL(message="Insira uma URL válida.")])
+    linkedin = URLField('LinkedIn', validators=[Optional(), URL(message="Insira uma URL válida.")])
 
 # rota provisoria
 @app.route('/cadastro', methods=['GET', 'POST'])
@@ -118,9 +127,20 @@ def perfil():
     if form.validate_on_submit():
         #banco de dados futuro
         flash("Perfil atualizado com sucesso!", "success")
-        return redirect('/perfil')
-        
+        return redirect('/perfil')        
     return render_template('perfil-editar.html', form=form)
+
+@app.route('/perfil-dev', methods=['GET', 'POST'])
+def perfildev():
+    form =EditarDevForm()
+    if form.validate_on_submit():
+        flash ("Perfil atualizado com sucesso!", "success")
+        return redirect('/perfil-dev')
+    return render_template('perfil.html',form=form)
+
+@app.route("/")
+def home():
+    return render_template('home.html')
 
 # executa a aplicação
 if __name__ == '__main__':
