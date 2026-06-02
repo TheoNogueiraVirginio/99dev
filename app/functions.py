@@ -5,7 +5,7 @@ from flask import session
 from flask_mail import Message
 import bcrypt
 from app import mail, serializer
-from app.models import Usuario, db
+from app.models import Usuario, PerfilDev, db
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEMANDAS_CSV_PATH = BASE_DIR / 'data' / 'demandas.csv'
@@ -28,8 +28,22 @@ def cadastrar_usuario(email, senha, cargo_definido):
     )
     db.session.add(novo_usuario)
     try:
+        db.session.flush()
+
+        
+        if cargo_definido == 'dev':
+            novo_perfil = PerfilDev(
+                id_usuario=novo_usuario.id,
+                nome="Novo Desenvolvedor" # Valor Default
+                # Os outros campos assumem null/vazio conforme configurado no Model
+            )
+            db.session.add(novo_perfil)
+
+        # Salva o usuário E o perfil-dev ao mesmo tempo
         db.session.commit()
+        
     except Exception:
+        # Se algo der errado em qualquer uma das duas tabelas, cancela tudo
         db.session.rollback()
         raise
 
@@ -45,6 +59,30 @@ def autenticar_usuario(email,senha):
         raise ValueError("Senha incorreta")
     
     return usuario
+
+def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, github, linkedin):
+    """
+    Função dedicada a atualizar os dados extras do Dev.
+    Como a linha já foi criada no cadastro, basta fazer um UPDATE direto.
+    """
+    # Busca o perfil atrelado ao ID do usuário logado
+    perfil = PerfilDev.query.filter_by(id_usuario=id_usuario).first()
+    
+    if not perfil:
+        raise ValueError("Perfil não encontrado para este usuário.")
+    
+    # Atualiza os campos com os dados validados do FlaskForm
+    perfil.nome = nome
+    perfil.titulo = titulo
+    perfil.valor_hora = valor_hora
+    perfil.skills = skills
+    perfil.resumo = resumo
+    perfil.github = github
+    perfil.linkedin = linkedin
+    
+    # Salva as alterações no banco de dados
+    db.session.commit()
+    return perfil
 
 def solicitar_recuperacao_senha(email):
     usuario = Usuario.query.filter_by(email=email).first()

@@ -6,7 +6,7 @@ from wtforms.validators import input_required, Email, Optional, URL
 
 #importando a função de cadastro do usuário
 from app import app, db
-from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token
+from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev
 from app.decorators import login_required
 
 with app.app_context():
@@ -139,11 +139,32 @@ def perfil():
 @app.route('/perfil-dev', methods=['GET', 'POST'])
 @login_required
 def perfildev():
-    form =EditarDevForm()
+    form = EditarDevForm()
+    
     if form.validate_on_submit():
-        flash ("Perfil atualizado com sucesso!", "success")
-        return redirect('/perfil-dev')
-    return render_template('perfil.html',form=form)
+        try:
+            # Puxa o ID do usuário logado direto da sessão segura
+            id_do_usuario_logado = session["id_usuario"]
+            
+            
+            atualizar_perfil_dev(
+                id_usuario=id_do_usuario_logado,
+                nome=form.nome.data,
+                titulo=form.titulo.data,
+                valor_hora=form.valor_hora.data,
+                skills=form.skills.data,
+                resumo=form.resumo.data,
+                github=form.github.data,
+                linkedin=form.linkedin.data
+            )
+            
+            flash("Perfil atualizado com sucesso!", "success")
+            return redirect('/perfil-dev')
+            
+        except Exception as e:
+            flash(f"Erro ao atualizar perfil: {str(e)}", "error")
+            
+    return render_template('perfil.html', form=form)
 
 @app.route("/")
 def home():
