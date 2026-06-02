@@ -142,10 +142,28 @@ def perfildev():
     form = EditarDevForm()
     
     if form.validate_on_submit():
-        
-        flash("Perfil atualizado com sucesso!", "success")
-        return redirect('/perfil-dev')
-        
+        try:
+            # Puxamos o ID do usuário logado direto da sessão segura
+            id_do_usuario_logado = session["id_usuario"]
+            
+            # Importe e chame a nova função do functions.py
+            atualizar_perfil_dev(
+                id_usuario=id_do_usuario_logado,
+                nome=form.nome.data,
+                titulo=form.titulo.data,
+                valor_hora=form.valor_hora.data,
+                skills=form.skills.data,
+                resumo=form.resumo.data,
+                github=form.github.data,
+                linkedin=form.linkedin.data
+            )
+            
+            flash("Perfil atualizado com sucesso!", "success")
+            return redirect('/perfil-dev')
+            
+        except Exception as e:
+            flash(f"Erro ao atualizar perfil: {str(e)}", "error")
+            
     return render_template('perfil.html', form=form)
 
 @app.route("/")
