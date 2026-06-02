@@ -27,8 +27,22 @@ def cadastrar_usuario(email, senha, cargo_definido):
     )
     db.session.add(novo_usuario)
     try:
+        db.session.flush()
+
+        
+        if cargo_definido == 'dev':
+            novo_perfil = PerfilDev(
+                id_usuario=novo_usuario.id,
+                nome="Novo Desenvolvedor" # Valor Default
+                # Os outros campos assumem null/vazio conforme configurado no Model
+            )
+            db.session.add(novo_perfil)
+
+        # Salva o usuário E o perfil-dev ao mesmo tempo
         db.session.commit()
+        
     except Exception:
+        # Se algo der errado em qualquer uma das duas tabelas, cancela tudo
         db.session.rollback()
         raise
 
