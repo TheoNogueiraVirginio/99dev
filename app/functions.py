@@ -4,7 +4,7 @@ from pathlib import Path
 from flask_mail import Message
 import bcrypt
 from app import mail, serializer
-from app.models import Usuario, db
+from app.models import Usuario, PerfilDev, db
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEMANDAS_CSV_PATH = BASE_DIR / 'data' / 'demandas.csv'
@@ -62,7 +62,7 @@ def autenticar_usuario(email,senha):
 def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, github, linkedin):
     """
     Função dedicada a atualizar os dados extras do Dev.
-    Como a linha já foi criada no cadastro, fazemos um UPDATE direto.
+    Como a linha já foi criada no cadastro, basta fazer um UPDATE direto.
     """
     # Busca o perfil atrelado ao ID do usuário logado
     perfil = PerfilDev.query.filter_by(id_usuario=id_usuario).first()
@@ -79,7 +79,7 @@ def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, g
     perfil.github = github
     perfil.linkedin = linkedin
     
-    # Confirma as alterações no banco de dados
+    # Salva as alterações no banco de dados
     db.session.commit()
     return perfil
 

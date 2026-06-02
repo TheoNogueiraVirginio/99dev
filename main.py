@@ -6,7 +6,7 @@ from wtforms.validators import input_required, Email, Optional, URL
 
 #importando a função de cadastro do usuário
 from app import app, db
-from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, salvarDemanda, solicitar_recuperacao_senha, validar_token
+from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev
 from app.decorators import login_required
 
 with app.app_context():
@@ -143,10 +143,10 @@ def perfildev():
     
     if form.validate_on_submit():
         try:
-            # Puxamos o ID do usuário logado direto da sessão segura
+            # Puxa o ID do usuário logado direto da sessão segura
             id_do_usuario_logado = session["id_usuario"]
             
-            # Importe e chame a nova função do functions.py
+            
             atualizar_perfil_dev(
                 id_usuario=id_do_usuario_logado,
                 nome=form.nome.data,
