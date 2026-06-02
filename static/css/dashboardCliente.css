@@ -28,6 +28,70 @@ body {
 	color: var(--text);
 }
 
+.menu-toggle {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.menu-button {
+	display: none;
+	position: fixed;
+	top: 16px;
+	left: 16px;
+	z-index: 40;
+	width: 48px;
+	height: 48px;
+	border-radius: 14px;
+	background: #ffffff;
+	border: 1px solid #dbe4f0;
+	box-shadow: 0 10px 24px rgba(13, 28, 58, 0.12);
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	flex-direction: column;
+	cursor: pointer;
+}
+
+.menu-button span {
+	display: block;
+	width: 20px;
+	height: 2px;
+	border-radius: 999px;
+	background: var(--sidebar);
+	transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.menu-overlay {
+	display: none;
+	position: fixed;
+	inset: 0;
+	z-index: 25;
+	background: rgba(13, 28, 58, 0.42);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.25s ease;
+}
+
+.menu-close {
+	display: none;
+	align-self: flex-end;
+	width: 38px;
+	height: 38px;
+	border-radius: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+	font-size: 1.9rem;
+	line-height: 1;
+	text-align: center;
+	cursor: pointer;
+}
+
 aside {
 	width: 254px;
 	min-height: 100vh;
@@ -315,10 +379,22 @@ header input:focus {
 		flex-direction: column;
 	}
 
+	.menu-button {
+		display: inline-flex;
+	}
+
+	.menu-overlay {
+		display: block;
+	}
+
 	aside {
-		position: relative;
-		width: 100%;
-		min-height: auto;
+		position: fixed;
+		z-index: 30;
+		width: min(84vw, 320px);
+		min-height: 100vh;
+		transform: translateX(-102%);
+		transition: transform 0.28s ease;
+		box-shadow: 18px 0 40px rgba(13, 28, 58, 0.24);
 	}
 
 	main {
@@ -328,12 +404,40 @@ header input:focus {
 
 	header {
 		position: relative;
+		padding-left: 76px;
+	}
+
+	.menu-close {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.menu-toggle:checked ~ aside {
+		transform: translateX(0);
+	}
+
+	.menu-toggle:checked ~ .menu-overlay {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.menu-toggle:checked + .menu-button span:nth-child(1) {
+		transform: translateY(7px) rotate(45deg);
+	}
+
+	.menu-toggle:checked + .menu-button span:nth-child(2) {
+		opacity: 0;
+	}
+
+	.menu-toggle:checked + .menu-button span:nth-child(3) {
+		transform: translateY(-7px) rotate(-45deg);
 	}
 }
 
 @media (max-width: 640px) {
 	header {
-		padding: 0 16px;
+		padding: 0 16px 0 76px;
 	}
 
 	.novaTarefa,
