@@ -374,6 +374,135 @@ header input:focus {
 	transform: translateY(0);
 }
 
+.tarefas {
+	margin: 22px 28px 0;
+	padding: 22px 24px 18px;
+	background: #ffffff;
+	border: 1px solid rgba(219, 228, 240, 0.95);
+	border-radius: 18px;
+	box-shadow: var(--shadow);
+	max-width: 1280px;
+	overflow: hidden;
+}
+
+.tarefas-header {
+	margin-bottom: 14px;
+}
+
+.tarefas-header h2 {
+	font-size: 1.45rem;
+	line-height: 1.2;
+	color: var(--text);
+	letter-spacing: -0.02em;
+}
+
+.tarefas table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.95rem;
+	background: #fff;
+}
+
+.tarefas thead th {
+	text-align: left;
+	font-weight: 600;
+	color: #61718a;
+	padding: 14px 18px;
+	border-bottom: 1px solid var(--line);
+	white-space: nowrap;
+}
+
+.tarefas tbody td {
+	padding: 18px;
+	border-bottom: 1px solid #edf2f7;
+	vertical-align: middle;
+	color: var(--text);
+}
+
+.tarefas tbody tr {
+	transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.tarefas tbody tr:hover {
+	background: #fafcff;
+}
+
+.task-title {
+	font-size: 1.05rem;
+	font-weight: 600;
+	margin-bottom: 4px;
+	color: var(--text);
+}
+
+.task-subtitle {
+	font-size: 0.88rem;
+	color: #6d7c92;
+}
+
+.task-description {
+	color: #485a74;
+	max-width: 360px;
+	line-height: 1.4;
+}
+
+.tech-pill,
+.status-pill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 32px;
+	padding: 0 12px;
+	border-radius: 999px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.tech-pill {
+	background: #f2f4f8;
+	color: #344969;
+	border: 1px solid #ebeff5;
+	margin-right: 8px;
+	margin-bottom: 8px;
+}
+
+.status-pill {
+	background: #eaf8f1;
+	color: #187a4d;
+	border: 1px solid #cdeedc;
+}
+
+.developer-placeholder {
+	color: #73849c;
+	font-weight: 500;
+}
+
+.action-link {
+	color: #2f6bf2;
+	font-weight: 700;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.action-link:hover {
+	text-decoration: underline;
+}
+
+.tarefas tbody td:last-child,
+.tarefas thead th:last-child {
+	text-align: right;
+}
+
+.tarefas tbody td:nth-child(5) {
+	font-weight: 700;
+	font-size: 1.05rem;
+	color: var(--text);
+	white-space: nowrap;
+}
+
+.tarefas tbody td:nth-child(6) {
+	white-space: nowrap;
+}
+
 @media (max-width: 980px) {
 	body {
 		flex-direction: column;
@@ -448,6 +577,53 @@ header input:focus {
 
 	.novaTarefa {
 		padding: 22px 16px 18px;
+	}
+
+	.tarefas {
+		margin: 18px 16px 0;
+		padding: 18px 16px 14px;
+	}
+
+	.tarefas table,
+	.tarefas thead,
+	.tarefas tbody,
+	.tarefas th,
+	.tarefas td,
+	.tarefas tr {
+		display: block;
+	}
+
+	.tarefas thead {
+		display: none;
+	}
+
+	.tarefas tbody tr {
+		padding: 14px 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.tarefas tbody td {
+		padding: 8px 0;
+		border: 0;
+		display: flex;
+		justify-content: space-between;
+		gap: 16px;
+	}
+
+	.tarefas tbody td::before {
+		content: attr(data-label);
+		font-weight: 600;
+		color: #61718a;
+		flex-shrink: 0;
+	}
+
+	.tarefas tbody td:last-child {
+		text-align: left;
+	}
+
+	.task-description {
+		max-width: none;
+		text-align: right;
 	}
 
 	.logo h1 {
