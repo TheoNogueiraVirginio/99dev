@@ -8,7 +8,6 @@
 </head>
 <body>
     <main>
-        <!-- Identidade visual -->
         <div class="secao-infos">
             <div class="logo">
                 <i class="fa-solid fa-code"></i>
@@ -23,52 +22,59 @@
             </div>
         </div>
 
-        <!-- Seção do Formulário Customizado -->
         <div class="formulario">
             <div class="card-perfil">
                 <h1>Nome do desenvolvedor</h1>
                 <h2>Perfil do desenvolvedor</h2>
                 
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    <ul class="flashes">
+                    {% for category, message in messages %}
+                      <li class="flash-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                  {% endif %}
+                {% endwith %}
+                
                 <form action="" method="POST">
+                    {{ form.hidden_tag() }}
                     
-                    <!-- Informações Gerais -->
                     <div class="grupo-campos">
                         <label for="nome">Nome Completo</label>
-                        <input type="text" id="nome" name="nome" required>
+                        {{ form.nome(id="nome", required=True) }}
                         
                         <label for="titulo">Função principal do Perfil</label>
-                        <input type="text" id="titulo" name="titulo" placeholder="Ex: Desenvolvedor Backend Python">
+                        {{ form.titulo(id="titulo", placeholder="Ex: Desenvolvedor Backend Python") }}
                     </div>
 
-                    <!-- Valor do trabalho e justificativa(qualidades) -->
                     <div class="grupo-campos linha-dupla">
                         <div class="campo-dividido">
                             <label for="valor_hora">Valor Hora (R$)</label>
-                            <input type="number" id="valor_hora" name="valor_hora" placeholder="60" min="0">
+                            {{ form.valor_hora(id="valor_hora", placeholder="60", min="0") }}
                         </div>
                         <div class="campo-dividido">
                             <label for="skills">Habilidades (Tags)</label>
-                            <input type="text" id="skills" name="skills" placeholder="Python, Flask, SQL">
+                            {{ form.skills(id="skills", placeholder="Python, Flask, SQL") }}
                         </div>
                     </div>
 
-                    <!-- Sobre mim -->
                     <div class="grupo-campos">
                         <label for="resumo">Sobre Mim / Bio</label>
-                        <textarea id="resumo" name="resumo" rows="4" placeholder="Conte sobre sua experiência de trabalho e projetos desenvolvidos..."></textarea>
+                        {{ form.resumo(id="resumo", rows="4", placeholder="Conte sobre sua experiência de trabalho e projetos desenvolvidos...") }}
                     </div>
 
-                    <!-- Links Externos (github,linkedin,etc) -->
                     <div class="grupo-campos linha-dupla">
                         <div class="campo-dividido">
                             <label for="github"><i class="fa-brands fa-github"></i> GitHub</label>
-                            <input type="url" id="github" name="github" placeholder="https://github.com/...">
+                            {{ form.github(id="github", placeholder="https://github.com/...") }}
                         </div>
                         <div class="campo-dividido">
                             <label for="linkedin"><i class="fa-brands fa-linkedin"></i> LinkedIn</label>
-                            <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/...">
+                            {{ form.linkedin(id="linkedin", placeholder="https://linkedin.com/in/...") }}
                         </div>
                     </div>
+                    
                     <div class="acoes-formulario">
                         <button type="submit" class="btn-salvar">Salvar Alterações</button>
                     </div>
