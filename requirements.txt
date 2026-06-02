@@ -3,5 +3,5 @@ Flask-WTF
 email-validator
 sqlalchemy
 flask_mail
-brcrypt
+bcrypt
 flask_sqlalchemy

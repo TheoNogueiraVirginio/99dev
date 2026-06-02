@@ -109,3 +109,4 @@ def validar_token(token, expiracao=1800):
         return email
     except:
         return None
+

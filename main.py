@@ -79,7 +79,7 @@ def login():
 
             session["id_usuario"] = usuario.id
             flash("Login realizado com sucesso!", "success")
-            return redirect('/home')
+            return redirect('/dashboard')
 
         except ValueError as e:
             flash(str(e), "error")
@@ -141,6 +141,10 @@ def perfildev():
 @app.route("/")
 def home():
     return render_template('home.html')
+
+@app.route("/dashboard")
+def dashboardCliente():
+    return render_template('dashboardCliente.html')
 
 # executa a aplicação
 if __name__ == '__main__':
