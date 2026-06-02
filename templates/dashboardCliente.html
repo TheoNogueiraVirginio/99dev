@@ -65,6 +65,29 @@
                 <button type="submit">Criar Tarefa</button>
             </form>
         </section>
+        <section class="tarefas">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Tecnologia</th>
+                        <th>Descrição</th>
+                        <th>Orçamento</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for demanda in demandas %}
+                    <tr>
+                        <td>{{ demanda.titulo }}</td>
+                        <td>{{ demanda.tecnologia }}</td>
+                        <td>{{ demanda.descricao }}</td>
+                        <td>R$ {{ demanda.orcamento }}</td>
+                        <td>{{ demanda.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+        </section>"
     </main>
 </body>
 
