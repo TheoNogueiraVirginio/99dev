@@ -126,7 +126,7 @@ def nova_senha(token):
     return render_template('nova-senha.html', form=form)
 
 @app.route('/editar-perfil', methods=['GET', 'POST'])
-# @login_required 
+@login_required 
 def perfil():
     form = EditarPerfilForm()
     
@@ -137,6 +137,7 @@ def perfil():
     return render_template('perfil-editar.html', form=form)
 
 @app.route('/perfil-dev', methods=['GET', 'POST'])
+@login_required
 def perfildev():
     form =EditarDevForm()
     if form.validate_on_submit():
@@ -149,6 +150,7 @@ def home():
     return render_template('home.html')
 
 @app.route("/dashboard", methods=['GET', 'POST'])
+@login_required
 def dashboardCliente():
     form = DemandaForm()
 
