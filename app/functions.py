@@ -1,7 +1,13 @@
+import csv
+from pathlib import Path
+
 from flask_mail import Message
 import bcrypt
 from app import mail, serializer
 from app.models import Usuario, db
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DEMANDAS_CSV_PATH = BASE_DIR / 'data' / 'demandas.csv'
 
 
 def cadastrar_usuario(email, senha, cargo_definido):
@@ -110,3 +116,8 @@ def validar_token(token, expiracao=1800):
     except:
         return None
 
+def salvarDemanda(titulo, tecnologia, descricao, orcamento, status):
+    DEMANDAS_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with DEMANDAS_CSV_PATH.open('a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file, delimiter='\t')
+        writer.writerow([titulo, tecnologia, descricao, orcamento, status])
