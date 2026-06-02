@@ -33,6 +33,34 @@
                 <img src="{{ user.profile_picture }}" alt="Foto de perfil"> 
             </div>
         </header>
+        <section class="novaTarefa">
+            <!-- adicionar um icone de mais antes do titulo -->
+            <h2>Nova Tarefa</h2>
+            <form action="#" method="post">
+                <label for="titulo">Título da tarefa:</label>
+                <input type="text" name="titulo" placeholder="Título da tarefa" required>
+                <label for="techStack">Tecnologias da tarefa:</label>
+                <ul>
+                    <li><input type="checkbox" name="techStack" value="React"> React</li>
+                    <li><input type="checkbox" name="techStack" value="Node"> Node.js</li>
+                    <li><input type="checkbox" name="techStack" value="Python"> Python</li>
+                    <li><input type="checkbox" name="techStack" value="SQL"> SQL</li>
+                    <li><input type="checkbox" name="techStack" value="PostgreSQL"> PostgreSQL</li>
+                    <li><input type="checkbox" name="techStack" value="MongoDB"> MongoDB</li>
+                    <li><input type="checkbox" name="techStack" value="TypeScript"> TypeScript</li>
+                    <li><input type="checkbox" name="techStack" value="JavaScript"> JavaScript</li>
+                    <li><input type="checkbox" name="techStack" value="Express"> Express</li>
+                    <li><input type="checkbox" name="techStack" value="Django"> Django</li>
+                    <li><input type="checkbox" name="techStack" value="Next.js"> Next.js</li>
+                    <li><input type="checkbox" name="techStack" value="Vue.js"> Vue.js</li>
+                </ul>
+                <label for="descricao">Descrição da tarefa:</label>
+                <textarea name="descricao" placeholder="Descrição da tarefa" required></textarea>
+                <label for="orcamento">Orçamento da tarefa(BRL):</label>
+                <input type="number" name="orcamento" placeholder="Orçamento da tarefa" required>
+                <button type="submit">Criar Tarefa</button>
+            </form>
+        </section>
     </main>
 </body>
 </html>
