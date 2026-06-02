@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title> Nome da Pessoa - 99Dev</title>
+
+    <link rel="stylesheet" href="../static/css/perfil.css">
 </head>
 <body>
     <main>
@@ -37,135 +39,120 @@
                 </div>
             </div>
             
-            <div class="profile-card">
-                <div class="banner ">
-                    <button class="btn-banner-edit" aria-label="Edit Banner">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                </div>  
-
-
-                <div class="general-info">
-                    <div class="avatar">
-                        <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar">
+            <div class="content-wrapper">
+                <div class="profile-card">
+                    <div class="banner ">
+                        <button class="btn-banner-edit" aria-label="Edit Banner">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
                     </div>
-
-
-                    <div class="user-details">
-                        <h2>Sarah Chen <span class="fa-solid-circle-check verified-badge"></span></h2>
-                        <p>Senior Frontend Engineer</p>
+                    <div class="general-info">
+                        <div class="avatar">
+                            <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar">
+                        </div>
+                        <div class="user-details">
+                            <h2>Sarah Chen <span class="fa-solid-circle-check verified-badge"></span></h2>
+                            <p>Senior Frontend Engineer</p>
+                        </div>
+                        <button>Edit Profile</button>
                     </div>
-
-
-                    <button>Edit Profile</button>
-                </div>
-
-
-                <div class="additional-info">
-                    <div class="info-item">
-                        <h3>Total Earned</h3>
-                        <p>$15,000</p>
-                    </div>
-
-                    <div class="info-item">
-                        <h3>Tasks Completed</h3>
-                        <p>25</p>
-                    </div>
-
-                    <div class="info-item">
-                        <h3>Success Rate</h3>
-                        <p>95%</p>
-                    </div>
-
-                    <div class="info-item">
-                        <h3>Rating</h3>
-                        <p>4.8</p>
+                    <div class="additional-info">
+                        <div class="info-item">
+                            <h3>Total Earned</h3>
+                            <p>$15,000</p>
+                        </div>
+                        <div class="info-item">
+                            <h3>Tasks Completed</h3>
+                            <p>25</p>
+                        </div>
+                        <div class="info-item">
+                            <h3>Success Rate</h3>
+                            <p>95%</p>
+                        </div>
+                        <div class="info-item">
+                            <h3>Rating</h3>
+                            <p>4.8</p>
+                        </div>
                     </div>
                 </div>
+
+                <section class="profile-content">
+                    <div class="profile-sidebar">
+                        <div class="about-me">
+                            <h3>About Me</h3>
+                            <p>Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum</p>
+                            <div class="contact-info">
+                                <p>sarah@dev.com</p>
+                                <p>sarahchen.dev</p>
+                                <p>github.com/sarahchen</p>
+                            </div>
+                        </div>
+                        <div class="skills-card">
+                            <h3>Top Skills</h3>
+                            <div class="skills-list">
+                                <span class="skill">JavaScript</span>
+                                <span class="skill">React</span>
+                                <span class="skill">CSS</span>
+                                <span class="skill">Node.js</span>
+                                <span class="skill">TypeScript</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-main">
+                        <div class="client-reviews">
+                            <h3>Recent Client Reviews</h3>
+                
+                            <div class="reviews-list">
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <h4>React Performance Fix</h4>
+                                        <span class="review-rating">
+                                            <i class="fa-solid fa-star"></i> 5
+                                        </span>
+                                    </div>
+                                    <p class="client-name">Client: John D.</p>
+                                    <p class="review-text">"Sarah was extremely fast and immediately identified the bottleneck in our rendering cycle. Highly recommend!"</p>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <h4>Dashboard Implementation</h4>
+                                        <span class="review-rating">
+                                            <i class="fa-solid fa-star"></i> 5
+                                        </span>
+                                    </div>
+                                    <p class="client-name">Client: TechStart Inc.</p>
+                                    <p class="review-text">"Perfect translation of our Figma files to React. Clean code and responsive."</p>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <h4>API Integration</h4>
+                                        <span class="review-rating">
+                                            <i class="fa-solid fa-star"></i> 4.5
+                                        </span>
+                                    </div>
+                                    <p class="client-name">Client: Mike L.</p>
+                                    <p class="review-text">"Solid work on integrating our complex legacy API."</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="available-tasks-card">
+                            <div class="task-info-left">
+                                <div class="icon-container">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <div class="task-text">
+                                    <h3>Available for Tasks</h3>
+                                    <p>Turn on to receive instant task requests</p>
+                                </div>
+                            </div>
+                
+                            <div class="task-toggle-right">
+                                <input type="checkbox" id="tasks-toggle" class="toggle-checkbox">
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
-
-            <section class="profile-content">
-                <div class="profile-sidebar">
-                    <div class="about-me">
-                        <h3>About Me</h3>
-                        <p>Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum</p>
-
-                        <div class="contact-info">
-                            <p>sarah@dev.com</p>
-                            <p>sarahchen.dev</p>
-                            <p>github.com/sarahchen</p>
-                        </div>
-                    </div>
-
-                    <div class="skills-card">
-                        <h3>Top Skills</h3>
-                        <div class="skills-list">
-                            <span class="skill">JavaScript</span>
-                            <span class="skill">React</span>
-                            <span class="skill">CSS</span>
-                            <span class="skill">Node.js</span>
-                            <span class="skill">TypeScript</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-main">
-                    <div class="client-reviews">
-                        <h3>Recent Client Reviews</h3>
-                        
-                        <div class="reviews-list">
-                            <div class="review-item">
-                                <div class="review-header">
-                                    <h4>React Performance Fix</h4>
-                                    <span class="review-rating">
-                                        <i class="fa-solid fa-star"></i> 5
-                                    </span>
-                                </div>
-                                <p class="client-name">Client: John D.</p>
-                                <p class="review-text">"Sarah was extremely fast and immediately identified the bottleneck in our rendering cycle. Highly recommend!"</p>
-                            </div>
-
-                            <div class="review-item">
-                                <div class="review-header">
-                                    <h4>Dashboard Implementation</h4>
-                                    <span class="review-rating">
-                                        <i class="fa-solid fa-star"></i> 5
-                                    </span>
-                                </div>
-                                <p class="client-name">Client: TechStart Inc.</p>
-                                <p class="review-text">"Perfect translation of our Figma files to React. Clean code and responsive."</p>
-                            </div>
-
-                            <div class="review-item">
-                                <div class="review-header">
-                                    <h4>API Integration</h4>
-                                    <span class="review-rating">
-                                        <i class="fa-solid fa-star"></i> 4.5
-                                    </span>
-                                </div>
-                                <p class="client-name">Client: Mike L.</p>
-                                <p class="review-text">"Solid work on integrating our complex legacy API."</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="available-tasks-card">
-                        <div class="task-info-left">
-                            <div class="icon-container">
-                                <i class="fa-solid fa-bolt"></i>
-                            </div>
-                            <div class="task-text">
-                                <h3>Available for Tasks</h3>
-                                <p>Turn on to receive instant task requests</p>
-                            </div>
-                        </div>
-                        
-                        <div class="task-toggle-right">
-                            <input type="checkbox" id="tasks-toggle" class="toggle-checkbox">
-                        </div>
-                    </div>
-                </div>
-            </section>
         </div>
     </main>
 </body>
