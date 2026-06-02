@@ -116,8 +116,8 @@ def validar_token(token, expiracao=1800):
     except:
         return None
 
-def salvarDemanda(titulo, tecnologia, descricao, orcamento, status):
+def salvarDemanda(titulo, tecnologia, descricao, orcamento, status, id):
     DEMANDAS_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
     with DEMANDAS_CSV_PATH.open('a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file, delimiter='\t')
-        writer.writerow([titulo, tecnologia, descricao, orcamento, status])
+        writer.writerow([titulo, tecnologia, descricao, orcamento, status, id])

@@ -153,6 +153,7 @@ def home():
 @login_required
 def dashboardCliente():
     form = DemandaForm()
+    id = session["id_usuario"]
 
     if form.validate_on_submit():
         try:
@@ -161,7 +162,8 @@ def dashboardCliente():
                 tecnologia=form.tecnologia.data,
                 descricao=form.descricao.data,
                 orcamento=form.orcamento.data,
-                status="Aberta"
+                status="Aberta",
+                id=id
             )
             flash("Demanda cadastrada com sucesso!", "success")
             return redirect('/dashboard')
