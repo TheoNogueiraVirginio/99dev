@@ -1,4 +1,4 @@
-from flask import flash, render_template, redirect, session
+from flask import flash, render_template, redirect, request, session
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, TextAreaField, IntegerField, URLField
@@ -46,6 +46,9 @@ class DemandaForm(FlaskForm):
     tecnologia = StringField('Tecnologia Principal', validators=[input_required(message="A tecnologia é obrigatória.")])
     descricao = TextAreaField('Descrição Detalhada', validators=[input_required(message="A descrição é obrigatória.")])
     orcamento = IntegerField('Orçamento Estimado (R$)', validators=[input_required(message="O orçamento é obrigatório.")])
+
+class FiltroForm(FlaskForm):
+    filtro = StringField('Filtrar por status')
 
 # rota provisoria
 @app.route('/cadastro', methods=['GET', 'POST'])
@@ -195,10 +198,13 @@ def dashboardCliente():
 
     return render_template('dashboardCliente.html', form=form, demandas=demandas)
 
-@app.route("/MeusProjetos")
+@app.route("/MeusProjetos", methods=['GET', 'POST'])
 @login_required
 def meusProjetos():
-    return render_template('MeusProjetos.html')
+    busca = request.args.get("busca", "").strip() or None
+    filtro_status = request.args.get("filtro", "").strip() or None
+    demandas = lerDemandas(busca=busca, filtro_status=filtro_status)
+    return render_template('MeusProjetos.html', demandas=demandas)
 
 # executa a aplicação
 if __name__ == '__main__':

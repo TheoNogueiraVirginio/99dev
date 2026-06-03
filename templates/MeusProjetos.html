@@ -38,7 +38,7 @@
     </aside>
     <main>
         <header>
-            <input type="text" placeholder="Pesquisar projetos...">
+            <input type="text" name="busca" form="filtro-projetos" placeholder="Pesquisar projetos..." value="{{ request.args.get('busca', '') }}">
             <div class="fotoUsuario">
             </div>
         </header>
@@ -51,20 +51,19 @@
         {% endwith %}
         <section class="buscaDemanda">
             <h2>Buscar Demanda</h2>
-            <form action="#" method="post">
-                <label for="busca">Digite o título da demanda:</label>
-                {{form.hidden_tag()}}
-                {{ form.titulo(placeholder="Título da demanda", id="busca") }}
-                <button type="submit">Buscar</button>
-            </form>
         </section>
         <section class="tarefas">
             <div class="tarefas-header">
-                <ul>
-                    <li class="active">Todas as demandas</li>
-                    <li class="pendente">Em andamento</li>
-                    <li class="concluida">Concluídas</li>
-                </ul>
+                <form id="filtro-projetos" action="" method="get">
+                    <label for="filtro">Filtrar por status:</label>
+                    <select name="filtro" id="filtro" onchange="this.form.submit()">
+                        <option value="" {% if not request.args.get('filtro') %}selected{% endif %}>Todos</option>
+                        <option value="Aberta" {% if request.args.get('filtro') == 'Aberta' %}selected{% endif %}>Aberta</option>
+                        <option value="Fechada" {% if request.args.get('filtro') == 'Fechada' %}selected{% endif %}>Fechada</option>
+                        <option value="Pendente" {% if request.args.get('filtro') == 'Pendente' %}selected{% endif %}>Pendente</option>
+                    </select>
+                    <button type="submit">Buscar</button>
+                </form>
             </div>
             <table>
                 <thead>

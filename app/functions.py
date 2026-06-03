@@ -161,9 +161,10 @@ def salvarDemanda(titulo, tecnologia, descricao, orcamento, status, id):
         writer = csv.writer(file, delimiter='\t')
         writer.writerow([titulo, tecnologia, descricao, orcamento, status, id])
 
-def lerDemandas():
+def lerDemandas(busca=None, filtro_status=None):
     demandas = []
     id_usuario = session.get("id_usuario")
+    busca_normalizada = busca.lower().strip() if busca else None
 
     if DEMANDAS_CSV_PATH.exists():
         with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as file:
@@ -176,6 +177,14 @@ def lerDemandas():
                     continue
 
                 if id_usuario is not None and int(row[5]) == id_usuario:
+                    if filtro_status is not None and row[4] != filtro_status:
+                        continue
+
+                    if busca_normalizada:
+                        texto_busca = " ".join([row[0], row[1], row[2], row[4]]).lower()
+                        if busca_normalizada not in texto_busca:
+                            continue
+
                     demandas.append({
                         'titulo': row[0],
                         'tecnologia': row[1],
@@ -185,3 +194,4 @@ def lerDemandas():
                         'id': row[5]
                     })
     return demandas
+
