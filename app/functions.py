@@ -54,10 +54,10 @@ def autenticar_usuario(email,senha):
 
     if not usuario:
         raise ValueError("Usuário não encontrado")
-    
-    if usuario.senha != senha:
-        raise ValueError("Senha incorreta")
-    
+    senha_usuario = senha.encode('utf-8')
+    senha_banco = usuario.senha.encode('utf-8')
+    if not bcrypt.checkpw(senha_usuario, senha_banco):
+        raise ValueError("Senha incorreta")    
     return usuario
 
 def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, github, linkedin):
