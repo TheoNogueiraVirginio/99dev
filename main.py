@@ -195,6 +195,11 @@ def dashboardCliente():
 
     return render_template('dashboardCliente.html', form=form, demandas=demandas)
 
+@app.route("/MeusProjetos")
+@login_required
+def meusProjetos():
+    return render_template('MeusProjetos.html')
+
 # executa a aplicação
 if __name__ == '__main__':
     app.run(debug=True, port=3001)
