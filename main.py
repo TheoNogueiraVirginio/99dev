@@ -47,6 +47,9 @@ class DemandaForm(FlaskForm):
     descricao = TextAreaField('Descrição Detalhada', validators=[input_required(message="A descrição é obrigatória.")])
     orcamento = IntegerField('Orçamento Estimado (R$)', validators=[input_required(message="O orçamento é obrigatório.")])
 
+class FiltroForm(FlaskForm):
+    filtro = StringField('Filtrar por status')
+
 # rota provisoria
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
@@ -195,10 +198,17 @@ def dashboardCliente():
 
     return render_template('dashboardCliente.html', form=form, demandas=demandas)
 
-@app.route("/MeusProjetos")
+@app.route("/MeusProjetos", methods=['GET', 'POST'])
 @login_required
 def meusProjetos():
-    return render_template('MeusProjetos.html')
+    form = FiltroForm()
+
+    if form.validate_on_submit():
+        filtro_status = form.filtro.data
+        demandas = lerDemandas(filtro_status=filtro_status)
+    else:
+        demandas = lerDemandas()
+    return render_template('MeusProjetos.html', form=form, demandas=demandas)
 
 # executa a aplicação
 if __name__ == '__main__':

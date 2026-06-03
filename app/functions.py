@@ -161,7 +161,7 @@ def salvarDemanda(titulo, tecnologia, descricao, orcamento, status, id):
         writer = csv.writer(file, delimiter='\t')
         writer.writerow([titulo, tecnologia, descricao, orcamento, status, id])
 
-def lerDemandas():
+def lerDemandas(filtro_status=None):
     demandas = []
     id_usuario = session.get("id_usuario")
 
@@ -176,87 +176,14 @@ def lerDemandas():
                     continue
 
                 if id_usuario is not None and int(row[5]) == id_usuario:
-                    demandas.append({
-                        'titulo': row[0],
-                        'tecnologia': row[1],
-                        'descricao': row[2],
-                        'orcamento': row[3],
+                    if filtro_status is None or row[4] == filtro_status:
+                        demandas.append({
+                            'titulo': row[0],
+                            'tecnologia': row[1],
+                            'descricao': row[2],
+                            'orcamento': row[3],
                         'status': row[4],
                         'id': row[5]
                     })
     return demandas
 
-def lerdemandasAtivas():
-    demandas = []
-    id_usuario = session.get("id_usuario")
-
-    if DEMANDAS_CSV_PATH.exists():
-        with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as file:
-            reader = csv.reader(file, delimiter='\t')
-            for row in reader:
-                if len(row) < 6:
-                    continue
-
-                if not row[5].strip().isdigit():
-                    continue
-
-                if id_usuario is not None and int(row[5]) == id_usuario and row[4] == "Aberta":
-                    demandas.append({
-                        'titulo': row[0],
-                        'tecnologia': row[1],
-                        'descricao': row[2],
-                        'orcamento': row[3],
-                        'status': row[4],
-                        'id': row[5]
-                    })
-    return demandas
-
-def lerdemandasFechadas():
-    demandas = []
-    id_usuario = session.get("id_usuario")
-
-    if DEMANDAS_CSV_PATH.exists():
-        with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as file:
-            reader = csv.reader(file, delimiter='\t')
-            for row in reader:
-                if len(row) < 6:
-                    continue
-
-                if not row[5].strip().isdigit():
-                    continue
-
-                if id_usuario is not None and int(row[5]) == id_usuario and row[4] == "Fechada":
-                    demandas.append({
-                        'titulo': row[0],
-                        'tecnologia': row[1],
-                        'descricao': row[2],
-                        'orcamento': row[3],
-                        'status': row[4],
-                        'id': row[5]
-                    })
-    return demandas
-
-def lerdemandasPendentes():
-    demandas = []
-    id_usuario = session.get("id_usuario")
-
-    if DEMANDAS_CSV_PATH.exists():
-        with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as file:
-            reader = csv.reader(file, delimiter='\t')
-            for row in reader:
-                if len(row) < 6:
-                    continue
-
-                if not row[5].strip().isdigit():
-                    continue
-
-                if id_usuario is not None and int(row[5]) == id_usuario and row[4] == "Pendente":
-                    demandas.append({
-                        'titulo': row[0],
-                        'tecnologia': row[1],
-                        'descricao': row[2],
-                        'orcamento': row[3],
-                        'status': row[4],
-                        'id': row[5]
-                    })
-    return demandas

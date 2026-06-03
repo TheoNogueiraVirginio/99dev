@@ -51,20 +51,19 @@
         {% endwith %}
         <section class="buscaDemanda">
             <h2>Buscar Demanda</h2>
-            <form action="#" method="post">
-                <label for="busca">Digite o título da demanda:</label>
-                {{form.hidden_tag()}}
-                {{ form.titulo(placeholder="Título da demanda", id="busca") }}
-                <button type="submit">Buscar</button>
-            </form>
         </section>
         <section class="tarefas">
             <div class="tarefas-header">
-                <ul>
-                    <li class="active">Todas as demandas</li>
-                    <li class="pendente">Em andamento</li>
-                    <li class="concluida">Concluídas</li>
-                </ul>
+                <form action="" method="post">
+                    <label for="filtro">Filtrar por status:</label>
+                    {{ form.filtro(placeholder="Filtrar por status", id="filtro") }}
+                    <select name="filtro" id="filtro" onchange="this.form.submit()">
+                        <option value="">Todos</option>
+                        <option value="Aberta">Aberta</option>
+                        <option value="Fechada">Fechada</option>
+                        <option value="Pendente">Pendente</option>
+                    </select>
+                </form>
             </div>
             <table>
                 <thead>
