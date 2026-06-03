@@ -1,4 +1,4 @@
-from flask import flash, render_template, redirect, session
+from flask import flash, render_template, redirect, request, session
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, TextAreaField, IntegerField, URLField
@@ -201,14 +201,10 @@ def dashboardCliente():
 @app.route("/MeusProjetos", methods=['GET', 'POST'])
 @login_required
 def meusProjetos():
-    form = FiltroForm()
-
-    if form.validate_on_submit():
-        filtro_status = form.filtro.data
-        demandas = lerDemandas(filtro_status=filtro_status)
-    else:
-        demandas = lerDemandas()
-    return render_template('MeusProjetos.html', form=form, demandas=demandas)
+    busca = request.args.get("busca", "").strip() or None
+    filtro_status = request.args.get("filtro", "").strip() or None
+    demandas = lerDemandas(busca=busca, filtro_status=filtro_status)
+    return render_template('MeusProjetos.html', demandas=demandas)
 
 # executa a aplicação
 if __name__ == '__main__':
