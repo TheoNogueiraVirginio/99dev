@@ -6,7 +6,9 @@ from wtforms.validators import input_required, Email, Optional, URL
 
 #importando a função de cadastro do usuário
 from app import app, db
-from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev
+from app.models import Usuario
+
+from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente
 from app.decorators import login_required
 
 with app.app_context():
@@ -131,12 +133,37 @@ def nova_senha(token):
 @app.route('/editar-perfil', methods=['GET', 'POST'])
 @login_required 
 def perfil():
+    id_usuario = session.get("id_usuario")
+    usuario = Usuario.query.get(id_usuario)
+    
+    if not usuario:
+        flash("Usuário não encontrado.", "error")
+        return redirect('/login')
+        
     form = EditarPerfilForm()
     
     if form.validate_on_submit():
-        #banco de dados futuro
-        flash("Perfil atualizado com sucesso!", "success")
-        return redirect('/perfil')        
+        
+        novo_cargo = 'dev' if form.dev.data else 'cliente'
+            
+        try:
+            atualizar_perfil_cliente(
+                id_usuario=id_usuario,
+                novo_email=form.email.data,
+                nova_senha=form.nova_senha.data,
+                novo_cargo=novo_cargo
+            )
+            flash("Perfil updated com sucesso!", "success")
+            return redirect('/editar-perfil')
+            
+        except Exception as e:
+            flash(str(e), "error")
+            
+    elif request.method == 'GET':
+        form.email.data = usuario.email
+        form.dev.data = (usuario.cargo == 'dev')
+        form.pessoa.data = (usuario.cargo == 'cliente')
+            
     return render_template('perfil-editar.html', form=form)
 
 @app.route('/perfil-dev', methods=['GET', 'POST'])
@@ -146,7 +173,6 @@ def perfildev():
     
     if form.validate_on_submit():
         try:
-            # Puxa o ID do usuário logado direto da sessão segura
             id_do_usuario_logado = session["id_usuario"]
             
             
