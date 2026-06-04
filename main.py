@@ -33,6 +33,7 @@ class EditarPerfilForm(FlaskForm):
     nova_senha = PasswordField('Nova Senha (opcional)', validators=[Optional()])
     dev = BooleanField('Eu sou um dev')
     pessoa = BooleanField('Eu preciso de um dev')
+    descricao = TextAreaField('Sobre Mim / Descrição', validators=[Optional()])
 
 class EditarDevForm(FlaskForm):
     nome = StringField('Nome Completo', validators=[input_required(message="O nome é obrigatório.")])
@@ -151,7 +152,8 @@ def perfil():
                 id_usuario=id_usuario,
                 novo_email=form.email.data,
                 nova_senha=form.nova_senha.data,
-                novo_cargo=novo_cargo
+                novo_cargo=novo_cargo,
+                nova_descricao=form.descricao.data
             )
             flash("Perfil updated com sucesso!", "success")
             return redirect('/editar-perfil')
@@ -163,7 +165,8 @@ def perfil():
         form.email.data = usuario.email
         form.dev.data = (usuario.cargo == 'dev')
         form.pessoa.data = (usuario.cargo == 'cliente')
-            
+        form.descricao.data = usuario.descricao    
+        
     return render_template('perfil-editar.html', form=form)
 
 @app.route('/perfil-dev', methods=['GET', 'POST'])
