@@ -51,6 +51,14 @@
                 {% endfor %}
 
                 <div>
+                    {{ form.foto.label }}
+                    {{ form.foto() }}
+                </div>
+                {% for error in form.foto.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+
+                <div>
                     {{ form.nova_senha.label }}
                     {{ form.nova_senha(placeholder="Deixe em branco para não alterar") }}
                 </div>

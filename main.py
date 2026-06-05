@@ -1,5 +1,6 @@
 from flask import flash, render_template, redirect, request, session
 
+from flask_wtf.file import FileField, FileAllowed
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, TextAreaField, IntegerField, URLField
 from wtforms.validators import input_required, Email, Optional, URL
@@ -34,6 +35,7 @@ class EditarPerfilForm(FlaskForm):
     dev = BooleanField('Eu sou um dev')
     pessoa = BooleanField('Eu preciso de um dev')
     descricao = TextAreaField('Sobre Mim / Descrição', validators=[Optional()])
+    foto = FileField('Foto de Perfil', validators=[Optional(), FileAllowed(['jpg', 'png', 'jpeg'], 'Apenas imagens .jpg, .jpeg ou .png!')])
 
 class EditarDevForm(FlaskForm):
     nome = StringField('Nome Completo', validators=[input_required(message="O nome é obrigatório.")])
@@ -156,7 +158,8 @@ def perfil():
                 novo_email=form.email.data,
                 nova_senha=form.nova_senha.data,
                 novo_cargo=novo_cargo,
-                nova_descricao=form.descricao.data
+                nova_descricao=form.descricao.data,
+                arquivo_foto=form.foto.data
             )
             flash("Perfil updated com sucesso!", "success")
             return redirect('/editar-perfil')
