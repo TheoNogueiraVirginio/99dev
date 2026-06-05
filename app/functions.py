@@ -1,6 +1,8 @@
 import csv
 from pathlib import Path
 
+import os
+
 from flask import session
 from flask_mail import Message
 import bcrypt
@@ -195,7 +197,7 @@ def lerDemandas(busca=None, filtro_status=None):
                     })
     return demandas
 
-def atualizar_perfil_cliente(id_usuario, novo_email, nova_senha, novo_cargo, nova_descricao):
+def atualizar_perfil_cliente(id_usuario, novo_email, nova_senha, novo_cargo, nova_descricao, arquivo_foto):
     usuario = Usuario.query.get(id_usuario)
     if not usuario:
         raise ValueError("Usuário não encontrado.")
@@ -215,7 +217,10 @@ def atualizar_perfil_cliente(id_usuario, novo_email, nova_senha, novo_cargo, nov
         
         if novo_cargo == 'dev' and not PerfilDev.query.filter_by(id_usuario=id_usuario).first():
             db.session.add(PerfilDev(id_usuario=id_usuario, nome="Novo Desenvolvedor"))
-                
+    if arquivo_foto:
+        nome_da_foto = salvar_foto_perfil(id_usuario, arquivo_foto)
+        usuario.foto_perfil = nome_da_foto
+
     usuario.descricao = nova_descricao
     
     try:
@@ -223,3 +228,15 @@ def atualizar_perfil_cliente(id_usuario, novo_email, nova_senha, novo_cargo, nov
     except Exception:
         db.session.rollback()
         raise
+    
+def salvar_foto_perfil(id_usuario, arquivo_foto):
+    
+    #Extrai a extensão
+    _, extensao = os.path.splitext(arquivo_foto.filename)
+    nome_arquivo = f"{id_usuario}{extensao}"
+    pasta_uploads = os.path.join(BASE_DIR, 'static', 'uploads', 'perfil')
+    os.makedirs(pasta_uploads, exist_ok=True)
+    caminho_completo = os.path.join(pasta_uploads, nome_arquivo)
+    arquivo_foto.save(caminho_completo)
+    
+    return nome_arquivo
