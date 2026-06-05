@@ -91,7 +91,10 @@ def login():
 
             session["id_usuario"] = usuario.id
             flash("Login realizado com sucesso!", "success")
-            return redirect('/dashboard')
+            if usuario.cargo=='dev':
+                return redirect('/perfil-dev')
+            else:
+                return redirect('/dashboard')
 
         except ValueError as e:
             flash(str(e), "error")
