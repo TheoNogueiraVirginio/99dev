@@ -176,3 +176,36 @@ main > div p a {
 main > div p a:hover {
     text-decoration: underline;
 }
+
+/* Container que agrupa o label, a foto e o botão de upload */
+.container-perfil {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+    margin-bottom: 1em;
+    align-items: center;
+}
+
+.container-perfil label {
+    align-self: flex-start;
+    width: 100%;
+}
+
+/* Moldura que deixa a foto redonda e com sombra */
+.moldura-perfil {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--blue);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    background-color: #e2e8f0;
+}
+
+/* Garante que a imagem ocupe o círculo */
+.moldura-perfil img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
