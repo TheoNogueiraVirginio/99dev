@@ -2,12 +2,12 @@ from flask import flash, render_template, redirect, request, session
 
 from flask_wtf.file import FileField, FileAllowed
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, TextAreaField, IntegerField, URLField
-from wtforms.validators import input_required, Email, Optional, URL
+from wtforms import StringField, PasswordField, BooleanField, TextAreaField, IntegerField
+from wtforms.validators import input_required, Email, Optional
 
 #importando a função de cadastro do usuário
 from app import app, db
-from app.models import Usuario
+from app.models import Usuario, PerfilDev
 
 from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente
 from app.decorators import login_required
@@ -43,8 +43,8 @@ class EditarDevForm(FlaskForm):
     valor_hora = IntegerField('Valor Hora (R$)', validators=[Optional()])
     skills = StringField('Habilidades (Tags)', validators=[Optional()])
     resumo = TextAreaField('Sobre Mim / Bio', validators=[Optional()])
-    github = URLField('GitHub', validators=[Optional(), URL(message="Insira uma URL válida.")])
-    linkedin = URLField('LinkedIn', validators=[Optional(), URL(message="Insira uma URL válida.")])
+    github = StringField('GitHub', validators=[Optional()])
+    linkedin = StringField('LinkedIn', validators=[Optional()])
 
 class DemandaForm(FlaskForm):
     titulo = StringField('Título do Projeto', validators=[input_required(message="O título é obrigatório.")])
@@ -179,7 +179,16 @@ def perfil():
 @login_required
 def perfildev():
     form = EditarDevForm()
-    
+    usuario = PerfilDev.query.filter_by(id_usuario=session["id_usuario"]).first()
+    if request.method == 'GET' and usuario:
+        form.nome.data = usuario.nome
+        form.titulo.data = usuario.titulo
+        form.valor_hora.data = usuario.valor_hora
+        form.skills.data = usuario.skills
+        form.resumo.data = usuario.resumo
+        form.github.data = usuario.github
+        form.linkedin.data = usuario.linkedin
+
     if form.validate_on_submit():
         try:
             id_do_usuario_logado = session["id_usuario"]
@@ -202,7 +211,8 @@ def perfildev():
         except Exception as e:
             flash(f"Erro ao atualizar perfil: {str(e)}", "error")
             
-    return render_template('perfil.html', form=form)
+    return render_template('perfil.html', form=form, usuario=usuario)
+
 
 @app.route("/")
 def home():
