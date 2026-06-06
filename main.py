@@ -172,8 +172,8 @@ def perfil():
         form.dev.data = (usuario.cargo == 'dev')
         form.pessoa.data = (usuario.cargo == 'cliente')
         form.descricao.data = usuario.descricao    
-        
-    return render_template('perfil-editar.html', form=form)
+    foto_perfil= usuario.foto_perfil    
+    return render_template('perfil-editar.html',foto_perfil=foto_perfil, form=form)
 
 @app.route('/perfil-dev', methods=['GET', 'POST'])
 @login_required
