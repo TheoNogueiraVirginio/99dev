@@ -85,13 +85,13 @@
                             <h3>About Me</h3>
                             <p>{{ usuario.resumo }}</p>
                             {% if usuario.valor_hora %}
-                            <P>Valor / hora: ${{ "%.2f" % usuario.valor_hora }}</P>
+                            <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: ${{ "%.2f" % usuario.valor_hora }}</P>
                             {% else %}
-                            <P>Valor / hora: Não cadastrado</P>
+                            <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: Não cadastrado</P>
                             {% endif %}
                             <div class="contact-info">
-                                <p>{{ usuario.github }}</p>
-                                <p>{{ usuario.linkedin }}</p>
+                                <p><i class="fab fa-github"></i> {{ usuario.github }}</p>
+                                <p><i class="fab fa-linkedin"></i> {{ usuario.linkedin }}</p>
                             </div>
                         </div>
 
@@ -104,7 +104,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="profile-main">
                         <div class="client-reviews">
                             <h3>Recent Client Reviews</h3>
