@@ -1,4 +1,4 @@
-from flask import flash, render_template, redirect, request, session
+from flask import flash, render_template, redirect, request, session, abort
 
 from flask_wtf.file import FileField, FileAllowed
 from flask_wtf import FlaskForm
@@ -54,6 +54,9 @@ class DemandaForm(FlaskForm):
 
 class FiltroForm(FlaskForm):
     filtro = StringField('Filtrar por status')
+@app.route("/")
+def home():
+    return render_template('home.html')
 
 # rota provisoria
 @app.route('/cadastro', methods=['GET', 'POST'])
@@ -145,19 +148,17 @@ def perfil():
     if not usuario:
         flash("Usuário não encontrado.", "error")
         return redirect('/login')
-        
+    if usuario.cargo=='dev':
+        abort(403)
     form = EditarPerfilForm()
     
     if form.validate_on_submit():
-        
-        novo_cargo = 'dev' if form.dev.data else 'cliente'
             
         try:
             atualizar_perfil_cliente(
                 id_usuario=id_usuario,
                 novo_email=form.email.data,
                 nova_senha=form.nova_senha.data,
-                novo_cargo=novo_cargo,
                 nova_descricao=form.descricao.data,
                 arquivo_foto=form.foto.data
             )
@@ -214,10 +215,6 @@ def perfildev():
     return render_template('perfil.html', form=form, usuario=usuario)
 
 
-@app.route("/")
-def home():
-    return render_template('home.html')
-
 @app.route("/dashboard", methods=['GET', 'POST'])
 @login_required
 def dashboardCliente():
@@ -250,6 +247,10 @@ def meusProjetos():
     filtro_status = request.args.get("filtro", "").strip() or None
     demandas = lerDemandas(busca=busca, filtro_status=filtro_status)
     return render_template('MeusProjetos.html', demandas=demandas)
+
+@app.errorhandler(403)
+def acesso_proibido(error):
+    return render_template('403.html'),403
 
 # executa a aplicação
 if __name__ == '__main__':

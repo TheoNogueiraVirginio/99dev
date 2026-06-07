@@ -197,11 +197,12 @@ def lerDemandas(busca=None, filtro_status=None):
                     })
     return demandas
 
-def atualizar_perfil_cliente(id_usuario, novo_email, nova_senha, novo_cargo, nova_descricao, arquivo_foto):
+def atualizar_perfil_cliente(id_usuario, novo_email, nova_senha, nova_descricao, arquivo_foto):
     usuario = Usuario.query.get(id_usuario)
     if not usuario:
         raise ValueError("Usuário não encontrado.")
-    
+    if usuario.cargo  != 'cliente':
+        raise ValueError('Você não tem acesso com esse tipo de perfil')
     if usuario.email != novo_email:
         if Usuario.query.filter_by(email=novo_email).first():
             raise ValueError("Este e-mail já está associado a outra conta.")
@@ -212,11 +213,6 @@ def atualizar_perfil_cliente(id_usuario, novo_email, nova_senha, novo_cargo, nov
         salt = bcrypt.gensalt()
         usuario.senha = bcrypt.hashpw(senha_bytes, salt).decode('utf-8')
         
-    if usuario.cargo != novo_cargo:
-        usuario.cargo = novo_cargo
-        
-        if novo_cargo == 'dev' and not PerfilDev.query.filter_by(id_usuario=id_usuario).first():
-            db.session.add(PerfilDev(id_usuario=id_usuario, nome="Novo Desenvolvedor"))
     if arquivo_foto:
         nome_da_foto = salvar_foto_perfil(id_usuario, arquivo_foto)
         usuario.foto_perfil = nome_da_foto

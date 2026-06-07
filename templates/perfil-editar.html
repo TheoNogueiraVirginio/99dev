@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Perfil - 99Dev</title>
-    <link rel="stylesheet" href="../static/css/perfil-editar.css"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/perfil-editar.css') }}"> 
 </head>
 
 <body>
@@ -24,15 +24,6 @@
             
             <form action="" method="post" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
-                
-                <div>
-                    {{ form.dev.label }}
-                    {{ form.dev() }}
-                </div>
-                <div>
-                    {{ form.pessoa.label }}
-                    {{ form.pessoa() }}
-                </div>
                 
                 <div>
                     {{ form.email.label }}
