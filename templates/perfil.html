@@ -6,17 +6,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title> Nome da Pessoa - 99Dev</title>
 
+
     <link rel="stylesheet" href="../static/css/perfil.css">
 </head>
 <body>
     <main>
-         <!-- sidebar de navegação -->
+        <!-- sidebar de navegação -->
         <div class="left-panel">
             <div class="logo">
                 <i class="fa-solid fa-code"></i>
                 <h1>99 Dev</h1>
             </div>
-
 
             <nav class="menu">
                 <ul>
@@ -38,7 +38,7 @@
                     <input type="checkbox" id="toggle" class="toggle-checkbox">
                 </div>
             </div>
-            
+
             <div class="content-wrapper">
                 <div class="profile-card">
                     <div class="banner ">
@@ -46,16 +46,18 @@
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
                     </div>
+
                     <div class="general-info">
                         <div class="avatar">
                             <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar">
                         </div>
                         <div class="user-details">
-                            <h2>Sarah Chen <span class="fa-solid-circle-check verified-badge"></span></h2>
-                            <p>Senior Frontend Engineer</p>
+                            <h2>{{ usuario.nome }} <span class="fa-solid-circle-check verified-badge"></span></h2>
+                            <p>{{ usuario.titulo }}</p>
                         </div>
                         <a href="#edit-modal" class="btn-edit">Edit Profile</a>
                     </div>
+
                     <div class="additional-info">
                         <div class="info-item">
                             <h3>Total Earned</h3>
@@ -76,32 +78,56 @@
                     </div>
                 </div>
 
+
                 <section class="profile-content">
                     <div class="profile-sidebar">
                         <div class="about-me">
                             <h3>About Me</h3>
-                            <p>Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum</p>
+                            {% if usuario.resumo %}
+                                <p>{{ usuario.resumo }}</p>
+                            {% else %}
+                                <p>Resumo não cadastrado</p>
+                            {% endif %}
+
+                            {% if usuario.valor_hora %}
+                                <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: ${{ "%.2f" % usuario.valor_hora }}</P>
+                            {% else %}
+                                <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: Não cadastrado</P>
+                            {% endif %}
+
                             <div class="contact-info">
-                                <p>sarah@dev.com</p>
-                                <p>sarahchen.dev</p>
-                                <p>github.com/sarahchen</p>
+                                {% if usuario.github %}
+                                    <p><i class="fab fa-github"></i> {{ usuario.github }}</p>
+                                {% else %}
+                                    <p><i class="fab fa-github"></i> GitHub não cadastrado</p>
+                                {% endif %}
+
+                                {% if usuario.linkedin %}
+                                    <p><i class="fab fa-linkedin"></i> {{ usuario.linkedin }}</p>
+                                {% else %}
+                                    <p><i class="fab fa-linkedin"></i> LinkedIn não cadastrado</p>
+                                {% endif %}
                             </div>
                         </div>
+
                         <div class="skills-card">
                             <h3>Top Skills</h3>
                             <div class="skills-list">
-                                <span class="skill">JavaScript</span>
-                                <span class="skill">React</span>
-                                <span class="skill">CSS</span>
-                                <span class="skill">Node.js</span>
-                                <span class="skill">TypeScript</span>
+                                {% if usuario.skills %}
+                                    {% for skill in usuario.skills.split(',') %}
+                                        <span class="skill">{{ skill.strip() }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="skill">Nenhuma skill cadastrada</span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
+
                     <div class="profile-main">
                         <div class="client-reviews">
                             <h3>Recent Client Reviews</h3>
-                
+
                             <div class="reviews-list">
                                 <div class="review-item">
                                     <div class="review-header">
@@ -111,7 +137,8 @@
                                         </span>
                                     </div>
                                     <p class="client-name">Client: John D.</p>
-                                    <p class="review-text">"Sarah was extremely fast and immediately identified the bottleneck in our rendering cycle. Highly recommend!"</p>
+                                    <p class="review-text">"Sarah was extremely fast and immediately identified the
+                                        bottleneck in our rendering cycle. Highly recommend!"</p>
                                 </div>
                                 <div class="review-item">
                                     <div class="review-header">
@@ -121,7 +148,8 @@
                                         </span>
                                     </div>
                                     <p class="client-name">Client: TechStart Inc.</p>
-                                    <p class="review-text">"Perfect translation of our Figma files to React. Clean code and responsive."</p>
+                                    <p class="review-text">"Perfect translation of our Figma files to React. Clean code
+                                        and responsive."</p>
                                 </div>
                                 <div class="review-item">
                                     <div class="review-header">
@@ -145,7 +173,7 @@
                                     <p>Turn on to receive instant task requests</p>
                                 </div>
                             </div>
-                
+
                             <div class="task-toggle-right">
                                 <input type="checkbox" id="tasks-toggle" class="toggle-checkbox">
                             </div>
@@ -156,17 +184,18 @@
         </div>
     </main>
 
+
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content">
             <a href="" class="close-btn" aria-label="Close Modal">
                 <i class="fa-solid fa-xmark"></i>
             </a>
-    
+
             <h2>Edit Profile</h2>
-    
+
             <form action="{{ url_for('perfildev') }}" method="POST">
                 {{ form.hidden_tag() }}
-    
+
                 <div class="input-group">
                     {{ form.nome.label }}
                     {{ form.nome(id="name", placeholder="Sarah Chen") }}
@@ -174,40 +203,41 @@
                     <span class="error-msg" style="color: red; font-size: 0.8em;">{{ error }}</span>
                     {% endfor %}
                 </div>
-    
+
                 <div class="input-group">
                     {{ form.titulo.label }}
                     {{ form.titulo(id="role", placeholder="Senior Frontend Engineer") }}
                 </div>
-    
+
                 <div class="input-group">
                     {{ form.resumo.label }}
                     {{ form.resumo(id="about", rows="3", placeholder="Lorem ipsum Lorem ipsum...") }}
                 </div>
-    
+
                 <div class="input-group">
                     {{ form.valor_hora.label }}
                     {{ form.valor_hora(id="valor_hora", placeholder="Ex: 150") }}
                 </div>
-    
+
                 <div class="input-group">
                     {{ form.skills.label }}
                     {{ form.skills(id="skills", placeholder="Ex: Python, React, Flask") }}
                 </div>
-    
+
                 <div class="input-group">
                     {{ form.github.label }}
                     {{ form.github(id="github", placeholder="https://github.com/usuario") }}
                 </div>
-    
+
                 <div class="input-group">
                     {{ form.linkedin.label }}
                     {{ form.linkedin(id="linkedin", placeholder="https://linkedin.com/in/usuario") }}
                 </div>
-    
+
                 <button type="submit" class="btn-save">Save Changes</button>
             </form>
         </div>
     </div>
 </body>
+
 </html>
