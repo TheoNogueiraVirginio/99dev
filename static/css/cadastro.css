@@ -118,7 +118,7 @@ main > div:first-child{
 
 
 /*--- Textos das vantagens ---*/
-.advantage-item h3{
+.advantage-item h2{
     margin: 0 0 0.3em 0;
 
     font-size: 1.2rem;
