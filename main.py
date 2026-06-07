@@ -220,7 +220,7 @@ def perfildev():
 def dashboardCliente():
     form = DemandaForm()
     id = session["id_usuario"]
-
+    usuario = Usuario.query.get(id)
     demandas = lerDemandas()
 
     if form.validate_on_submit():
@@ -237,8 +237,8 @@ def dashboardCliente():
             return redirect('/dashboard')
         except Exception as e:
             flash(f"Falha ao cadastrar demanda: {str(e)}", "error")
-
-    return render_template('dashboardCliente.html', form=form, demandas=demandas)
+    foto_perfil = usuario.foto_perfil if usuario else None
+    return render_template('dashboardCliente.html', form=form, demandas=demandas,foto_perfil=foto_perfil)
 
 @app.route("/MeusProjetos", methods=['GET', 'POST'])
 @login_required
