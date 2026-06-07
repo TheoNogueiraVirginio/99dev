@@ -84,25 +84,28 @@
                         <div class="about-me">
                             <h3>About Me</h3>
                             {% if usuario.resumo %}
-                            <p>{{ usuario.resumo }}</p>
+                                <p>{{ usuario.resumo }}</p>
                             {% else %}
-                            <p>Resumo não cadastrado</p>
+                                <p>Resumo não cadastrado</p>
                             {% endif %}
+
                             {% if usuario.valor_hora %}
-                            <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: ${{ "%.2f" % usuario.valor_hora }}</P>
+                                <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: ${{ "%.2f" % usuario.valor_hora }}</P>
                             {% else %}
-                            <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: Não cadastrado</P>
+                                <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: Não cadastrado</P>
                             {% endif %}
+
                             <div class="contact-info">
                                 {% if usuario.github %}
-                                <p><i class="fab fa-github"></i> {{ usuario.github }}</p>
+                                    <p><i class="fab fa-github"></i> {{ usuario.github }}</p>
                                 {% else %}
-                                <p><i class="fab fa-github"></i> GitHub não cadastrado</p>
+                                    <p><i class="fab fa-github"></i> GitHub não cadastrado</p>
                                 {% endif %}
+
                                 {% if usuario.linkedin %}
-                                <p><i class="fab fa-linkedin"></i> {{ usuario.linkedin }}</p>
+                                    <p><i class="fab fa-linkedin"></i> {{ usuario.linkedin }}</p>
                                 {% else %}
-                                <p><i class="fab fa-linkedin"></i> LinkedIn não cadastrado</p>
+                                    <p><i class="fab fa-linkedin"></i> LinkedIn não cadastrado</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -112,7 +115,7 @@
                             <div class="skills-list">
                                 {% if usuario.skills %}
                                     {% for skill in usuario.skills.split(',') %}
-                                    <span class="skill">{{ skill.strip() }}</span>
+                                        <span class="skill">{{ skill.strip() }}</span>
                                     {% endfor %}
                                 {% else %}
                                     <span class="skill">Nenhuma skill cadastrada</span>
