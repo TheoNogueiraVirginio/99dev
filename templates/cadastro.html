@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - 99Dev</title>
-    <link rel="stylesheet" href="../static/css/cadastro.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
 </head>
 
 <body>
-    # Exibe mensagens de erro
+    {# Exibe mensagens de erro#}
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     {% for category, msg in messages %}
@@ -25,40 +25,27 @@
             </div>
 
             <div class="hero-content">
-                <h1>Fast code fixes on demand</h1>
+                <h1>Correções de código rápidas e sob demanda</h1>
 
                 <p>
-                    Connect with expert developers in minutes.
-                    Get your coding tasks done quickly and efficiently.
+                    Conecte-se com desenvolvedores especialistas em minutos. Conclua suas tarefas de programação com rapidez e eficiência.
                 </p>
             </div>
 
             <div class="advantages">
                 <div class="advantage-item">
                     <div class="advantage-icon">⚡</div>
-
-                    <div>
-                        <h3>Lightning Fast</h3>
-                        <span>Get matched with developers in under 2 minutes</span>
-                    </div>
+                    <h2>Acesso Rápido a desenvolvedores </h2>
                 </div>
 
                 <div class="advantage-item">
                     <div class="advantage-icon">👥</div>
-
-                    <div>
-                        <h3>Vetted Experts</h3>
-                        <span>Work with pre-screened professional developers</span>
-                    </div>
+                    <h2>Trabalhe com profissionais</h2>
                 </div>
 
                 <div class="advantage-item">
                     <div class="advantage-icon">🕒</div>
-
-                    <div>
-                        <h3>Pay As You Go</h3>
-                        <span>Only pay for the tasks you need, no subscriptions</span>
-                    </div>
+                    <h2>Pagamentos apenas para o que precisa</h2>
                 </div>
 
             </div>
