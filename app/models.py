@@ -25,4 +25,5 @@ class PerfilDev(db.Model):
     resumo = db.Column(db.Text, nullable=True)
     github = db.Column(db.String(255), nullable=True)
     linkedin = db.Column(db.String(255), nullable=True)
+    foto_banner = db.Column(db.String(150), nullable=True)
     exibir_dados = db.Column(db.Boolean, default=True, nullable=False)
