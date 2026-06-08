@@ -342,3 +342,146 @@ footer a:hover{
     transform: translateY(-3px);
     transition: .3s;
 }
+/* ==========================================================================
+   Estilização do SVG da Logo e Elementos de Suporte
+   ========================================================================== */
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-svg {
+    height: 50px;
+    width: auto;
+    /* Filtro opcional para melhorar o contraste da tipografia escura no fundo dark */
+    filter: drop-shadow(0px 2px 4px rgba(255, 255, 255, 0.1)); 
+}
+
+.divisor-or {
+    text-align: center;
+    margin: 1.5rem 0;
+    font-weight: bold;
+    color: #7ED321;
+}
+
+.social-title {
+    margin-top: 1rem;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    color: #666;
+}
+
+/* ==========================================================================
+   Menu Hambúrguer (Escondido por padrão no Desktop)
+   ========================================================================== */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1100;
+}
+
+.menu-toggle .bar {
+    width: 100%;
+    height: 3px;
+    background-color: white;
+    border-radius: 2px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Animação do Hambúrguer virando 'X' quando ativo */
+.menu-toggle.active .bar:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+    background-color: #7ED321;
+}
+
+.menu-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active .bar:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+    background-color: #7ED321;
+}
+
+/* ==========================================================================
+   Media Query: Dispositivos Móveis e Tablets (Max-width: 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+    header {
+        padding: 1rem 5%;
+    }
+
+    .menu-toggle {
+        display: flex; /* Exibe o botão hambúrguer no mobile */
+    }
+
+    /* Transforma a navegação em uma gaveta lateral (Sidebar) */
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+        background: #050b14;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+        padding: 6rem 2rem 2rem 2rem;
+        transition: right 0.4s cubic-bezier(0.1, 1, 0.1, 1);
+        z-index: 1050;
+    }
+
+    .nav-menu.active {
+        right: 0; /* Faz o menu surgir na tela */
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 2.5rem;
+        align-items: flex-start;
+    }
+
+    nav a {
+        font-size: 1.2rem;
+        display: block;
+        width: 100%;
+    }
+
+    /* Ajustes de Responsividade do Layout (Seções e Tipografia) */
+    .content h1 {
+        font-size: 2.2rem;
+    }
+
+    .content p {
+        font-size: 1rem;
+    }
+
+    .cta h2 {
+        font-size: 2rem;
+    }
+
+    .resultados h2, .funciona h2, .feedbacks h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .resultados, .funciona, .feedbacks, .cta {
+        padding: 4rem 5%;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-primary, .btn-secondary, .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
