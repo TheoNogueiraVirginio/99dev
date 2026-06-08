@@ -46,6 +46,8 @@ class EditarDevForm(FlaskForm):
     github = StringField('GitHub', validators=[Optional()])
     linkedin = StringField('LinkedIn', validators=[Optional()])
     exibir_dados = BooleanField('Exibir minhas estatísticas e avaliações publicamente')
+    foto_perfil = FileField('Foto de Perfil', validators=[Optional(), FileAllowed(['jpg', 'png', 'jpeg'], 'Apenas imagens .jpg, .jpeg ou .png!')])
+    foto_banner = FileField('Foto de Banner', validators=[Optional(), FileAllowed(['jpg', 'png', 'jpeg'], 'Apenas imagens .jpg, .jpeg ou .png!')])
 
 class DemandaForm(FlaskForm):
     titulo = StringField('Título do Projeto', validators=[input_required(message="O título é obrigatório.")])
