@@ -36,6 +36,16 @@ main {
     padding: 2.5em; 
     box-sizing: border-box;
 }
+.card-cadastro p a {
+    margin-left: 0.4em;
+    text-decoration: none;
+    color: var(--blue);
+    font-weight: bold;
+}
+
+.card-cadastro p a:hover {
+    text-decoration: underline;
+}
 
 main > div:last-child {
     display: flex;
