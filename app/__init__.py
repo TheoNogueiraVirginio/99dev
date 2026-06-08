@@ -9,6 +9,7 @@ from itsdangerous import URLSafeTimedSerializer
 
 from authlib.integrations.flask_client import OAuth
 
+from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -18,10 +19,11 @@ app = Flask(
 	static_folder=os.path.join(BASE_DIR, '..', 'static'),
 )
 
-# colocar em variáveis de ambiente depois
-app.config['SECRET_KEY'] = 'IFPB-99Dev'
-app.config['GOOGLE_CLIENT_ID'] = '897300149640-echvsi28po2utgc31ai3gso1odiqivn6.apps.googleusercontent.com'
-app.config['GOOGLE_CLIENT_SECRET'] = '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'
+load_dotenv(os.path.join(BASE_DIR, '..', '.env'))
+
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['GOOGLE_CLIENT_ID'] = os.getenv('GOOGLE_CLIENT_ID')
+app.config['GOOGLE_CLIENT_SECRET'] = os.getenv('GOOGLE_CLIENT_SECRET')
 
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
@@ -43,7 +45,7 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = '99desenvolvedores@gmail.com'
-app.config['MAIL_PASSWORD'] = 'lser rczm dpvo wzhf'
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = '99desenvolvedores@gmail.com'
 
 db.init_app(app)

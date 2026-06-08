@@ -7,3 +7,4 @@ bcrypt
 flask_sqlalchemy
 Authlib
 requests
+python-dotenv
