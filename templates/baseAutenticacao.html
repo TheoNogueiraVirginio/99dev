@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/baseAutenticacao.css') }}">
+    {% block extra_css %}{% endblock %}
+    <title>{% block title %}99Dev{% endblock %}</title>
+</head>
+
+<body>
+
+    {# ── Mensagens flash globais ── #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, msg in messages %}
+                <div class="flash-msg flash-{{ category }}">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <main class="auth-layout">
+
+        <aside class="auth-aside" aria-hidden="true">
+
+            <div class="aside-logo">
+                <i class="fa-solid fa-code" aria-hidden="true"></i>
+                <span>99 Dev</span>
+            </div>
+
+            {# Permite que páginas filhas substituam o título do aside, se quiserem #}
+            <div class="aside-headline">
+                {% block aside_headline %}
+                    <h2>A plataforma que conecta você ao talento certo</h2>
+                {% endblock %}
+            </div>
+
+            {# Permite adicionar/remover itens de vantagens por página #}
+            <ul class="aside-features" aria-label="Vantagens da plataforma">
+                {% block aside_features %}
+                    <li>
+                        <span class="feature-icon" aria-hidden="true">
+                            <i class="fa-solid fa-bolt-lightning"></i>
+                        </span>
+                        <span>Acesso rápido a desenvolvedores</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon" aria-hidden="true">
+                            <i class="fa-solid fa-user-check"></i>
+                        </span>
+                        <span>Trabalhe com profissionais</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon" aria-hidden="true">
+                            <i class="fa-regular fa-clock"></i>
+                        </span>
+                        <span>Pague apenas pelo que precisa</span>
+                    </li>
+                {% endblock %}
+            </ul>
+
+        </aside>
+
+
+        <section class="auth-content">
+            {% block content %}{% endblock %}
+        </section>
+
+    </main>
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>
