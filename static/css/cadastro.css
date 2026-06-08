@@ -25,113 +25,18 @@ main {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-
-/*--- Lado esquerdo da página ---*/
-main > div:first-child{
-    background-color: var(--blue);
-
-    color: white;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    padding: 0 5em;
-    min-height: 100vh;
-}
-
-
-/*--- Marca do 99 dev ---*/
-.brand{
-    display: flex;
-    align-items: center;
-    gap: 0.7em;
-}
-
-.brand-icon{
-    font-size: 2rem;
-}
-
-.brand-name{
-    font-size: 3rem;
-    font-weight: bold;
-}
-
-
-/*--- Conteúdo principal da esquerda ---*/
-.hero-content{
-    margin-bottom: 4em;
-}
-
-.hero-content h1{
-    font-size: 3rem;
-    line-height: 1.1;
-
-    max-width: 31.25em; /* 500px convertido */
-
-    margin-bottom: 0.5em;
-}
-
-.hero-content p{
-    font-size: 1.3rem;
-    line-height: 1.6;
-
-    max-width: 32.5em; /* 520px convertido */
-
-    color: rgba(255,255,255,0.9);
-}
-
-
-/*--- Lista de vantagens ---*/
-.advantages{
-    display: flex;
-    flex-direction: column;
-    gap: 2em;
-}
-
-
-/*--- Cada vantagem ---*/
-.advantage-item{
-    display: flex;
-    align-items: flex-start;
-    gap: 1em;
-}
-
-
-/*--- Ícones das vantagens ---*/
-.advantage-icon{
-    width: 2.5em; 
-    height: 2.5em; 
-
-    background: var(--light-blue);
-
-    border-radius: 1em;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    font-size: 1.3rem;
-
-    flex-shrink: 0;
-}
-
-
-/*--- Textos das vantagens ---*/
-.advantage-item h2{
-    margin: 0 0 0.3em 0;
-
-    font-size: 1.2rem;
-}
-
-.advantage-item span{
-    line-height: 1.5;
-
-    color: rgba(255,255,255,0.9);
-}
-
-
 /*--- Lado direito da página (Substitui o antigo .right-panel) ---*/
+
+.card-cadastro{
+    width: 100%;
+    max-width: 360px; 
+    background-color: #ffffff; 
+    border-radius: 1em; 
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.08); 
+    padding: 2.5em; 
+    box-sizing: border-box;
+}
+
 main > div:last-child {
     display: flex;
     justify-content: center;
