@@ -262,6 +262,9 @@
                     </div>
                     {{ form.foto_perfil() }}
                 </div>
+                {% for error in form.foto_perfil.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
 
                 <div class="input-group">
                     {{ form.foto_banner.label }}
@@ -275,6 +278,9 @@
                     </div>
                     {{ form.foto_banner() }}
                 </div>
+                {% for error in form.foto_banner.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
 
                 <div class="input-group"
                     style="display: flex; flex-direction: row; align-items: center; gap: 10px; padding-top: 10px; padding-bottom: 20px;">
