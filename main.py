@@ -1,4 +1,4 @@
-from flask import flash, render_template, redirect, request, session, abort
+from flask import flash, render_template, redirect, request, session, abort, url_for
 
 from flask_wtf.file import FileField, FileAllowed
 from flask_wtf import FlaskForm
@@ -6,10 +6,10 @@ from wtforms import StringField, PasswordField, BooleanField, TextAreaField, Int
 from wtforms.validators import input_required, Email, Optional
 
 #importando a função de cadastro do usuário
-from app import app, db
+from app import app, db, google
 from app.models import Usuario, PerfilDev
 
-from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente
+from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente
 from app.decorators import login_required
 
 with app.app_context():
@@ -105,6 +105,42 @@ def login():
             flash(str(e), "error")
 
     return render_template('login.html', form=form)
+
+#rota para iniciar a autenticação via Google
+@app.route('/login/google')
+def login_google():
+    #Se não vier nada, assume 'cliente'
+    session['cargo_pretendido'] = request.args.get('cargo', 'cliente')
+
+    # Monta a URL de callback e redireciona o usuário para a tela do Google
+    redirect_uri = url_for('authorize_google', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+#rota para callback de autorização do Google
+@app.route('/authorize/google')
+def authorize_google():
+    try:
+        # O usuário voltou do Google. Pegamos o token e os dados dele:
+        token = google.authorize_access_token()
+        user_info = token.get('userinfo')
+        email = user_info['email']
+        
+        cargo_escolhido = session.pop('cargo_pretendido', 'cliente')
+        
+        usuario = gerenciar_login_google(email, cargo_escolhido)
+        
+        session["id_usuario"] = usuario.id
+        flash("Login com Google realizado com sucesso!", "success")
+        
+        # 5. Redireciona para o painel correto
+        if usuario.cargo == 'dev':
+            return redirect('/perfil-dev')
+        else:
+            return redirect('/dashboard')
+            
+    except Exception as e:
+        flash("Ocorreu um erro ao tentar fazer login com o Google.", "error")
+        return redirect('/login')
 
 #rota para a página de recuperação de senha
 @app.route('/recuperar-senha', methods=['GET', 'POST'])

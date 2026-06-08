@@ -220,3 +220,103 @@ main {
 #senha:invalid:not(:placeholder-shown) {
     border: 2px solid var(--red);
 }
+
+
+/* Estilos da Integração com Google */
+.google-auth-container {
+    text-align: center;
+    margin: 15px 0;
+    width: 100%;
+}
+
+.divisor-ou {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #757575; 
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    margin: 25px 0; 
+}
+
+/* Cria as duas linhas automáticas */
+.divisor-ou::before,
+.divisor-ou::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #dadce0;
+}
+
+/* Espaçamento interno entre as linhas e o texto "ou" */
+.divisor-ou::before {
+    margin-right: 12px;
+}
+
+.divisor-ou::after {
+    margin-left: 12px;
+}
+
+.menu-google-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.btn-google {
+    list-style: none;
+    cursor: pointer;
+    background-color: #fff;
+    color: #5f6368;
+    padding: 12px;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.btn-google:hover {
+    background-color: #f8f9fa;
+}
+
+.btn-google::-webkit-details-marker {
+    display: none;
+}
+
+.menu-google-opcoes {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    z-index: 99;
+}
+
+.menu-google-opcoes a {
+    display: block;
+    padding: 12px;
+    text-decoration: none;
+    color: #3c4043;
+    font-size: 14px;
+    text-align: center;
+    transition: background-color 0.15s;
+}
+
+.menu-google-opcoes a:hover {
+    background-color: #f1f3f4;
+    color: #1a73e8;
+}
+
+.menu-google-opcoes a:not(:last-child) {
+    border-bottom: 1px solid #f1f3f4;
+}

@@ -5,3 +5,5 @@ sqlalchemy
 flask_mail
 bcrypt
 flask_sqlalchemy
+Authlib
+requests
