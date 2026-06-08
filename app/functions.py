@@ -64,7 +64,7 @@ def autenticar_usuario(email,senha):
         raise ValueError("Senha incorreta")    
     return usuario
 
-def gerenciar_login_google(email):
+def gerenciar_login_google(email, cargo):
     usuario = Usuario.query.filter_by(email=email).first()
     
     if usuario:
@@ -74,7 +74,7 @@ def gerenciar_login_google(email):
     senha_aleatoria = secrets.token_urlsafe(32)
     
     try:
-        novo_usuario = cadastrar_usuario(email, senha_aleatoria, 'cliente')
+        novo_usuario = cadastrar_usuario(email, senha_aleatoria, cargo)
         return novo_usuario
     except Exception as e:
         raise ValueError(f"Erro ao criar conta automaticamente via Google: {str(e)}")
