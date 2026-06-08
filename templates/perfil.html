@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title> Nome da Pessoa - 99Dev</title>
-
-
     <link rel="stylesheet" href="../static/css/perfil.css">
 </head>
+
 <body>
     <main>
-        <!-- sidebar de navegação -->
         <div class="left-panel">
             <div class="logo">
                 <i class="fa-solid fa-code"></i>
@@ -28,13 +27,11 @@
         </div>
 
 
-        <!-- Seção principal de perfil.html -->
         <div class="right-panel">
             <div class="header">
                 <h1>Tarefas Disponíveis</h1>
                 <div class="toggle-online">
                     <span class="status">Você está Offline</span>
-                    <!-- Posteriormente, criar o toggle real -->
                     <input type="checkbox" id="toggle" class="toggle-checkbox">
                 </div>
             </div>
@@ -53,22 +50,23 @@
                         </div>
                         <div class="user-details">
                             {% if usuario.nome %}
-                                <h2>{{ usuario.nome }} <span class="fa-solid-circle-check verified-badge"></span></h2>
+                            <h2>{{ usuario.nome }} <span class="fa-solid-circle-check verified-badge"></span></h2>
                             {% else %}
-                                <h2>Usuário sem nome</h2>
-                            
-                            {% endif %}  
-                            
+                            <h2>Usuário sem nome</h2>
+
+                            {% endif %}
+
                             {% if usuario.titulo %}
                             <p>{{ usuario.titulo }}</p>
                             {% else %}
-                                <h2>Usuário sem função principal</h2>
-                            
-                            {% endif %} 
+                            <h2>Usuário sem função principal</h2>
+
+                            {% endif %}
                         </div>
                         <a href="#edit-modal" class="btn-edit">Edição de Perfil</a>
                     </div>
 
+                    {% if usuario.exibir_dados %}
                     <div class="additional-info">
                         <div class="info-item">
                             <h3>Total Adquirido</h3>
@@ -87,6 +85,7 @@
                             <p>4.8</p>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
 
 
@@ -95,28 +94,29 @@
                         <div class="about-me">
                             <h3>Sobre mim</h3>
                             {% if usuario.resumo %}
-                                <p>{{ usuario.resumo }}</p>
+                            <p>{{ usuario.resumo }}</p>
                             {% else %}
-                                <p>Resumo não cadastrado</p>
+                            <p>Resumo não cadastrado</p>
                             {% endif %}
 
                             {% if usuario.valor_hora %}
-                                <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: ${{ "%.2f" % usuario.valor_hora }}</P>
+                            <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: ${{ "%.2f" % usuario.valor_hora }}
+                            </P>
                             {% else %}
-                                <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: Não cadastrado</P>
+                            <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: Não cadastrado</P>
                             {% endif %}
 
                             <div class="contact-info">
                                 {% if usuario.github %}
-                                    <p><i class="fab fa-github"></i> {{ usuario.github }}</p>
+                                <p><i class="fab fa-github"></i> {{ usuario.github }}</p>
                                 {% else %}
-                                    <p><i class="fab fa-github"></i> GitHub não cadastrado</p>
+                                <p><i class="fab fa-github"></i> GitHub não cadastrado</p>
                                 {% endif %}
 
                                 {% if usuario.linkedin %}
-                                    <p><i class="fab fa-linkedin"></i> {{ usuario.linkedin }}</p>
+                                <p><i class="fab fa-linkedin"></i> {{ usuario.linkedin }}</p>
                                 {% else %}
-                                    <p><i class="fab fa-linkedin"></i> LinkedIn não cadastrado</p>
+                                <p><i class="fab fa-linkedin"></i> LinkedIn não cadastrado</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -125,17 +125,18 @@
                             <h3>Top Habilidades</h3>
                             <div class="skills-list">
                                 {% if usuario.skills %}
-                                    {% for skill in usuario.skills.split(',') %}
-                                        <span class="skill">{{ skill.strip() }}</span>
-                                    {% endfor %}
+                                {% for skill in usuario.skills.split(',') %}
+                                <span class="skill">{{ skill.strip() }}</span>
+                                {% endfor %}
                                 {% else %}
-                                    <span class="skill">Nenhuma habilidade cadastrada</span>
+                                <span class="skill">Nenhuma habilidade cadastrada</span>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
 
                     <div class="profile-main">
+                        {% if usuario.exibir_dados %}
                         <div class="client-reviews">
                             <h3>Análises recentes de clientes</h3>
 
@@ -148,7 +149,8 @@
                                         </span>
                                     </div>
                                     <p class="client-name">Cliente: John D.</p>
-                                    <p class="review-text">"{{usuario.nome}} foi muito rápido e imediatamente identificou o gargalo em 
+                                    <p class="review-text">"{{usuario.nome}} foi muito rápido e imediatamente
+                                        identificou o gargalo em
                                         nosso ciclo de renderização. Altamente recomendado!"</p>
                                 </div>
                                 <div class="review-item">
@@ -159,7 +161,8 @@
                                         </span>
                                     </div>
                                     <p class="client-name">Cliente: TechStart Inc.</p>
-                                    <p class="review-text">"Transição perfeita dos seus arquivos Figma para React. Código limpo e responsivo."</p>
+                                    <p class="review-text">"Transição perfeita dos seus arquivos Figma para React.
+                                        Código limpo e responsivo."</p>
                                 </div>
                                 <div class="review-item">
                                     <div class="review-header">
@@ -169,10 +172,13 @@
                                         </span>
                                     </div>
                                     <p class="client-name">Cliente: Michael L.</p>
-                                    <p class="review-text">"Excelente trabalho na integração da nossa complexa API legada."</p>
+                                    <p class="review-text">"Excelente trabalho na integração da nossa complexa API
+                                        legada."</p>
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
+
                         <div class="available-tasks-card">
                             <div class="task-info-left">
                                 <div class="icon-container">
@@ -244,10 +250,12 @@
                     {{ form.linkedin(id="linkedin", placeholder="https://linkedin.com/in/usuario") }}
                 </div>
 
-                <button type="submit" class="btn-save">Save Changes</button>
-            </form>
-        </div>
-    </div>
-</body>
+                <div class="input-group"
+                    style="display: flex; flex-direction: row; align-items: center; gap: 10px; padding-top: 10px; padding-bottom: 20px;">
+                    {{ form.exibir_dados(style="width: 1.2rem; height: 1.2rem; cursor: pointer; margin: 0;") }}
+                    <span style="font-weight: bold; color: #475569; font-size: 0.9em;">
+                        {{ form.exibir_dados.label.text }}
+                    </span>
+                </div>
 
-</html>
+                <button type="submit" class="btn-save">Save Changes
