@@ -62,18 +62,12 @@ def autenticar_usuario(email,senha):
         raise ValueError("Senha incorreta")    
     return usuario
 
-def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, github, linkedin):
-    """
-    Função dedicada a atualizar os dados extras do Dev.
-    Como a linha já foi criada no cadastro, basta fazer um UPDATE direto.
-    """
-    # Busca o perfil atrelado ao ID do usuário logado
+def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, github, linkedin, novo_exibir_dados):
     perfil = PerfilDev.query.filter_by(id_usuario=id_usuario).first()
     
     if not perfil:
-        raise ValueError("Perfil não encontrado para este usuário.")
-    
-    # Atualiza os campos com os dados validados do FlaskForm
+        raise ValueError("Perfil de desenvolvedor não encontrado.")
+        
     perfil.nome = nome
     perfil.titulo = titulo
     perfil.valor_hora = valor_hora
@@ -81,11 +75,13 @@ def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, g
     perfil.resumo = resumo
     perfil.github = github
     perfil.linkedin = linkedin
+    perfil.exibir_dados = novo_exibir_dados
     
-    # Salva as alterações no banco de dados
-    db.session.commit()
-    return perfil
-
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
 def solicitar_recuperacao_senha(email):
     usuario = Usuario.query.filter_by(email=email).first()
     if not usuario:
