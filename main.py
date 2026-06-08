@@ -45,6 +45,7 @@ class EditarDevForm(FlaskForm):
     resumo = TextAreaField('Sobre Mim / Bio', validators=[Optional()])
     github = StringField('GitHub', validators=[Optional()])
     linkedin = StringField('LinkedIn', validators=[Optional()])
+    exibir_dados = BooleanField('Exibir minhas estatísticas e avaliações publicamente')
 
 class DemandaForm(FlaskForm):
     titulo = StringField('Título do Projeto', validators=[input_required(message="O título é obrigatório.")])
@@ -225,6 +226,7 @@ def perfildev():
         form.resumo.data = usuario.resumo
         form.github.data = usuario.github
         form.linkedin.data = usuario.linkedin
+        form.exibir_dados.data = usuario.exibir_dados
 
     if form.validate_on_submit():
         try:
@@ -239,7 +241,8 @@ def perfildev():
                 skills=form.skills.data,
                 resumo=form.resumo.data,
                 github=form.github.data,
-                linkedin=form.linkedin.data
+                linkedin=form.linkedin.data,
+                novo_exibir_dados=form.exibir_dados.data
             )
             
             flash("Perfil atualizado com sucesso!", "success")
