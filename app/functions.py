@@ -66,31 +66,25 @@ def autenticar_usuario(email,senha):
 
 def gerenciar_login_google(email, cargo):
     usuario = Usuario.query.filter_by(email=email).first()
-    
+
     if usuario:
         return usuario
-    
+
     # Se o usuario não estiver cadastrado, é gerada uma senha aleatória (que ele nunca vai precisar usar)
     senha_aleatoria = secrets.token_urlsafe(32)
-    
+
     try:
         novo_usuario = cadastrar_usuario(email, senha_aleatoria, cargo)
         return novo_usuario
     except Exception as e:
         raise ValueError(f"Erro ao criar conta automaticamente via Google: {str(e)}")
-
-def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, github, linkedin):
-    """
-    Função dedicada a atualizar os dados extras do Dev.
-    Como a linha já foi criada no cadastro, basta fazer um UPDATE direto.
-    """
-    # Busca o perfil atrelado ao ID do usuário logado
+        
+def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, github, linkedin, novo_exibir_dados):
     perfil = PerfilDev.query.filter_by(id_usuario=id_usuario).first()
-    
+
     if not perfil:
-        raise ValueError("Perfil não encontrado para este usuário.")
-    
-    # Atualiza os campos com os dados validados do FlaskForm
+        raise ValueError("Perfil de desenvolvedor não encontrado.")
+
     perfil.nome = nome
     perfil.titulo = titulo
     perfil.valor_hora = valor_hora
@@ -98,11 +92,14 @@ def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, g
     perfil.resumo = resumo
     perfil.github = github
     perfil.linkedin = linkedin
-    
-    # Salva as alterações no banco de dados
-    db.session.commit()
-    return perfil
+    perfil.exibir_dados = novo_exibir_dados
 
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+        
 def solicitar_recuperacao_senha(email):
     usuario = Usuario.query.filter_by(email=email).first()
     if not usuario:
