@@ -250,6 +250,38 @@
                     {{ form.linkedin(id="linkedin", placeholder="https://linkedin.com/in/usuario") }}
                 </div>
 
+                <div class="input-group">
+                    {{ form.foto_perfil.label }}
+                    
+                    <div class="moldura-perfil">
+                        {% if foto_perfil %}
+                            <img src="{{ url_for('static', filename='uploads/perfil/' ~ foto_perfil) }}" alt="Sua foto de perfil atual">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar padrão do sistema">
+                        {% endif %}
+                    </div>
+                    {{ form.foto_perfil() }}
+                </div>
+                {% for error in form.foto_perfil.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+
+                <div class="input-group">
+                    {{ form.foto_banner.label }}
+                    
+                    <div class="moldura-perfil">
+                        {% if foto_banner %}
+                            <img src="{{ url_for('static', filename='uploads/banner/' ~ foto_banner) }}" alt="Sua foto de banner atual">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar padrão do sistema">
+                        {% endif %}
+                    </div>
+                    {{ form.foto_banner() }}
+                </div>
+                {% for error in form.foto_banner.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+
                 <div class="input-group"
                     style="display: flex; flex-direction: row; align-items: center; gap: 10px; padding-top: 10px; padding-bottom: 20px;">
                     {{ form.exibir_dados(style="width: 1.2rem; height: 1.2rem; cursor: pointer; margin: 0;") }}
