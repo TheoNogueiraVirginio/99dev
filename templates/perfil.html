@@ -31,9 +31,9 @@
         <!-- Seção principal de perfil.html -->
         <div class="right-panel">
             <div class="header">
-                <h1>Avaliable Tasks</h1>
+                <h1>Tarefas Disponíveis</h1>
                 <div class="toggle-online">
-                    <span class="status">You're Offline</span>
+                    <span class="status">Você está Offline</span>
                     <!-- Posteriormente, criar o toggle real -->
                     <input type="checkbox" id="toggle" class="toggle-checkbox">
                 </div>
@@ -52,27 +52,38 @@
                             <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar">
                         </div>
                         <div class="user-details">
-                            <h2>{{ usuario.nome }} <span class="fa-solid-circle-check verified-badge"></span></h2>
+                            {% if usuario.nome %}
+                                <h2>{{ usuario.nome }} <span class="fa-solid-circle-check verified-badge"></span></h2>
+                            {% else %}
+                                <h2>Usuário sem nome</h2>
+                            
+                            {% endif %}  
+                            
+                            {% if usuario.titulo %}
                             <p>{{ usuario.titulo }}</p>
+                            {% else %}
+                                <h2>Usuário sem função principal</h2>
+                            
+                            {% endif %} 
                         </div>
-                        <a href="#edit-modal" class="btn-edit">Edit Profile</a>
+                        <a href="#edit-modal" class="btn-edit">Edição de Perfil</a>
                     </div>
 
                     <div class="additional-info">
                         <div class="info-item">
-                            <h3>Total Earned</h3>
+                            <h3>Total Adquirido</h3>
                             <p>$15,000</p>
                         </div>
                         <div class="info-item">
-                            <h3>Tasks Completed</h3>
+                            <h3>Tarefas Completadas</h3>
                             <p>25</p>
                         </div>
                         <div class="info-item">
-                            <h3>Success Rate</h3>
+                            <h3>Taxa de sucesso</h3>
                             <p>95%</p>
                         </div>
                         <div class="info-item">
-                            <h3>Rating</h3>
+                            <h3>Pontuação</h3>
                             <p>4.8</p>
                         </div>
                     </div>
@@ -82,7 +93,7 @@
                 <section class="profile-content">
                     <div class="profile-sidebar">
                         <div class="about-me">
-                            <h3>About Me</h3>
+                            <h3>Sobre mim</h3>
                             {% if usuario.resumo %}
                                 <p>{{ usuario.resumo }}</p>
                             {% else %}
@@ -111,14 +122,14 @@
                         </div>
 
                         <div class="skills-card">
-                            <h3>Top Skills</h3>
+                            <h3>Top Habilidades</h3>
                             <div class="skills-list">
                                 {% if usuario.skills %}
                                     {% for skill in usuario.skills.split(',') %}
                                         <span class="skill">{{ skill.strip() }}</span>
                                     {% endfor %}
                                 {% else %}
-                                    <span class="skill">Nenhuma skill cadastrada</span>
+                                    <span class="skill">Nenhuma habilidade cadastrada</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -126,30 +137,29 @@
 
                     <div class="profile-main">
                         <div class="client-reviews">
-                            <h3>Recent Client Reviews</h3>
+                            <h3>Análises recentes de clientes</h3>
 
                             <div class="reviews-list">
                                 <div class="review-item">
                                     <div class="review-header">
-                                        <h4>React Performance Fix</h4>
+                                        <h4>Correção de desempenho do React</h4>
                                         <span class="review-rating">
                                             <i class="fa-solid fa-star"></i> 5
                                         </span>
                                     </div>
-                                    <p class="client-name">Client: John D.</p>
-                                    <p class="review-text">"Sarah was extremely fast and immediately identified the
-                                        bottleneck in our rendering cycle. Highly recommend!"</p>
+                                    <p class="client-name">Cliente: John D.</p>
+                                    <p class="review-text">"{{usuario.nome}} foi muito rápido e imediatamente identificou o gargalo em 
+                                        nosso ciclo de renderização. Altamente recomendado!"</p>
                                 </div>
                                 <div class="review-item">
                                     <div class="review-header">
-                                        <h4>Dashboard Implementation</h4>
+                                        <h4>Implementação de DashBoard</h4>
                                         <span class="review-rating">
                                             <i class="fa-solid fa-star"></i> 5
                                         </span>
                                     </div>
-                                    <p class="client-name">Client: TechStart Inc.</p>
-                                    <p class="review-text">"Perfect translation of our Figma files to React. Clean code
-                                        and responsive."</p>
+                                    <p class="client-name">Cliente: TechStart Inc.</p>
+                                    <p class="review-text">"Transição perfeita dos seus arquivos Figma para React. Código limpo e responsivo."</p>
                                 </div>
                                 <div class="review-item">
                                     <div class="review-header">
@@ -158,8 +168,8 @@
                                             <i class="fa-solid fa-star"></i> 4.5
                                         </span>
                                     </div>
-                                    <p class="client-name">Client: Mike L.</p>
-                                    <p class="review-text">"Solid work on integrating our complex legacy API."</p>
+                                    <p class="client-name">Cliente: Michael L.</p>
+                                    <p class="review-text">"Excelente trabalho na integração da nossa complexa API legada."</p>
                                 </div>
                             </div>
                         </div>
@@ -169,8 +179,8 @@
                                     <i class="fa-solid fa-bolt"></i>
                                 </div>
                                 <div class="task-text">
-                                    <h3>Available for Tasks</h3>
-                                    <p>Turn on to receive instant task requests</p>
+                                    <h3>Disponível para Tarefas</h3>
+                                    <p>Ative para receber solicitações de tarefas</p>
                                 </div>
                             </div>
 
@@ -191,7 +201,7 @@
                 <i class="fa-solid fa-xmark"></i>
             </a>
 
-            <h2>Edit Profile</h2>
+            <h2>Edição de Perfil</h2>
 
             <form action="{{ url_for('perfildev') }}" method="POST">
                 {{ form.hidden_tag() }}
@@ -211,7 +221,7 @@
 
                 <div class="input-group">
                     {{ form.resumo.label }}
-                    {{ form.resumo(id="about", rows="3", placeholder="Lorem ipsum Lorem ipsum...") }}
+                    {{ form.resumo(id="about", rows="3", placeholder="Escreva um pequeno texto sobre você...") }}
                 </div>
 
                 <div class="input-group">
