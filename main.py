@@ -289,6 +289,12 @@ def meusProjetos():
     demandas = lerDemandas(busca=busca, filtro_status=filtro_status)
     return render_template('MeusProjetos.html', demandas=demandas)
 
+@app.route("/logout",methods=['GET'])
+def sairLogin():
+    session.clear()
+    flash('Você saiu da sua conta, logue novamente!')
+    return redirect ('/login')
+
 @app.errorhandler(403)
 def acesso_proibido(error):
     return render_template('403.html'),403
