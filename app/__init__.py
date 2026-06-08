@@ -21,7 +21,6 @@ app = Flask(
 
 load_dotenv(os.path.join(BASE_DIR, '..', '.env'))
 
-# colocar em variáveis de ambiente depois
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['GOOGLE_CLIENT_ID'] = os.getenv('GOOGLE_CLIENT_ID')
 app.config['GOOGLE_CLIENT_SECRET'] = os.getenv('GOOGLE_CLIENT_SECRET')
