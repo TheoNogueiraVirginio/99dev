@@ -279,7 +279,7 @@ def dashboardCliente():
         except Exception as e:
             flash(f"Falha ao cadastrar demanda: {str(e)}", "error")
     foto_perfil = usuario.foto_perfil if usuario else None
-    return render_template('dashboardCliente.html', form=form, demandas=demandas,foto_perfil=foto_perfil)
+    return render_template('dashboardCliente.html', form=form, demandas=demandas,foto_perfil=foto_perfil,usuario=usuario)
 
 @app.route("/MeusProjetos", methods=['GET', 'POST'])
 @login_required
