@@ -7,7 +7,7 @@ from wtforms.validators import input_required, Email, Optional
 
 #importando a função de cadastro do usuário
 from app import app, db, google
-from app.models import Usuario, PerfilDev
+from app.models import Cliente, Desenvolvedor
 
 from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente
 from app.decorators import login_required
@@ -98,11 +98,11 @@ def login():
             usuario = autenticar_usuario(form.email.data, form.senha.data)
 
             session["id_usuario"] = usuario.id
+            session["tipo_usuario"] = "dev" if isinstance(usuario, Desenvolvedor) else "cliente"
             flash("Login realizado com sucesso!", "success")
-            if usuario.cargo=='dev':
+            if session["tipo_usuario"] == 'dev':
                 return redirect('/perfil-dev')
-            else:
-                return redirect('/dashboard')
+            return redirect('/dashboard')
 
         except ValueError as e:
             flash(str(e), "error")
@@ -133,13 +133,13 @@ def authorize_google():
         usuario = gerenciar_login_google(email, cargo_escolhido)
         
         session["id_usuario"] = usuario.id
+        session["tipo_usuario"] = "dev" if isinstance(usuario, Desenvolvedor) else "cliente"
         flash("Login com Google realizado com sucesso!", "success")
         
         # 5. Redireciona para o painel correto
-        if usuario.cargo == 'dev':
-            return redirect('/perfil-dev')
-        else:
-            return redirect('/dashboard')
+        if session["tipo_usuario"] == "dev":
+            return redirect("/perfil-dev")
+        return redirect("/dashboard")
             
     except Exception as e:
         flash("Ocorreu um erro ao tentar fazer login com o Google.", "error")
@@ -182,12 +182,12 @@ def nova_senha(token):
 @login_required 
 def perfil():
     id_usuario = session.get("id_usuario")
-    usuario = Usuario.query.get(id_usuario)
+    usuario = Cliente.query.get(id_usuario)
     
     if not usuario:
         flash("Usuário não encontrado.", "error")
         return redirect('/login')
-    if usuario.cargo=='dev':
+    if session.get("tipo_usuario") == 'dev':
         abort(403)
     form = EditarPerfilForm()
     
@@ -209,8 +209,8 @@ def perfil():
             
     elif request.method == 'GET':
         form.email.data = usuario.email
-        form.dev.data = (usuario.cargo == 'dev')
-        form.pessoa.data = (usuario.cargo == 'cliente')
+        form.dev.data = (session.get("tipo_usuario") == 'dev')
+        form.pessoa.data = (session.get("tipo_usuario") == 'cliente')
         form.descricao.data = usuario.descricao    
     foto_perfil= usuario.foto_perfil    
     return render_template('perfil-editar.html',foto_perfil=foto_perfil, form=form)
@@ -219,7 +219,11 @@ def perfil():
 @login_required
 def perfildev():
     form = EditarDevForm()
-    usuario = PerfilDev.query.filter_by(id_usuario=session["id_usuario"]).first()
+
+    if session.get("tipo_usuario") != "dev":
+        abort(403)
+    usuario = Desenvolvedor.query.get(session["id_usuario"])
+
     if request.method == 'GET' and usuario:
         form.nome.data = usuario.nome
         form.titulo.data = usuario.titulo
@@ -260,8 +264,12 @@ def perfildev():
 @login_required
 def dashboardCliente():
     form = DemandaForm()
+
+    if session.get("tipo_usuario") != "cliente":
+        abort(403)
+
     id = session["id_usuario"]
-    usuario = Usuario.query.get(id)
+    usuario = Cliente.query.get(id)
     demandas = lerDemandas()
 
     if form.validate_on_submit():
