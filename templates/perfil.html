@@ -209,7 +209,7 @@
 
             <h2>Edição de Perfil</h2>
 
-            <form action="{{ url_for('perfildev') }}" method="POST">
+            <form action="{{ url_for('perfildev') }}" method="POST" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
 
                 <div class="input-group">
@@ -290,4 +290,9 @@
                     </span>
                 </div>
 
-                <button type="submit" class="btn-save">Save Changes
+                <button type="submit" class="btn-save">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</body>       
+</html>

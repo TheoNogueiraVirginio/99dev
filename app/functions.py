@@ -77,8 +77,13 @@ def atualizar_perfil_dev(id_dev, nome, titulo, valor_hora, skills, resumo, githu
     perfil.resumo = resumo
     perfil.github = github
     perfil.linkedin = linkedin
-    perfil.foto_perfil = foto_perfil
-    perfil.foto_banner = foto_banner
+
+    if foto_perfil:
+        perfil.foto_perfil = salvar_foto_perfil(id_dev, foto_perfil)
+
+    if foto_banner:
+        perfil.foto_banner = salvar_banner_perfil(id_dev, foto_banner)
+
     perfil.exibir_dados = novo_exibir_dados
 
     try:
@@ -125,6 +130,16 @@ def salvar_foto_perfil(id_usuario, arquivo_foto):
     caminho_completo = os.path.join(pasta_uploads, nome_arquivo)
     arquivo_foto.save(caminho_completo)
     
+    return nome_arquivo
+
+def salvar_banner_perfil(id_usuario, arquivo_banner):
+    _, extensao = os.path.splitext(arquivo_banner.filename)
+    nome_arquivo = f"{id_usuario}{extensao}"
+    pasta_uploads = os.path.join(BASE_DIR, 'static', 'uploads', 'banner')
+    os.makedirs(pasta_uploads, exist_ok=True)
+    caminho_completo = os.path.join(pasta_uploads, nome_arquivo)
+    arquivo_banner.save(caminho_completo)
+
     return nome_arquivo
 
 def solicitar_recuperacao_senha(email):

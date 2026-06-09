@@ -79,7 +79,7 @@ def cadastro():
             cadastrar_usuario(
                 email=form.email.data,
                 senha=form.senha.data,
-                cargo_definido=cargo_definido
+                cargo=cargo_definido
             )
         except Exception as e:
             flash(f"Falha ao cadastrar usuário: {str(e)}", "error")
@@ -240,7 +240,7 @@ def perfildev():
             
             
             atualizar_perfil_dev(
-                id_usuario=id_do_usuario_logado,
+                id_dev=id_do_usuario_logado,
                 nome=form.nome.data,
                 titulo=form.titulo.data,
                 valor_hora=form.valor_hora.data,
@@ -248,6 +248,8 @@ def perfildev():
                 resumo=form.resumo.data,
                 github=form.github.data,
                 linkedin=form.linkedin.data,
+                foto_perfil=form.foto_perfil.data,
+                foto_banner=form.foto_banner.data,
                 novo_exibir_dados=form.exibir_dados.data
             )
             
