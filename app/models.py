@@ -4,7 +4,7 @@ db = SQLAlchemy()
 
 class Cliente(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nome = db.Column(db.String(100), unique=True, nullable=False)
+    nome = db.Column(db.String(100), unique=True, nullable=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     senha = db.Column(db.String(256), nullable=False)
     descricao = db.Column(db.Text, nullable=True)
@@ -14,7 +14,9 @@ class Desenvolvedor(db.Model):
     __tablename__ = 'perfis_dev'
     
     id = db.Column(db.Integer, primary_key=True)
-    
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    senha = db.Column(db.String(256), nullable=False)
+
     # Dados extras (comentados como nullable=True para nascerem vazios no cadastro)
     nome = db.Column(db.String(100), nullable=True)
     titulo = db.Column(db.String(100), nullable=True)
