@@ -128,7 +128,7 @@ def salvar_foto_perfil(id_usuario, arquivo_foto):
     return nome_arquivo
 
 def solicitar_recuperacao_senha(email):
-    usuario = Usuario.query.filter_by(email=email).first()
+    usuario = Cliente.query.filter_by(email=email).first() or Desenvolvedor.query.filter_by(email=email).first()
     if not usuario:
         raise ValueError("Usuário não encontrado")
     
@@ -168,7 +168,7 @@ def enviar_instrucoes(email):
     return "email enviado com sucesso"
 
 def atualizar_senha(email, nova_senha):
-    usuario = Usuario.query.filter_by(email=email).first()
+    usuario = Cliente.query.filter_by(email=email).first() or Desenvolvedor.query.filter_by(email=email).first()
     if not usuario:
         raise ValueError("Usuário não encontrado")
     
