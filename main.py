@@ -195,7 +195,7 @@ def perfil():
             
         try:
             atualizar_perfil_cliente(
-                id_usuario=id_usuario,
+                id_cliente=id_usuario,
                 novo_email=form.email.data,
                 nova_senha=form.nova_senha.data,
                 nova_descricao=form.descricao.data,
