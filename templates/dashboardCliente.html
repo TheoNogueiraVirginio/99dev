@@ -1,115 +1,88 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+{% extends "basePerfil.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - 99dev</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboardCliente.css') }}">
-</head>
+{% block title %}Dashboard - 99dev{% endblock %}
 
-<body>
-    <input type="checkbox" id="menu-toggle" class="menu-toggle">
-    <label for="menu-toggle" class="menu-button" aria-label="Abrir menu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </label>
-    <label for="menu-toggle" class="menu-overlay" aria-hidden="true"></label>
-    <aside>
-        <label for="menu-toggle" class="menu-close" aria-label="Fechar menu">×</label>
-        <div class="logo">
-            <h1>99dev</h1>
-            <p>Portal do cliente</p>
-        </div>
-        <hr>
-        <nav>
-            <ul>
-                <li><a href="/dashboard">Dashboard</a></li>
-                <li><a href="/MeusProjetos">Meus Projetos</a></li>
-                <li><a href="/carteira">Carteira</a></li>
-                <li><a href="/suporte">Suporte</a></li>
-            </ul>
-        </nav>
-        <hr>
-        <div class="user-info">
-            <a href="/logout">Sair</a>
-        </div>
-    </aside>
-    <main>
-        <header>
-            <input type="text" placeholder="Pesquisar projetos...">
-    
-            <a href="/editar-perfil" class="link-perfil">
-                <div class="fotoUsuario">
-                    <div class="moldura-perfil">
-                        {% if foto_perfil %}
-                            <img src="{{ url_for('static', filename='uploads/perfil/' ~ foto_perfil) }}" alt="Foto de perfil">
-                        {% else %}
-                            <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar padrão do sistema">
-                        {% endif %}
-                    </div>
-                </div>
-            </a>
-        </header>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, msg in messages %}
-        <div class="error-message {{ category }}">{{ msg }}</div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-        <section class="novaTarefa">
-            <!-- adicionar um icone de mais antes do titulo -->
-            <h2>Nova Tarefa</h2>
-            <form action="#" method="post">
-                <label for="titulo">Título da tarefa:</label>
-                {{form.hidden_tag()}}
-                {{ form.titulo(placeholder="Título da tarefa", id="titulo") }}
-                <label for="techStack">Tecnologias da tarefa:</label>
-                {{ form.tecnologia(placeholder="Tecnologias da tarefa", id="techStack") }}
-                <label for="descricao">Descrição da tarefa:</label>
-                {{ form.descricao(placeholder="Descrição da tarefa", id="descricao") }}
-                <label for="orcamento">Orçamento da tarefa(BRL):</label>
-                {{ form.orcamento(placeholder="Orçamento da tarefa", id="orcamento") }}
-                <button type="submit">Criar Tarefa</button>
-            </form>
-        </section>
-        <section class="tarefas">
-            <div class="tarefas-header">
-                <h2>Demandas recentes</h2>
+{% block head_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboardCliente.css') }}">
+{% endblock %}
+
+{% block content %}
+<header>
+    <input type="text" placeholder="Pesquisar projetos...">
+
+    <a href="/editar-perfil" class="link-perfil">
+        <div class="fotoUsuario">
+            <div class="moldura-perfil">
+                {% if foto_perfil %}
+                    <img src="{{ url_for('static', filename='uploads/perfil/' ~ foto_perfil) }}" alt="Foto de perfil">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar padrão do sistema">
+                {% endif %}
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Título</th>
-                        <th>Tecnologia</th>
-                        <th>Status</th>
-                        <th>Developer</th>
-                        <th>Orçamento</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for demanda in demandas %}
-                    <tr>
-                        <td data-label="Task">
-                            <div class="task-title">{{ demanda.titulo }}</div>
-                            <div class="task-subtitle">{{ demanda.descricao }}</div>
-                        </td>
-                        <td data-label="Tech Stack">
-                            <span class="tech-pill">{{ demanda.tecnologia }}</span>
-                        </td>
-                        <td data-label="Status"><span class="status-pill">{{ demanda.status }}</span></td>
-                        <td data-label="Developer"><span class="developer-placeholder">Finding match...</span></td>
-                        <td data-label="Cost">R$ {{ demanda.orcamento }}</td>
-                        <td data-label="Actions"><a class="action-link" href="#">View Task</a></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </section>
-    </main>
-</body>
+        </div>
+    </a>
+</header>
 
-</html>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, msg in messages %}
+            <div class="error-message {{ category }}">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<section class="novaTarefa">
+    <h2>Nova Tarefa</h2>
+    <form action="#" method="post">
+        <label for="titulo">Título da tarefa:</label>
+        {{ form.hidden_tag() }}
+        {{ form.titulo(placeholder="Título da tarefa", id="titulo") }}
+        
+        <label for="techStack">Tecnologias da tarefa:</label>
+        {{ form.tecnologia(placeholder="Tecnologias da tarefa", id="techStack") }}
+        
+        <label for="descricao">Descrição da tarefa:</label>
+        {{ form.descricao(placeholder="Descrição da tarefa", id="descricao") }}
+        
+        <label for="orcamento">Orçamento da tarefa(BRL):</label>
+        {{ form.orcamento(placeholder="Orçamento da tarefa", id="orcamento") }}
+        
+        <button type="submit">Criar Tarefa</button>
+    </form>
+</section>
+
+<section class="tarefas">
+    <div class="tarefas-header">
+        <h2>Demandas recentes</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Tecnologia</th>
+                <th>Status</th>
+                <th>Developer</th>
+                <th>Orçamento</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for demanda in demandas %}
+            <tr>
+                <td data-label="Task">
+                    <div class="task-title">{{ demanda.titulo }}</div>
+                    <div class="task-subtitle">{{ demanda.descricao }}</div>
+                </td>
+                <td data-label="Tech Stack">
+                    <span class="tech-pill">{{ demanda.tecnologia }}</span>
+                </td>
+                <td data-label="Status"><span class="status-pill">{{ demanda.status }}</span></td>
+                <td data-label="Developer"><span class="developer-placeholder">Finding match...</span></td>
+                <td data-label="Cost">R$ {{ demanda.orcamento }}</td>
+                <td data-label="Actions"><a class="action-link" href="#">View Task</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

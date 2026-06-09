@@ -18,85 +18,6 @@
     --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
-/*--- Reset básico ---*/
-html, body {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif; 
-    background-color: var(--bg-color);
-}
-
-h1, h2, h3, h4, p {
-    margin: 0;
-    color: var(--text-dark);
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-/*--- Layout geral da página ---*/
-main {
-    width: 100%;
-    height: 100vh;
-    display: grid;
-    grid-template-columns: 250px 1fr; /* Left panel fixo de 250px, right panel ocupa o restante */
-}
-
-/*--- Left Panel (Sidebar) ---*/
-.left-panel {
-    background-color: var(--dark-blue);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    padding: 24px 0;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 0 24px 32px 24px;
-    font-size: 1.2rem;
-}
-
-.logo h1 {
-    color: white;
-    font-size: 1.5rem;
-}
-
-.menu ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.menu li a {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 1em 1em;
-    margin: 0 1em;
-    color: #9CA3AF;
-    transition: all 0.3s;
-}
-
-.menu li a:hover, 
-.menu li:nth-child(3) a /* Simulando o item ativo (Profile) */ {
-    background-color: var(--blue);
-    color: white;
-    border-radius: 1em;
-    margin-right: 1em;
-}
-
-/*--- Right Panel (Main Content) ---*/
-.right-panel {
-    background-color: var(--bg-color);
-    overflow-y: auto;
-}
-
 /* Header Superior */
 .header {
     display: flex;
@@ -106,8 +27,10 @@ main {
     padding: 16px 32px;
     border-radius: 12px;
     box-shadow: var(--card-shadow);
+    margin-top: 20px;
     margin-bottom: 32px;
-    margin-top: -10px; /* Ajuste para colar no topo */
+    margin-left: 32px;
+    margin-right: 32px;
 }
 
 .content-wrapper {
@@ -116,7 +39,11 @@ main {
 }
 
 /* Base dos Cards (Reutilizável) */
-.profile-card, .about-me, .skills-card, .client-reviews, .available-tasks-card {
+.profile-card, 
+.about-me, 
+.skills-card, 
+.client-reviews, 
+.available-tasks-card {
     background-color: white;
     border: 1px solid var(--border-color);
     border-radius: 16px;
@@ -124,12 +51,21 @@ main {
     overflow: hidden;
 }
 
-/*--- Profile Card Principal ---*/
+/* Profile Card Principal */
 .banner {
     background-color: var(--blue);
     height: 140px;
     position: relative;
     border-radius: 16px 16px 0 0;
+    overflow: hidden;
+}
+
+/* Imagem do banner */
+.banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .btn-banner-edit {
@@ -144,6 +80,7 @@ main {
     border-radius: 50%;
     cursor: pointer;
     transition: 0.3s;
+    z-index: 10;
 }
 
 .btn-banner-edit:hover {
@@ -168,7 +105,7 @@ main {
     border-radius: 16px;
     border: 4px solid white;
     object-fit: cover;
-    background-color: white; /* Fallback caso não carregue a imagem */
+    background-color: white;
 }
 
 .user-details h2 {
@@ -177,6 +114,7 @@ main {
     display: flex;
     align-items: center;
     gap: 8px;
+    color: var(--text-dark);
 }
 
 .verified-badge {
@@ -188,6 +126,11 @@ main {
     color: var(--text-muted);
 }
 
+.text-missing {
+    color: #94a3b8;
+    font-style: italic;
+}
+
 .general-info .btn-edit {
     margin-left: auto;
     background-color: var(--blue);
@@ -197,6 +140,7 @@ main {
     font-weight: 600;
     transition: background 0.3s;
     display: inline-block;
+    text-decoration: none;
 }
 
 .general-info .btn-edit:hover {
@@ -220,10 +164,11 @@ main {
 .info-item p {
     font-size: 1.5rem;
     font-weight: bold;
+    color: var(--text-dark);
 }
 
 .info-item:nth-child(3) p {
-    color: var(--green); /* Success Rate Verde */
+    color: var(--green);
 }
 
 .info-item:nth-child(4) p {
@@ -233,14 +178,14 @@ main {
 }
 
 .info-item:nth-child(4) p::after {
-    content: '\f005'; /* Icone de estrela do FontAwesome */
+    content: '\f005';
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
     color: var(--gold);
     font-size: 1.2rem;
 }
 
-/*--- Profile Grid Inferior ---*/
+/* Profile Grid Inferior */
 .profile-content {
     display: grid;
     grid-template-columns: 1fr 2fr; 
@@ -248,20 +193,23 @@ main {
     margin-top: 24px;
 }
 
-/* Coluna Esquerda */
 .profile-sidebar {
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
-.about-me, .skills-card {
+.about-me, 
+.skills-card {
     padding: 24px;
 }
 
-.about-me h3, .skills-card h3, .client-reviews h3 {
+.about-me h3, 
+.skills-card h3, 
+.client-reviews h3 {
     font-size: 1.1rem;
     margin-bottom: 16px;
+    color: var(--text-dark);
 }
 
 .about-me p {
@@ -275,6 +223,11 @@ main {
     color: var(--text-muted);
     margin-bottom: 12px;
     font-size: 0.9rem;
+}
+
+.contact-info a {
+    text-decoration: none;
+    color: inherit;
 }
 
 .skills-list {
@@ -292,7 +245,6 @@ main {
     font-weight: 500;
 }
 
-/* Coluna Direita */
 .profile-main {
     display: flex;
     flex-direction: column;
@@ -320,6 +272,11 @@ main {
     margin-bottom: 4px;
 }
 
+.review-header h4 {
+    color: var(--text-dark);
+    margin: 0;
+}
+
 .review-rating {
     color: var(--gold);
     font-weight: bold;
@@ -337,7 +294,6 @@ main {
     line-height: 1.5;
 }
 
-/*--- Available Tasks Toggle Section ---*/
 .available-tasks-card {
     padding: 20px 24px;
     display: flex;
@@ -366,6 +322,7 @@ main {
 .task-text h3 {
     margin-bottom: 4px;
     font-size: 1.1rem;
+    color: var(--text-dark);
 }
 
 .task-text p {
@@ -373,12 +330,12 @@ main {
     font-size: 0.9rem;
 }
 
-/*--- Botões Toggle Customizados em CSS Puro ---*/
+/* Botões Toggle */
 .toggle-checkbox {
-    appearance: none; /* Remove o visual padrão do checkbox */
+    appearance: none;
     width: 48px;
     height: 26px;
-    background-color: #D1D5DB; /* Cor offline */
+    background-color: #D1D5DB;
     border-radius: 20px;
     position: relative;
     cursor: pointer;
@@ -400,11 +357,11 @@ main {
 }
 
 .toggle-checkbox:checked {
-    background-color: var(--green); /* Fica verde quando ativo */
+    background-color: var(--green);
 }
 
 .toggle-checkbox:checked::before {
-    transform: translateX(22px); /* Move a bolinha para a direita */
+    transform: translateX(22px);
 }
 
 .toggle-online {
@@ -419,28 +376,21 @@ main {
     font-weight: 500;
 }
 
-/* ESTILIZAÇÃO DO MENU DO FORMULÁRIO */
+/* Estilização do modal e do formulário */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-
-    /* Oculto por padrão, mas usando opacity para ter transição suave */
+    z-index: 9999;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-
-    overflow-y: auto;
+    padding: 20px;
 }
 
-/* Quando a url terminar em #edit-modal, ele fica visível */
 .modal-overlay:target {
     opacity: 1;
     visibility: visible;
@@ -454,10 +404,10 @@ main {
     max-width: 450px;
     position: relative;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-
-    /* Efeito de surgir de baixo para cima */
     transform: translateY(30px);
     transition: transform 0.3s ease;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
 }
 
 .modal-overlay:target .modal-content {
@@ -466,20 +416,22 @@ main {
 
 .close-btn {
     position: absolute;
-    top: 24px;
-    right: 24px;
-    font-size: 1.2rem;
+    top: 20px;
+    right: 20px;
+    font-size: 1.4rem;
     color: var(--text-muted);
     transition: color 0.3s;
+    text-decoration: none;
+    z-index: 10;
 }
 
 .close-btn:hover {
     color: var(--text-dark);
 }
 
-/*--- Estilos do Formulário ---*/
 .modal-content h2 {
     margin-bottom: 24px;
+    color: var(--text-dark);
 }
 
 .input-group {
@@ -527,4 +479,51 @@ main {
 
 .btn-save:hover {
     background-color: #059669;
+}
+
+.error-msg {
+    color: red;
+    font-size: 0.8em;
+    display: block;
+    margin-top: 2px;
+}
+
+.moldura-perfil-preview {
+    margin: 5px 0;
+}
+
+.preview-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.preview-banner {
+    width: 100px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.input-group-checkbox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+.checkbox-custom {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+    margin: 0;
+}
+
+.checkbox-label {
+    font-weight: bold;
+    color: #475569;
+    font-size: 0.9em;
 }
