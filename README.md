@@ -133,7 +133,7 @@ http://127.0.0.1:3001
 
 ## Arquitetura do sistema
 
-![Diagrama de Uso](https://drive.google.com/file/d/1XFoq7EcP9YiZdQ1O8kK-SscItWtWL2eH/view)
+![Diagrama de Uso](https://docs.google.com/uc?export=view&id=1XFoq7EcP9YiZdQ1O8kK-SscItWtWL2eH)
 
 ---
 
