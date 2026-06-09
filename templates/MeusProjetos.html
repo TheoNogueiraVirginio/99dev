@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Projetos - 99dev</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/MeusProjetos.css') }}">
+</head>
+
+<body>
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    <label for="menu-toggle" class="menu-button" aria-label="Abrir menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </label>
+    <label for="menu-toggle" class="menu-overlay" aria-hidden="true"></label>
+    <aside>
+        <label for="menu-toggle" class="menu-close" aria-label="Fechar menu">×</label>
+        <div class="logo">
+            <h1>99dev</h1>
+            <p>Portal do cliente</p>
+        </div>
+        <hr>
+        <nav>
+            <ul>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/MeusProjetos">Meus Projetos</a></li>
+                <li><a href="/carteira">Carteira</a></li>
+                <li><a href="/suporte">Suporte</a></li>
+            </ul>
+        </nav>
+        <hr>
+        <div class="user-info">
+            <a href="/logout">Sair</a>
+        </div>
+    </aside>
+    <main>
+        <header>
+            <input type="text" name="busca" form="filtro-projetos" placeholder="Pesquisar projetos..." value="{{ request.args.get('busca', '') }}">
+            <div class="fotoUsuario">
+            </div>
+        </header>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, msg in messages %}
+        <div class="error-message {{ category }}">{{ msg }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <section class="buscaDemanda">
+            <h2>Buscar Demanda</h2>
+        </section>
+        <section class="tarefas">
+            <div class="tarefas-header">
+                <form id="filtro-projetos" action="" method="get">
+                    <label for="filtro">Filtrar por status:</label>
+                    <select name="filtro" id="filtro" onchange="this.form.submit()">
+                        <option value="" {% if not request.args.get('filtro') %}selected{% endif %}>Todos</option>
+                        <option value="Aberta" {% if request.args.get('filtro') == 'Aberta' %}selected{% endif %}>Aberta</option>
+                        <option value="Fechada" {% if request.args.get('filtro') == 'Fechada' %}selected{% endif %}>Fechada</option>
+                        <option value="Pendente" {% if request.args.get('filtro') == 'Pendente' %}selected{% endif %}>Pendente</option>
+                    </select>
+                    <button type="submit">Buscar</button>
+                </form>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Tecnologia</th>
+                        <th>Status</th>
+                        <th>Developer</th>
+                        <th>Orçamento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for demanda in demandas %}
+                    <tr>
+                        <td data-label="Task">
+                            <div class="task-title">{{ demanda.titulo }}</div>
+                            <div class="task-subtitle">{{ demanda.descricao }}</div>
+                        </td>
+                        <td data-label="Tech Stack">
+                            <span class="tech-pill">{{ demanda.tecnologia }}</span>
+                        </td>
+                        <td data-label="Status"><span class="status-pill">{{ demanda.status }}</span></td>
+                        <td data-label="Developer"><span class="developer-placeholder">Finding match...</span></td>
+                        <td data-label="Cost">R$ {{ demanda.orcamento }}</td>
+                        <td data-label="Actions"><a class="action-link" href="#">View Task</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+
+</html>

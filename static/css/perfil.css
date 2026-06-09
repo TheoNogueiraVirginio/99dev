@@ -1,0 +1,529 @@
+:root {
+    /* Cores principais */
+    --blue: #2664EB;
+    --dark-blue: #1E2636; /* Fundo do left panel */
+    --bg-color: #F8FAFC;  /* Fundo claro do right panel */
+    
+    /* Textos */
+    --text-dark: #1F2937;
+    --text-muted: #6B7280;
+    
+    /* Feedback e Status */
+    --green: #10B981;
+    --light-green: #D1FAE5;
+    --gold: #F59E0B;
+    
+    /* Bordas e Sombras */
+    --border-color: #E5E7EB;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* Header Superior */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 16px 32px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    margin-top: 20px;
+    margin-bottom: 32px;
+    margin-left: 32px;
+    margin-right: 32px;
+}
+
+.content-wrapper {
+    max-width: 70%;
+    margin: 0 auto;
+}
+
+/* Base dos Cards (Reutilizável) */
+.profile-card, 
+.about-me, 
+.skills-card, 
+.client-reviews, 
+.available-tasks-card {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+}
+
+/* Profile Card Principal */
+.banner {
+    background-color: var(--blue);
+    height: 140px;
+    position: relative;
+    border-radius: 16px 16px 0 0;
+    overflow: hidden;
+}
+
+/* Imagem do banner */
+.banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.btn-banner-edit {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 10;
+}
+
+.btn-banner-edit:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.general-info {
+    display: flex;
+    align-items: center;
+    padding: 0 32px 24px 32px;
+    position: relative;
+}
+
+.avatar {
+    margin-top: -50px;
+    margin-right: 24px;
+}
+
+.avatar img {
+    width: 120px;
+    height: 120px;
+    border-radius: 16px;
+    border: 4px solid white;
+    object-fit: cover;
+    background-color: white;
+}
+
+.user-details h2 {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-dark);
+}
+
+.verified-badge {
+    color: var(--blue);
+    font-size: 1.2rem;
+}
+
+.user-details p {
+    color: var(--text-muted);
+}
+
+.text-missing {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+.general-info .btn-edit {
+    margin-left: auto;
+    background-color: var(--blue);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.3s;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.general-info .btn-edit:hover {
+    background-color: #1d4ed8;
+}
+
+.additional-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 24px 32px;
+    border-top: 1px solid var(--border-color);
+}
+
+.info-item h3 {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.info-item p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
+.info-item:nth-child(3) p {
+    color: var(--green);
+}
+
+.info-item:nth-child(4) p {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.info-item:nth-child(4) p::after {
+    content: '\f005';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: var(--gold);
+    font-size: 1.2rem;
+}
+
+/* Profile Grid Inferior */
+.profile-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr; 
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.about-me, 
+.skills-card {
+    padding: 24px;
+}
+
+.about-me h3, 
+.skills-card h3, 
+.client-reviews h3 {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    color: var(--text-dark);
+}
+
+.about-me p {
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+    font-size: 0.95rem;
+}
+
+.contact-info p {
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+}
+
+.contact-info a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill {
+    background-color: #F3F4F6;
+    color: var(--text-dark);
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.profile-main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.client-reviews {
+    padding: 24px;
+}
+
+.review-item {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.review-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.review-header h4 {
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.review-rating {
+    color: var(--gold);
+    font-weight: bold;
+}
+
+.client-name {
+    font-size: 0.85rem;
+    color: #9CA3AF;
+    margin-bottom: 8px;
+}
+
+.review-text {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.available-tasks-card {
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-info-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.icon-container {
+    width: 48px;
+    height: 48px;
+    background-color: var(--light-green);
+    color: var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.task-text h3 {
+    margin-bottom: 4px;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+}
+
+.task-text p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Botões Toggle */
+.toggle-checkbox {
+    appearance: none;
+    width: 48px;
+    height: 26px;
+    background-color: #D1D5DB;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s;
+}
+
+.toggle-checkbox::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.toggle-checkbox:checked {
+    background-color: var(--green);
+}
+
+.toggle-checkbox:checked::before {
+    transform: translateX(22px);
+}
+
+.toggle-online {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toggle-online .status {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Estilização do modal e do formulário */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    padding: 20px;
+}
+
+.modal-overlay:target {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 32px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    transform: translateY(30px);
+    transition: transform 0.3s ease;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+.modal-overlay:target .modal-content {
+    transform: translateY(0);
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 1.4rem;
+    color: var(--text-muted);
+    transition: color 0.3s;
+    text-decoration: none;
+    z-index: 10;
+}
+
+.close-btn:hover {
+    color: var(--text-dark);
+}
+
+.modal-content h2 {
+    margin-bottom: 24px;
+    color: var(--text-dark);
+}
+
+.input-group {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.input-group input,
+.input-group textarea {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    outline: none;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+    border-color: var(--blue);
+}
+
+.btn-save {
+    width: 100%;
+    background-color: var(--green);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: background 0.3s;
+}
+
+.btn-save:hover {
+    background-color: #059669;
+}
+
+.error-msg {
+    color: red;
+    font-size: 0.8em;
+    display: block;
+    margin-top: 2px;
+}
+
+.moldura-perfil-preview {
+    margin: 5px 0;
+}
+
+.preview-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.preview-banner {
+    width: 100px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.input-group-checkbox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+.checkbox-custom {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+    margin: 0;
+}
+
+.checkbox-label {
+    font-weight: bold;
+    color: #475569;
+    font-size: 0.9em;
+}

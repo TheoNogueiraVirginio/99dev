@@ -1,0 +1,419 @@
+:root {
+    /* Cores exclusivas do Dashboard */
+    --sidebar-active: #2f6bf2;
+    --card-bg: #ffffff;
+    --line: #dbe4f0;
+    --shadow: 0 18px 45px rgba(13, 28, 58, 0.08);
+}
+
+/* --- Header de Pesquisa --- */
+header {
+    height: 78px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(219, 228, 240, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 28px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+header input {
+    width: min(100%, 560px);
+    height: 48px;
+    border: 1px solid #d7deea;
+    border-radius: 14px;
+    padding: 0 18px 0 48px;
+    outline: none;
+    background: #fff;
+    color: var(--text);
+    font-size: 0.98rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    background-image: radial-gradient(circle at 22px 23px, transparent 0, transparent 9px, #9aa8bb 9px, #9aa8bb 11px, transparent 11px), linear-gradient(#9aa8bb, #9aa8bb);
+    background-repeat: no-repeat;
+    background-size: 20px 20px, 10px 2px;
+    background-position: 14px center, 30px 31px;
+}
+
+header input::placeholder {
+    color: #8a97aa;
+}
+
+header input:focus {
+    border-color: #9db8ff;
+    box-shadow: 0 0 0 4px rgba(47, 107, 242, 0.1);
+}
+
+.fotoUsuario {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #dbe4f0;
+    background: #ffffff;
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+}
+
+.fotoUsuario:hover {
+    transform: scale(1.05);
+}
+
+.moldura-perfil {
+    width: 100%;
+    height: 100%;
+}
+
+.moldura-perfil img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+}
+
+.link-perfil {
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* --- Alertas de Sucesso / Erro --- */
+.error-message {
+    margin: 18px 28px 0;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    font-size: 0.95rem;
+}
+
+.error-message.success {
+    border-color: #cfe8d3;
+    background: #f3fbf5;
+    color: #25653a;
+}
+
+.error-message.error {
+    border-color: #f2c2c8;
+    background: #fff6f7;
+    color: #9f2436;
+}
+
+/* --- Seção: Nova Tarefa --- */
+.novaTarefa {
+    margin: 30px 28px 0;
+    background: var(--card-bg);
+    border: 1px solid rgba(219, 228, 240, 0.95);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 26px 28px 24px;
+    max-width: 1280px;
+}
+
+.novaTarefa h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+    font-size: 1.55rem;
+    line-height: 1.2;
+    margin-bottom: 18px;
+    letter-spacing: -0.02em;
+}
+
+.novaTarefa h2::before {
+    content: "+";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    color: var(--sidebar-active);
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 1;
+    margin-top: -2px;
+}
+
+.novaTarefa form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.novaTarefa label {
+    display: block;
+    margin: 6px 0 -2px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #20304a;
+}
+
+.novaTarefa input,
+.novaTarefa textarea {
+    width: 100%;
+    border: 1px solid #dbe4f0;
+    border-radius: 14px;
+    background: #fff;
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.novaTarefa input {
+    height: 40px;
+    padding: 0 16px;
+}
+
+.novaTarefa textarea {
+    min-height: 112px;
+    padding: 14px 16px;
+    resize: vertical;
+}
+
+.novaTarefa input::placeholder,
+.novaTarefa textarea::placeholder {
+    color: #9aa7ba;
+}
+
+.novaTarefa input:focus,
+.novaTarefa textarea:focus {
+    border-color: #8fb0ff;
+    box-shadow: 0 0 0 4px rgba(47, 107, 242, 0.08);
+}
+
+.novaTarefa button[type="submit"] {
+    height: 48px;
+    margin-top: 6px;
+    border: 0;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #2f6bf2, #245ad6);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 12px 28px rgba(47, 107, 242, 0.28);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.novaTarefa button[type="submit"]:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.03);
+    box-shadow: 0 16px 30px rgba(47, 107, 242, 0.34);
+}
+
+.novaTarefa button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* --- Seção: Tabela de Tarefas --- */
+.tarefas {
+    margin: 22px 28px 0;
+    padding: 22px 24px 18px;
+    background: #ffffff;
+    border: 1px solid rgba(219, 228, 240, 0.95);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    max-width: 1280px;
+    overflow: hidden;
+}
+
+.tarefas-header {
+    margin-bottom: 14px;
+}
+
+.tarefas-header h2 {
+    font-size: 1.45rem;
+    line-height: 1.2;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+
+.tarefas table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    background: #fff;
+}
+
+.tarefas thead th {
+    text-align: left;
+    font-weight: 600;
+    color: #61718a;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+}
+
+.tarefas tbody td {
+    padding: 18px;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: middle;
+    color: var(--text);
+}
+
+.tarefas tbody tr {
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.tarefas tbody tr:hover {
+    background: #fafcff;
+}
+
+.task-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text);
+}
+
+.task-subtitle {
+    font-size: 0.88rem;
+    color: #6d7c92;
+}
+
+.task-description {
+    color: #485a74;
+    max-width: 360px;
+    line-height: 1.4;
+}
+
+.tech-pill,
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.tech-pill {
+    background: #f2f4f8;
+    color: #344969;
+    border: 1px solid #ebeff5;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+.status-pill {
+    background: #eaf8f1;
+    color: #187a4d;
+    border: 1px solid #cdeedc;
+}
+
+.developer-placeholder {
+    color: #73849c;
+    font-weight: 500;
+}
+
+.action-link {
+    color: #2f6bf2;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.action-link:hover {
+    text-decoration: underline;
+}
+
+.tarefas tbody td:last-child,
+.tarefas thead th:last-child {
+    text-align: right;
+}
+
+.tarefas tbody td:nth-child(5) {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text);
+    white-space: nowrap;
+}
+
+.tarefas tbody td:nth-child(6) {
+    white-space: nowrap;
+}
+
+/* --- Responsividade do Dashboard --- */
+@media (max-width: 980px) {
+    header {
+        position: relative;
+        padding-left: 76px;
+    }
+}
+
+@media (max-width: 640px) {
+    header {
+        padding: 0 16px 0 76px;
+    }
+
+    header input {
+        width: 100%;
+    }
+
+    .novaTarefa,
+    .error-message {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+
+    .novaTarefa {
+        padding: 22px 16px 18px;
+    }
+
+    .tarefas {
+        margin: 18px 16px 0;
+        padding: 18px 16px 14px;
+    }
+
+    .tarefas table,
+    .tarefas thead,
+    .tarefas tbody,
+    .tarefas th,
+    .tarefas td,
+    .tarefas tr {
+        display: block;
+    }
+
+    .tarefas thead {
+        display: none;
+    }
+
+    .tarefas tbody tr {
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .tarefas tbody td {
+        padding: 8px 0;
+        border: 0;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .tarefas tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #61718a;
+        flex-shrink: 0;
+    }
+
+    .tarefas tbody td:last-child {
+        text-align: left;
+    }
+
+    .task-description {
+        max-width: none;
+        text-align: right;
+    }
+}

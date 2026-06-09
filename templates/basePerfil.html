@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}99Dev{% endblock %}</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/basePerfil.css') }}">
+    
+    {% block head_css %}{% endblock %}
+</head>
+
+<body>
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    <label for="menu-toggle" class="menu-button" aria-label="Abrir menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </label>
+    <label for="menu-toggle" class="menu-overlay" aria-hidden="true"></label>
+
+    <aside>
+        <label for="menu-toggle" class="menu-close" aria-label="Fechar menu">×</label>
+        
+        <div class="logo">
+            <i class="fa-solid fa-code"></i>
+            <div>
+                <h1>99dev</h1>
+                <p>
+                    {% if usuario and usuario.cargo == 'cliente' %}
+                        Portal do Cliente
+                    {% else %}
+                        Portal do Dev
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <nav>
+            <ul>
+                {% if usuario and usuario.cargo == 'cliente' %}
+                    <li><a href="/dashboard"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                    <li><a href="/MeusProjetos"><i class="fa-solid fa-folder-open"></i> Meus Projetos</a></li>
+                    <li><a href="/carteira"><i class="fa-solid fa-wallet"></i> Carteira</a></li>
+                    <li><a href="/suporte"><i class="fa-solid fa-headset"></i> Suporte</a></li>
+                
+                {% else %}
+                    <li><a href="#"><i class="fa-solid fa-house"></i> Início</a></li>
+                    <li><a href="#"><i class="fa-solid fa-wallet"></i> My Earnings</a></li>
+                    <li><a href="/perfil-dev"><i class="fa-solid fa-user"></i> Profile</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        
+        <hr>
+        
+        <div class="user-info">
+            <a href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</a>
+        </div>
+    </aside>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+
+</html>

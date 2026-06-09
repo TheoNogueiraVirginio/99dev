@@ -1,0 +1,273 @@
+/*--- Cores da página ---*/
+:root {
+    --blue: #2664EB;
+    --light-blue: rgba(255,255,255,0.12);
+    --red: #dc3545;
+}
+
+
+/*--- Reset básico ---*/
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+
+
+/*--- Layout geral da página ---*/
+main {
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: 50% 50%;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/*--- Lado direito da página (Substitui o antigo .right-panel) ---*/
+
+.card-cadastro{
+    width: 100%;
+    max-width: 360px; 
+    background-color: #ffffff; 
+    border-radius: 1em; 
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.08); 
+    padding: 2.5em; 
+    box-sizing: border-box;
+}
+.card-cadastro p a {
+    margin-left: 0.4em;
+    text-decoration: none;
+    color: var(--blue);
+    font-weight: bold;
+}
+
+.card-cadastro p a:hover {
+    text-decoration: underline;
+}
+
+main > div:last-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fafbfd;
+}
+
+/*--- Container do conteúdo (Substitui o antigo .signup-content) ---*/
+main > div:last-child > div {
+    width: 300px;
+    background: white;
+    border-radius: 1em;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 2em;
+}
+
+main > div:last-child > div h1 {
+    margin: 0;
+}
+
+main > div:last-child > div h2 {
+    all: unset;
+    font-size: 0.8em;
+    color: rgb(51, 51, 51);
+    margin: 0;
+}
+
+/*--- Estilização do formulário ---*/
+main > div:last-child > div form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+    margin-top: 1em;
+}
+
+/*--- Grupos de input de texto/senha (Substitui o antigo .input-group) ---*/
+form > div:has(input[type="text"]),
+form > div:has(input[type="email"]),
+form > div:has(input[type="password"]) {
+    display: flex;
+    flex-direction: column;
+}
+
+form > div label {
+    display: block;
+    font-size: 0.8em;
+    margin-bottom: 0.2em;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+    height: 2.5em;
+    border: 1px solid lightgray;
+    border-radius: 0.5em;
+    margin: 1px; /* Compensa a diferença de tamanho da borda no focus */
+    outline: none;
+    padding-left: 1em;
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="password"]:focus {
+    border: 2px solid var(--blue);
+    border-radius: 0.5em;
+    margin: 0;
+}
+
+/*--- Checkboxes do Flask (dev e pessoa) ---*/
+form > div:has(input[type="checkbox"]) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.8em;
+    color: rgb(51, 51, 51);
+    margin: 0.2em 0;
+}
+
+/*--- Mensagens de erro vindas do Flask-WTF ---*/
+form span {
+    color: var(--red);
+    font-size: 0.75em;
+    display: block;
+    margin-top: -0.2em;
+    margin-bottom: 0.4em;
+}
+
+/*--- Botão de Envio ---*/
+form button[type="submit"] {
+    border: 1px solid transparent;
+    border-radius: 0.5em;
+    background: var(--blue);
+    width: 100%;
+    height: 2.5em;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 0.5em;
+}
+
+/*--- Redirecionamento para Login ---*/
+main > div:last-child > div p {
+    display: flex;
+    justify-content: center;
+    font-size: 0.8em;
+    color: rgb(51, 51, 51);
+    margin-top: 1.5em;
+}
+
+main > div:last-child > div p a {
+    margin-left: 0.3em;
+    text-decoration: none;
+    color: var(--blue);
+    cursor: pointer;
+}
+
+/*--- Validação visual da senha ---*/
+#senha:valid {
+    border: 2px solid green;
+}
+#senha:invalid:not(:placeholder-shown) {
+    border: 2px solid red;
+}
+
+
+/* Estilos da Integração com Google */
+.google-auth-container {
+    text-align: center;
+    margin: 15px 0;
+    width: 100%;
+}
+
+.divisor-ou {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #757575;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    margin: 25px 0;
+}
+
+/* Cria as duas linhas automáticas */
+.divisor-ou::before,
+.divisor-ou::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #dadce0;
+}
+
+/* Espaçamento interno entre as linhas e o texto "ou" */
+.divisor-ou::before {
+    margin-right: 12px;
+}
+
+.divisor-ou::after {
+    margin-left: 12px;
+}
+
+.menu-google-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.btn-google {
+    list-style: none;
+    cursor: pointer;
+    background-color: #fff;
+    color: #5f6368;
+    padding: 12px;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.btn-google:hover {
+    background-color: #f8f9fa;
+}
+
+.btn-google::-webkit-details-marker {
+    display: none;
+}
+
+.menu-google-opcoes {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    z-index: 99;
+}
+
+.menu-google-opcoes a {
+    display: block;
+    padding: 12px;
+    text-decoration: none;
+    color: #3c4043;
+    font-size: 14px;
+    text-align: center;
+    transition: background-color 0.15s;
+}
+
+.menu-google-opcoes a:hover {
+    background-color: #f1f3f4;
+    color: #1a73e8;
+}
+
+.menu-google-opcoes a:not(:last-child) {
+    border-bottom: 1px solid #f1f3f4;
+}

@@ -1,0 +1,211 @@
+/*--- Cores da página ---*/
+:root {
+    --blue: #2664EB;
+    --light-blue: rgba(255,255,255,0.12);
+    --red: #dc3545;
+}
+
+/*--- Reset básico ---*/
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    background-color: #fafbfd; /* Fundo cinza padrão do projeto */
+}
+
+/*--- Layout geral (Centralização Absoluta) ---*/
+main {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+    padding: 2em;
+}
+
+/*--- Container do conteúdo (O Card Branco) ---*/
+main > div {
+    width: 100%;
+    max-width: 420px; /* Largura ideal para não distorcer o formulário */
+    background: white;
+    border-radius: 1em;
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.08); /* Sombra suave idêntica ao login */
+    padding: 2.5em;
+    box-sizing: border-box;
+}
+
+main > div h1 { 
+    margin: 0 0 0.2em 0;
+    font-size: 2rem;
+    color: #1e293b;
+}
+
+main > div h2 {
+    all: unset;
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0 0 2em 0;
+    font-weight: normal;
+    display: block;
+}
+
+/*--- Estrutura do Form ---*/
+main > div form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+    margin-top: 1em;
+}
+
+/*--- Grupos de input e textarea ---*/
+form > div:has(input[type="text"]),
+form > div:has(input[type="email"]),
+form > div:has(input[type="password"]),
+form > div:has(textarea) {
+    display: flex;
+    flex-direction: column;
+}
+
+form > div label {
+    display: block;
+    font-size: 0.85em;
+    margin-bottom: 0.4em;
+    margin-top: 0.4em;
+    font-weight: bold;
+    color: #475569;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form textarea {
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5em;
+    margin: 1px;
+    outline: none;
+    padding: 0.6em 1em;
+    font-size: 0.95rem;
+    color: #334155;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+    height: 2.8em;
+}
+
+/* Estilo customizado para o campo de biografia */
+form textarea {
+    resize: vertical;
+    min-height: 85px;
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="password"]:focus,
+form textarea:focus {
+    border: 2px solid var(--blue);
+    box-shadow: 0 0 0 3px rgba(38, 100, 235, 0.15);
+    border-radius: 0.5em;
+    margin: 0;
+}
+
+/*--- Checkboxes do Flask (dev e pessoa) ---*/
+form > div:has(input[type="checkbox"]) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.85em;
+    color: #475569;
+    margin: 0.2em 0;
+    font-weight: bold;
+}
+
+/*--- Mensagens de erro vindas do Flask-WTF ---*/
+form span {
+    color: var(--red);
+    font-size: 0.75em;
+    display: block;
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+}
+
+/*--- Botão de Envio ---*/
+form button[type="submit"] {
+    border: none;
+    border-radius: 0.5em;
+    background: var(--blue);
+    width: 100%;
+    height: 2.8em;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 1.5em;
+    font-size: 1rem;
+    transition: background 0.2s ease;
+}
+
+form button[type="submit"]:hover {
+    background: #1d53c9;
+}
+
+/*--- Redirecionamento ---*/
+main > div p {
+    display: flex;
+    justify-content: center;
+    font-size: 0.9em;
+    color: #64748b;
+    margin-top: 2em;
+    margin-bottom: 0;
+}
+
+main > div p a {
+    margin-left: 0.3em;
+    text-decoration: none;
+    color: var(--blue);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+main > div p a:hover {
+    text-decoration: underline;
+}
+
+/* Container que agrupa o label, a foto e o botão de upload */
+.container-perfil {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+    margin-bottom: 1em;
+    align-items: center;
+}
+
+.container-perfil label {
+    align-self: flex-start;
+    width: 100%;
+}
+
+/* Moldura que deixa a foto redonda e com sombra */
+.moldura-perfil {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--blue);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    background-color: #e2e8f0;
+}
+
+/* Garante que a imagem ocupe o círculo */
+.moldura-perfil img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+

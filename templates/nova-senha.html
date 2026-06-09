@@ -1,0 +1,32 @@
+{% extends "baseAutenticacao.html" %}
+
+{% block title %}Nova Senha — 99Dev{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/recuperar-senha.css') }}">
+{% endblock %}
+
+{% block aside_headline %}
+    <h2>Crie uma nova senha segura para proteger sua conta.</h2>
+{% endblock %}
+
+{% block content %}
+<div class="card-login">
+    <h1>Nova senha</h1>
+    <h2>Digite sua nova senha abaixo para acessar sua conta</h2>
+
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+
+        {{ form.password.label }}
+        {{ form.password(placeholder="Digite sua nova senha", id="password", required=True) }}
+
+        {{ form.password_confirm.label }}
+        {{ form.password_confirm(placeholder="Confirme sua nova senha", id="password_confirm", required=True) }}
+
+        <button type="submit">Salvar Nova Senha</button>
+    </form>
+
+    <p><a href="/login">Voltar para o login</a></p>
+</div>
+{% endblock %}

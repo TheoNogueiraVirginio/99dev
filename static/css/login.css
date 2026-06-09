@@ -1,0 +1,245 @@
+/*--- Cores da página ---*/
+:root {
+    --blue: #2664EB;
+    --light-blue: rgba(255, 255, 255, 0.12);
+    --red: #dc3545;
+    --gray-bg: #fafbfd;
+}
+
+/*--- Reset básico ---*/
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--gray-bg);
+}
+
+/*--- Layout geral da página ---*/
+main {
+    width: 100%;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+/*--- Lado direito da página (formulario e card-login) ---*/
+
+/*--- Ajuste no card ---*/
+.card-login {
+    width: 100%;
+    max-width: 360px; 
+    background-color: #ffffff; 
+    border-radius: 1em; 
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.08); 
+    padding: 2.5em; 
+    box-sizing: border-box;
+}
+
+.card-login h1 {
+    margin: 0 0 0.2em 0;
+    font-size: 2rem;
+    color: #1e293b;
+}
+
+.card-login h2 {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0 0 2em 0;
+    font-weight: normal;
+}
+
+/*--- Estrutura do Form ---*/
+.card-login form {
+    display: flex;
+    flex-direction: column;
+}
+
+/*--- Labels e Inputs ---*/
+.card-login form label {
+    font-size: 0.85em;
+    margin-bottom: 0.4em;
+    margin-top: 0.8em;
+    font-weight: bold;
+    color: #475569;
+}
+
+.card-login form label:first-of-type {
+    margin-top: 0;
+}
+
+.card-login form input {
+    height: 2.8em;
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    padding: 0 1em;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    color: #334155;
+    transition: all 0.2s ease;
+}
+
+.card-login form input::placeholder {
+    color: #94a3b8;
+}
+
+/* Efeito de foco otimizado usando as variáveis do projeto */
+.card-login form input:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(38, 100, 235, 0.15);
+}
+
+/*--- Botão de Envio ---*/
+.card-login form button[type="submit"] {
+    border: none;
+    border-radius: 8px;
+    background: var(--blue);
+    width: 100%;
+    height: 2.8em;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 2em;
+    font-size: 1rem;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.card-login form button[type="submit"]:hover {
+    background: #1d53c9;
+}
+
+.card-login form button[type="submit"]:active {
+    transform: scale(0.98);
+}
+
+/*--- Link para Cadastro ---*/
+.card-login p {
+    display: flex;
+    justify-content: center;
+    font-size: 0.9em;
+    color: #64748b;
+    margin-top: 2em;
+    margin-bottom: 0;
+}
+
+.card-login p a {
+    margin-left: 0.4em;
+    text-decoration: none;
+    color: var(--blue);
+    font-weight: bold;
+}
+
+.card-login p a:hover {
+    text-decoration: underline;
+}
+
+/*--- Validação visual da senha nativa ---*/
+#senha:valid {
+    border: 2px solid #10b981;
+}
+
+/* Validação visual da senha caso inválido */
+#senha:invalid:not(:placeholder-shown) {
+    border: 2px solid var(--red);
+}
+
+
+/* Estilos da Integração com Google */
+.google-auth-container {
+    text-align: center;
+    margin: 15px 0;
+    width: 100%;
+}
+
+.divisor-ou {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #757575; 
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    margin: 25px 0; 
+}
+
+/* Cria as duas linhas automáticas */
+.divisor-ou::before,
+.divisor-ou::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #dadce0;
+}
+
+/* Espaçamento interno entre as linhas e o texto "ou" */
+.divisor-ou::before {
+    margin-right: 12px;
+}
+
+.divisor-ou::after {
+    margin-left: 12px;
+}
+
+.menu-google-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.btn-google {
+    list-style: none;
+    cursor: pointer;
+    background-color: #fff;
+    color: #5f6368;
+    padding: 12px;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.btn-google:hover {
+    background-color: #f8f9fa;
+}
+
+.btn-google::-webkit-details-marker {
+    display: none;
+}
+
+.menu-google-opcoes {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    z-index: 99;
+}
+
+.menu-google-opcoes a {
+    display: block;
+    padding: 12px;
+    text-decoration: none;
+    color: #3c4043;
+    font-size: 14px;
+    text-align: center;
+    transition: background-color 0.15s;
+}
+
+.menu-google-opcoes a:hover {
+    background-color: #f1f3f4;
+    color: #1a73e8;
+}
+
+.menu-google-opcoes a:not(:last-child) {
+    border-bottom: 1px solid #f1f3f4;
+}

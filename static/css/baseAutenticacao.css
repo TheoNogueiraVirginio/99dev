@@ -1,0 +1,178 @@
+/* ==========================================================
+   auth-base.css — Layout e aside compartilhados pelas páginas
+   de autenticação: login, cadastro e recuperar-senha.
+   ========================================================== */
+
+/* ── Variáveis ── */
+:root {
+    --blue:        #2664EB;
+    --blue-dark:   #1d53c9;
+    --blue-glass:  rgba(255, 255, 255, 0.12);
+    --red:         #dc3545;
+    --gray-bg:     #fafbfd;
+    --text-dark:   #1e293b;
+    --text-muted:  #64748b;
+    --border:      #cbd5e1;
+}
+
+/* ── Reset mínimo ── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--gray-bg);
+    color: var(--text-dark);
+}
+
+/* ── Layout raiz: aside | conteúdo ── */
+.auth-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;   /* 50 / 50 — mesma proporção do projeto */
+    min-height: 100vh;
+}
+
+/* ══════════════════════════════════════
+   ASIDE
+   ══════════════════════════════════════ */
+.auth-aside {
+    background-color: var(--blue);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2.5rem;
+    padding: 3rem 10%;
+    min-height: 100vh;
+}
+
+/* Logo */
+.aside-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    font-size: 3rem;
+    font-weight: bold;
+    letter-spacing: -0.5px;
+}
+
+.aside-logo i {
+    font-size: 1em;
+}
+
+/* Título/subtítulo opcional */
+.aside-headline h2 {
+    font-size: 1.35rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Lista de vantagens */
+.aside-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+}
+
+.aside-features li {
+    display: flex;
+    align-items: center;
+    gap: 1.2em;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.4;
+    transition: transform 0.2s ease;
+}
+
+.aside-features li:hover {
+    transform: translateX(4px);
+}
+
+.feature-icon {
+    flex-shrink: 0;
+    width: 2.8em;
+    height: 2.8em;
+    background: var(--blue-glass);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+}
+
+.aside-features li:hover .feature-icon {
+    transform: scale(1.08);
+}
+
+/* ══════════════════════════════════════
+   ÁREA DE CONTEÚDO (coluna direita)
+   ══════════════════════════════════════ */
+.auth-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--gray-bg);
+    padding: 2rem;
+}
+
+/* ── Mensagens flash globais ── */
+.flash-msg {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    max-width: 90vw;
+    text-align: center;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateX(-50%) translateY(-12px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.flash-success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+.flash-error {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #9f1239;
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVIDADE — oculta o aside
+   em telas menores que 768 px
+   ══════════════════════════════════════ */
+@media (max-width: 768px) {
+    .auth-layout {
+        grid-template-columns: 1fr;   /* apenas uma coluna */
+    }
+
+    /* O aside é completamente removido do fluxo visual e de acessibilidade */
+    .auth-aside {
+        display: none;
+    }
+
+    .auth-content {
+        min-height: 100vh;
+        padding: 1.5rem 1rem;
+        align-items: flex-start;
+        padding-top: 3rem;
+    }
+}
