@@ -52,14 +52,12 @@ def autenticar_usuario(email,senha):
     return usuario
 
 def gerenciar_login_google(email, cargo):
-    usuario = Usuario.query.filter_by(email=email).first()
-
+    usuario = Cliente.query.filter_by(email=email).first() or Desenvolvedor.query.filter_by(email=email).first()
+    
     if usuario:
         return usuario
-
-    # Se o usuario não estiver cadastrado, é gerada uma senha aleatória (que ele nunca vai precisar usar)
+    
     senha_aleatoria = secrets.token_urlsafe(32)
-
     try:
         novo_usuario = cadastrar_usuario(email, senha_aleatoria, cargo)
         return novo_usuario
