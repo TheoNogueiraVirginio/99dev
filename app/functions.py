@@ -64,8 +64,8 @@ def gerenciar_login_google(email, cargo):
     except Exception as e:
         raise ValueError(f"Erro ao criar conta automaticamente via Google: {str(e)}")
         
-def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, github, linkedin, novo_exibir_dados):
-    perfil = PerfilDev.query.filter_by(id_usuario=id_usuario).first()
+def atualizar_perfil_dev(id_dev, nome, titulo, valor_hora, skills, resumo, github, linkedin, foto_perfil, foto_banner, novo_exibir_dados):
+    perfil = Desenvolvedor.query.get(id_dev)
 
     if not perfil:
         raise ValueError("Perfil de desenvolvedor não encontrado.")
@@ -77,6 +77,8 @@ def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, g
     perfil.resumo = resumo
     perfil.github = github
     perfil.linkedin = linkedin
+    perfil.foto_perfil = foto_perfil
+    perfil.foto_banner = foto_banner
     perfil.exibir_dados = novo_exibir_dados
 
     try:
@@ -85,6 +87,46 @@ def atualizar_perfil_dev(id_usuario, nome, titulo, valor_hora, skills, resumo, g
         db.session.rollback()
         raise
         
+def atualizar_perfil_cliente(id_cliente, novo_email, nova_senha, nova_descricao, arquivo_foto):
+    perfil = Cliente.query.get(id_cliente)
+
+    if not perfil:
+        raise ValueError("Usuário não encontrado.")
+    
+    if perfil.email != novo_email:
+        if Cliente.query.filter_by(email=novo_email).first():
+            raise ValueError("Este e-mail já está associado a outra conta.")
+        perfil.email = novo_email
+        
+    if nova_senha:
+        senha_bytes = nova_senha.encode('utf-8')
+        salt = bcrypt.gensalt()
+        perfil.senha = bcrypt.hashpw(senha_bytes, salt).decode('utf-8')
+        
+    if arquivo_foto:
+        nome_da_foto = salvar_foto_perfil(id_cliente, arquivo_foto)
+        perfil.foto_perfil = nome_da_foto
+
+    perfil.descricao = nova_descricao
+    
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+
+def salvar_foto_perfil(id_usuario, arquivo_foto):
+    
+    #Extrai a extensão
+    _, extensao = os.path.splitext(arquivo_foto.filename)
+    nome_arquivo = f"{id_usuario}{extensao}"
+    pasta_uploads = os.path.join(BASE_DIR, 'static', 'uploads', 'perfil')
+    os.makedirs(pasta_uploads, exist_ok=True)
+    caminho_completo = os.path.join(pasta_uploads, nome_arquivo)
+    arquivo_foto.save(caminho_completo)
+    
+    return nome_arquivo
+
 def solicitar_recuperacao_senha(email):
     usuario = Usuario.query.filter_by(email=email).first()
     if not usuario:
@@ -195,43 +237,3 @@ def lerDemandas(busca=None, filtro_status=None):
                         'id': row[5]
                     })
     return demandas
-
-def atualizar_perfil_cliente(id_usuario, novo_email, nova_senha, nova_descricao, arquivo_foto):
-    usuario = Usuario.query.get(id_usuario)
-    if not usuario:
-        raise ValueError("Usuário não encontrado.")
-    if usuario.cargo  != 'cliente':
-        raise ValueError('Você não tem acesso com esse tipo de perfil')
-    if usuario.email != novo_email:
-        if Usuario.query.filter_by(email=novo_email).first():
-            raise ValueError("Este e-mail já está associado a outra conta.")
-        usuario.email = novo_email
-        
-    if nova_senha:
-        senha_bytes = nova_senha.encode('utf-8')
-        salt = bcrypt.gensalt()
-        usuario.senha = bcrypt.hashpw(senha_bytes, salt).decode('utf-8')
-        
-    if arquivo_foto:
-        nome_da_foto = salvar_foto_perfil(id_usuario, arquivo_foto)
-        usuario.foto_perfil = nome_da_foto
-
-    usuario.descricao = nova_descricao
-    
-    try:
-        db.session.commit()
-    except Exception:
-        db.session.rollback()
-        raise
-    
-def salvar_foto_perfil(id_usuario, arquivo_foto):
-    
-    #Extrai a extensão
-    _, extensao = os.path.splitext(arquivo_foto.filename)
-    nome_arquivo = f"{id_usuario}{extensao}"
-    pasta_uploads = os.path.join(BASE_DIR, 'static', 'uploads', 'perfil')
-    os.makedirs(pasta_uploads, exist_ok=True)
-    caminho_completo = os.path.join(pasta_uploads, nome_arquivo)
-    arquivo_foto.save(caminho_completo)
-    
-    return nome_arquivo
