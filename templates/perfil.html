@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <title> Nome da Pessoa - 99Dev</title>
+    <title>{{ usuario.nome if usuario.nome else "Perfil" }} - 99Dev</title>
     <link rel="stylesheet" href="../static/css/perfil.css">
 </head>
 
@@ -26,7 +26,6 @@
             </nav>
         </div>
 
-
         <div class="right-panel">
             <div class="header">
                 <h1>Tarefas Disponíveis</h1>
@@ -38,29 +37,45 @@
 
             <div class="content-wrapper">
                 <div class="profile-card">
-                    <div class="banner ">
+                    {% if foto_banner %}
+                    <style>
+                        .banner-dinamico {
+                            background-image: url("{{ url_for('static', filename='uploads/banner/' ~ foto_banner) }}");
+                        }
+                    </style>
+                    <div class="banner banner-dinamico">
                         <button class="btn-banner-edit" aria-label="Edit Banner">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
                     </div>
+                    {% else %}
+                    <div class="banner">
+                        <button class="btn-banner-edit" aria-label="Edit Banner">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </div>
+                    {% endif %}
 
                     <div class="general-info">
                         <div class="avatar">
-                            <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar">
+                            {% if usuario.foto_perfil %}
+                                <img src="{{ url_for('static', filename='uploads/perfil/' ~ usuario.foto_perfil) }}" alt="Foto de {{ usuario.nome }}">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar Padrão">
+                            {% endif %}
                         </div>
+                        
                         <div class="user-details">
                             {% if usuario.nome %}
-                            <h2>{{ usuario.nome }} <span class="fa-solid-circle-check verified-badge"></span></h2>
+                                <h2>{{ usuario.nome }} <span class="fa-solid-circle-check verified-badge"></span></h2>
                             {% else %}
-                            <h2>Usuário sem nome</h2>
-
+                                <h2>Usuário sem nome</h2>
                             {% endif %}
 
                             {% if usuario.titulo %}
-                            <p>{{ usuario.titulo }}</p>
+                                <p>{{ usuario.titulo }}</p>
                             {% else %}
-                            <h2>Usuário sem função principal</h2>
-
+                                <p style="color: #94a3b8; font-style: italic;">Função principal não cadastrada</p>
                             {% endif %}
                         </div>
                         <a href="#edit-modal" class="btn-edit">Edição de Perfil</a>
@@ -88,35 +103,33 @@
                     {% endif %}
                 </div>
 
-
                 <section class="profile-content">
                     <div class="profile-sidebar">
                         <div class="about-me">
                             <h3>Sobre mim</h3>
                             {% if usuario.resumo %}
-                            <p>{{ usuario.resumo }}</p>
+                                <p>{{ usuario.resumo }}</p>
                             {% else %}
-                            <p>Resumo não cadastrado</p>
+                                <p style="color: #94a3b8; font-style: italic;">Resumo não cadastrado</p>
                             {% endif %}
 
                             {% if usuario.valor_hora %}
-                            <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: ${{ "%.2f" % usuario.valor_hora }}
-                            </P>
+                                <p><i class="fa-solid fa-dollar-sign"></i> Valor / hora: ${{ "%.2f" % usuario.valor_hora }}</p>
                             {% else %}
-                            <P><i class="fa-solid fa-dollar-sign"></i> Valor / hora: Não cadastrado</P>
+                                <p><i class="fa-solid fa-dollar-sign"></i> Valor / hora: Não cadastrado</p>
                             {% endif %}
 
                             <div class="contact-info">
                                 {% if usuario.github %}
-                                <p><i class="fab fa-github"></i> {{ usuario.github }}</p>
+                                    <p><i class="fab fa-github"></i> <a href="{{ usuario.github }}" target="_blank">GitHub</a></p>
                                 {% else %}
-                                <p><i class="fab fa-github"></i> GitHub não cadastrado</p>
+                                    <p><i class="fab fa-github"></i> GitHub não cadastrado</p>
                                 {% endif %}
 
                                 {% if usuario.linkedin %}
-                                <p><i class="fab fa-linkedin"></i> {{ usuario.linkedin }}</p>
+                                    <p><i class="fab fa-linkedin"></i> <a href="{{ usuario.linkedin }}" target="_blank">LinkedIn</a></p>
                                 {% else %}
-                                <p><i class="fab fa-linkedin"></i> LinkedIn não cadastrado</p>
+                                    <p><i class="fab fa-linkedin"></i> LinkedIn não cadastrado</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -125,11 +138,11 @@
                             <h3>Top Habilidades</h3>
                             <div class="skills-list">
                                 {% if usuario.skills %}
-                                {% for skill in usuario.skills.split(',') %}
-                                <span class="skill">{{ skill.strip() }}</span>
-                                {% endfor %}
+                                    {% for skill in usuario.skills.split(',') %}
+                                        <span class="skill">{{ skill.strip() }}</span>
+                                    {% endfor %}
                                 {% else %}
-                                <span class="skill">Nenhuma habilidade cadastrada</span>
+                                    <span class="skill">Nenhuma habilidade cadastrada</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -149,9 +162,7 @@
                                         </span>
                                     </div>
                                     <p class="client-name">Cliente: John D.</p>
-                                    <p class="review-text">"{{usuario.nome}} foi muito rápido e imediatamente
-                                        identificou o gargalo em
-                                        nosso ciclo de renderização. Altamente recomendado!"</p>
+                                    <p class="review-text">"{{ usuario.nome if usuario.nome else 'O dev' }} foi muito rápido e imediatamente identificou o gargalo em nosso ciclo de renderização. Altamente recomendado!"</p>
                                 </div>
                                 <div class="review-item">
                                     <div class="review-header">
@@ -161,8 +172,7 @@
                                         </span>
                                     </div>
                                     <p class="client-name">Cliente: TechStart Inc.</p>
-                                    <p class="review-text">"Transição perfeita dos seus arquivos Figma para React.
-                                        Código limpo e responsivo."</p>
+                                    <p class="review-text">"Transição perfeita dos seus arquivos Figma para React. Código limpo e responsivo."</p>
                                 </div>
                                 <div class="review-item">
                                     <div class="review-header">
@@ -172,8 +182,7 @@
                                         </span>
                                     </div>
                                     <p class="client-name">Cliente: Michael L.</p>
-                                    <p class="review-text">"Excelente trabalho na integração da nossa complexa API
-                                        legada."</p>
+                                    <p class="review-text">"Excelente trabalho na integração da nossa complexa API legada."</p>
                                 </div>
                             </div>
                         </div>
@@ -200,16 +209,15 @@
         </div>
     </main>
 
-
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content">
-            <a href="" class="close-btn" aria-label="Close Modal">
+            <a href="#" class="close-btn" aria-label="Close Modal">
                 <i class="fa-solid fa-xmark"></i>
             </a>
 
             <h2>Edição de Perfil</h2>
 
-            <form action="{{ url_for('perfildev') }}" method="POST">
+            <form action="{{ url_for('perfildev') }}" method="POST" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
 
                 <div class="input-group">
@@ -252,42 +260,45 @@
 
                 <div class="input-group">
                     {{ form.foto_perfil.label }}
-                    
-                    <div class="moldura-perfil">
-                        {% if foto_perfil %}
-                            <img src="{{ url_for('static', filename='uploads/perfil/' ~ foto_perfil) }}" alt="Sua foto de perfil atual">
+                    <div class="moldura-perfil" style="margin: 5px 0;">
+                        {% if usuario.foto_perfil %}
+                            <img src="{{ url_for('static', filename='uploads/perfil/' ~ usuario.foto_perfil) }}" alt="Foto de perfil atual" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
                         {% else %}
-                            <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar padrão do sistema">
+                            <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar padrão" style="width: 50px; height: 50px; border-radius: 50%;">
                         {% endif %}
                     </div>
                     {{ form.foto_perfil() }}
                 </div>
                 {% for error in form.foto_perfil.errors %}
-                <span>{{ error }}</span>
+                <span class="error-msg" style="color: red; font-size: 0.8em;">{{ error }}</span>
                 {% endfor %}
 
                 <div class="input-group">
                     {{ form.foto_banner.label }}
-                    
-                    <div class="moldura-perfil">
+                    <div class="moldura-perfil" style="margin: 5px 0;">
                         {% if foto_banner %}
-                            <img src="{{ url_for('static', filename='uploads/banner/' ~ foto_banner) }}" alt="Sua foto de banner atual">
+                            <img src="{{ url_for('static', filename='uploads/banner/' ~ foto_banner) }}" alt="Banner atual" style="width: 100px; height: 40px; object-fit: cover; border-radius: 4px;">
                         {% else %}
-                            <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar padrão do sistema">
+                            <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Banner padrão" style="width: 100px; height: 40px; object-fit: cover; border-radius: 4px;">
                         {% endif %}
                     </div>
                     {{ form.foto_banner() }}
                 </div>
                 {% for error in form.foto_banner.errors %}
-                <span>{{ error }}</span>
+                <span class="error-msg" style="color: red; font-size: 0.8em;">{{ error }}</span>
                 {% endfor %}
 
-                <div class="input-group"
-                    style="display: flex; flex-direction: row; align-items: center; gap: 10px; padding-top: 10px; padding-bottom: 20px;">
+                <div class="input-group" style="display: flex; flex-direction: row; align-items: center; gap: 10px; padding-top: 10px; padding-bottom: 20px;">
                     {{ form.exibir_dados(style="width: 1.2rem; height: 1.2rem; cursor: pointer; margin: 0;") }}
                     <span style="font-weight: bold; color: #475569; font-size: 0.9em;">
                         {{ form.exibir_dados.label.text }}
                     </span>
                 </div>
 
-                <button type="submit" class="btn-save">Save Changes
+                <button type="submit" class="btn-save">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
