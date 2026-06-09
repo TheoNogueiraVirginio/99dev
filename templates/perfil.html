@@ -18,8 +18,8 @@
 <div class="content-wrapper">
     <div class="profile-card">
         <div class="banner">
-        {% if foto_banner %}
-            <img src="{{ url_for('static', filename='uploads/banner/' ~ foto_banner) }}" alt="Banner do Perfil" class="banner-img">
+        {% if usuario.foto_banner %}
+            <img src="{{ url_for('static', filename='uploads/banner/' ~ usuario.foto_banner) }}" alt="Banner do Perfil" class="banner-img">
         {% endif %}
     
         <button class="btn-banner-edit" aria-label="Edit Banner">
