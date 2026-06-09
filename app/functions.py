@@ -7,7 +7,7 @@ from flask import session
 from flask_mail import Message
 import bcrypt
 from app import mail, serializer
-from app.models import Usuario, PerfilDev, db
+from app.models import Cliente, Desenvolvedor, db
 
 import secrets
 
@@ -15,49 +15,36 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEMANDAS_CSV_PATH = BASE_DIR / 'data' / 'demandas.csv'
 
 
-def cadastrar_usuario(email, senha, cargo_definido):
-    usuario_existente = Usuario.query.filter_by(email=email).first()
+def cadastrar_usuario(email,senha,cargo):
+    usuario_existente = bool(Cliente.query.filter_by(email=email).first() or Desenvolvedor.query.filter_by(email=email).first())
+
     if usuario_existente:
         raise ValueError("Este e-mail já está cadastrado no sistema.")
-
-    #Criptografia
+    
     senha_bytes = senha.encode('utf-8')
     salt = bcrypt.gensalt()
     senha_hash = bcrypt.hashpw(senha_bytes, salt)
-    
-    novo_usuario = Usuario(
-        email=email,
-        senha=senha_hash.decode('utf-8'), 
-        cargo=cargo_definido
-    )
+
+    if cargo == 'dev':
+        novo_usuario = Desenvolvedor(
+            email=email,
+            senha=senha_hash.decode('utf-8')
+        )
+    else:
+        novo_usuario = Cliente(
+            email=email,
+            senha=senha_hash.decode('utf-8')
+        )
     db.session.add(novo_usuario)
-    try:
-        db.session.flush()
-
-        
-        if cargo_definido == 'dev':
-            novo_perfil = PerfilDev(
-                id_usuario=novo_usuario.id,
-                nome="Novo Desenvolvedor" # Valor Default
-                # Os outros campos assumem null/vazio conforme configurado no Model
-            )
-            db.session.add(novo_perfil)
-
-        # Salva o usuário E o perfil-dev ao mesmo tempo
-        db.session.commit()
-        
-    except Exception:
-        # Se algo der errado em qualquer uma das duas tabelas, cancela tudo
-        db.session.rollback()
-        raise
-
+    db.session.commit()
     return novo_usuario
 
 def autenticar_usuario(email,senha):
-    usuario = Usuario.query.filter_by(email=email).first()
+    usuario = Cliente.query.filter_by(email=email).first() or Desenvolvedor.query.filter_by(email=email).first()
 
     if not usuario:
         raise ValueError("Usuário não encontrado")
+    
     senha_usuario = senha.encode('utf-8')
     senha_banco = usuario.senha.encode('utf-8')
     if not bcrypt.checkpw(senha_usuario, senha_banco):
