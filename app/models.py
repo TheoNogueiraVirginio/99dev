@@ -27,4 +27,5 @@ class Desenvolvedor(db.Model):
     linkedin = db.Column(db.String(255), nullable=True)
     foto_perfil = db.Column(db.String(150), nullable=True)
     foto_banner = db.Column(db.String(150), nullable=True)
+    saldo = db.Column(db.Float,default=1000.0, nullable=False)
     exibir_dados = db.Column(db.Boolean, default=True, nullable=False)

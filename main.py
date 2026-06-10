@@ -9,7 +9,7 @@ from wtforms.validators import input_required, Email, Optional
 from app import app, db, google
 from app.models import Cliente, Desenvolvedor
 
-from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente
+from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente
 from app.decorators import login_required
 
 with app.app_context():
@@ -314,7 +314,8 @@ def dashboardDev():
         abort(403)
 
     demandas = lerDemandas(tipo_usuario="dev")
-    return render_template('dashboardDev.html', demandas=demandas)
+    saldo = exibirSaldo(session["id_usuario"])
+    return render_template('dashboardDev.html', demandas=demandas, saldo=saldo)
 
 @app.errorhandler(403)
 def acesso_proibido(error):

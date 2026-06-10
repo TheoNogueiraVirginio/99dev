@@ -92,6 +92,14 @@ def atualizar_perfil_dev(id_dev, nome, titulo, valor_hora, skills, resumo, githu
         db.session.rollback()
         raise
         
+def exibirSaldo(id_dev):
+    perfil = Desenvolvedor.query.get(id_dev)
+
+    if not perfil:
+        raise ValueError("Perfil de desenvolvedor não encontrado.")
+    
+    return perfil.saldo
+
 def atualizar_perfil_cliente(id_cliente, novo_email, nova_senha, nova_descricao, arquivo_foto):
     perfil = Cliente.query.get(id_cliente)
 
