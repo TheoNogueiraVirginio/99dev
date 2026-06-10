@@ -101,7 +101,7 @@ def login():
             session["tipo_usuario"] = "dev" if isinstance(usuario, Desenvolvedor) else "cliente"
             flash("Login realizado com sucesso!", "success")
             if session["tipo_usuario"] == 'dev':
-                return redirect('/perfil-dev')
+                return redirect('/dashboardDev')
             return redirect('/dashboard')
 
         except ValueError as e:
@@ -138,7 +138,7 @@ def authorize_google():
         
         # 5. Redireciona para o painel correto
         if session["tipo_usuario"] == "dev":
-            return redirect("/perfil-dev")
+            return redirect("/dashboardDev")
         return redirect("/dashboard")
             
     except Exception as e:
@@ -306,6 +306,7 @@ def sairLogin():
     return redirect ('/login')
 
 
+##Rota para o dashboard do dev, só pode acessar se for dev, se for cliente da erro 403
 @app.route("/DashboardDev")
 @login_required
 def dashboardDev():
