@@ -101,7 +101,7 @@ def login():
             session["tipo_usuario"] = "dev" if isinstance(usuario, Desenvolvedor) else "cliente"
             flash("Login realizado com sucesso!", "success")
             if session["tipo_usuario"] == 'dev':
-                return redirect('/dashboardDev')
+                return redirect('/DashboardDev')
             return redirect('/dashboard')
 
         except ValueError as e:
@@ -138,7 +138,7 @@ def authorize_google():
         
         # 5. Redireciona para o painel correto
         if session["tipo_usuario"] == "dev":
-            return redirect("/dashboardDev")
+            return redirect("/DashboardDev")
         return redirect("/dashboard")
             
     except Exception as e:
@@ -312,7 +312,7 @@ def sairLogin():
 def dashboardDev():
     if session.get("tipo_usuario") != "dev":
         abort(403)
-    return render_template('DashboardDev.html')
+    return render_template('dashboardDev.html')
 
 @app.errorhandler(403)
 def acesso_proibido(error):
