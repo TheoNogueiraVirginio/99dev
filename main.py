@@ -317,6 +317,11 @@ def dashboardDev():
     saldo = exibirSaldo(session["id_usuario"])
     return render_template('dashboardDev.html', demandas=demandas, saldo=saldo)
 
+@app.route("/mensagens")
+@login_required
+def chat():
+    return render_template('chat.html')
+
 @app.errorhandler(403)
 def acesso_proibido(error):
     return render_template('403.html'),403
