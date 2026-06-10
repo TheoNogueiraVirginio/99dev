@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>99 Dev — Developer Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboardDev.css') }}" />
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">&lt;/&gt;</div>
+        <div class="logo-text">
+          <h2>99 Dev</h2>
+          <span>Developer Portal</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active" href="#">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Radar
+      </a>
+      <a class="nav-item" href="#">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="2" y="7" width="20" height="14" rx="2"/>
+          <path d="M16 7V5a2 2 0 0 0-4 0v2"/>
+        </svg>
+        My Earnings
+      </a>
+      <a class="nav-item" href="#">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Profile
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="avatar">SC</div>
+      <div class="user-info">
+        <div class="name">Sarah Chen</div>
+        <div class="email">sarah@dev.com</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- Mobile top bar -->
+    <header class="topbar" id="topbar">
+      <div class="logo-mark">
+        <div class="logo-icon">&lt;/&gt;</div>
+        <div class="logo-text">
+          <h2>99 Dev</h2>
+          <span>Developer Portal</span>
+        </div>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <!-- Content area: tasks + wallet -->
+    <div class="content-area">
+      <div style="flex:1; display:flex; flex-direction:column; overflow:hidden; min-width:0;">
+
+        <!-- Status bar -->
+        <div class="status-bar">
+          <h1>Available Tasks</h1>
+          <div class="status-indicator">
+            <span>You're Online</span>
+            <div class="toggle-wrap">
+              <label class="toggle" aria-label="Toggle online status">
+                <input type="checkbox" checked />
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+            <span class="ready-label">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              Ready for tasks
+            </span>
+          </div>
+        </div>
+
+        <!-- Task cards -->
+        <div class="tasks-scroll">
+          <div class="tasks-grid">
+
+            <!-- Card 1 -->
+            <div class="task-card">
+              <div class="card-header">
+                <h3 class="card-title">Fix React useEffect infinite loop</h3>
+                <span class="badge badge-high">HIGH</span>
+              </div>
+              <p class="card-desc">Component is re-rendering infinitely due to useEffect dependencies. Need help identifying and fixing the issue.</p>
+              <div class="tags">
+                <span class="tag">React</span>
+                <span class="tag">JavaScript</span>
+              </div>
+              <div class="card-meta">
+                <div class="meta-left">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  30–60 min
+                </div>
+                <div class="meta-right">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  John D.
+                </div>
+              </div>
+              <div class="card-footer">
+                <div>
+                  <div class="payment-label">Task Payment</div>
+                  <div class="payment-amount">$45</div>
+                </div>
+                <button class="btn-accept">Accept Task</button>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="task-card">
+              <div class="card-header">
+                <h3 class="card-title">Debug Node.js API endpoint</h3>
+                <span class="badge badge-medium">MEDIUM</span>
+              </div>
+              <p class="card-desc">POST endpoint returning 500 error. Need to investigate and fix the issue in Express middleware.</p>
+              <div class="tags">
+                <span class="tag">Node.js</span>
+                <span class="tag">Express</span>
+              </div>
+              <div class="card-meta">
+                <div class="meta-left">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  1–2 hours
+                </div>
+                <div class="meta-right">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  Sarah M.
+                </div>
+              </div>
+              <div class="card-footer">
+                <div>
+                  <div class="payment-label">Task Payment</div>
+                  <div class="payment-amount">$60</div>
+                </div>
+                <button class="btn-accept">Accept Task</button>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="task-card">
+              <div class="card-header">
+                <h3 class="card-title">Optimize SQL query performance</h3>
+                <span class="badge badge-low">LOW</span>
+              </div>
+              <p class="card-desc">Query taking 5+ seconds to execute. Need optimization and indexing suggestions.</p>
+              <div class="tags">
+                <span class="tag">SQL</span>
+                <span class="tag">PostgreSQL</span>
+              </div>
+              <div class="card-meta">
+                <div class="meta-left">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  2–3 hours
+                </div>
+                <div class="meta-right">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  Mike L.
+                </div>
+              </div>
+              <div class="card-footer">
+                <div>
+                  <div class="payment-label">Task Payment</div>
+                  <div class="payment-amount">$80</div>
+                </div>
+                <button class="btn-accept">Accept Task</button>
+              </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="task-card">
+              <div class="card-header">
+                <h3 class="card-title">TypeScript type errors in React components</h3>
+                <span class="badge badge-medium">MEDIUM</span>
+              </div>
+              <p class="card-desc">Multiple type errors after upgrading to TypeScript 5. Need help resolving them.</p>
+              <div class="tags">
+                <span class="tag">TypeScript</span>
+                <span class="tag">React</span>
+              </div>
+              <div class="card-meta">
+                <div class="meta-left">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  1 hour
+                </div>
+                <div class="meta-right">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  Emma W.
+                </div>
+              </div>
+              <div class="card-footer">
+                <div>
+                  <div class="payment-label">Task Payment</div>
+                  <div class="payment-amount">$50</div>
+                </div>
+                <button class="btn-accept">Accept Task</button>
+              </div>
+            </div>
+
+            <!-- Card 5 (full width left side) -->
+            <div class="task-card full">
+              <div class="card-header">
+                <h3 class="card-title">CSS responsive layout issue</h3>
+                <span class="badge badge-low">LOW</span>
+              </div>
+              <p class="card-desc">Mobile layout breaking on certain screen sizes. Need to fix flexbox/grid issues.</p>
+              <div class="tags">
+                <span class="tag">CSS</span>
+                <span class="tag">HTML</span>
+              </div>
+              <div class="card-meta">
+                <div class="meta-left">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  30 min
+                </div>
+                <div class="meta-right">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  David K.
+                </div>
+              </div>
+              <div class="card-footer">
+                <div>
+                  <div class="payment-label">Task Payment</div>
+                  <div class="payment-amount">$35</div>
+                </div>
+                <button class="btn-accept">Accept Task</button>
+              </div>
+            </div>
+
+          </div><!-- /tasks-grid -->
+        </div><!-- /tasks-scroll -->
+      </div>
+
+      <!-- ── Wallet Panel ── -->
+      <aside class="wallet-panel">
+        <div class="wallet-title">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="7" width="20" height="14" rx="2"/>
+            <path d="M16 7V5a2 2 0 0 0-4 0v2"/>
+          </svg>
+          Wallet Summary
+        </div>
+
+        <div class="wallet-card">
+          <div class="wallet-balance-label">Current Balance</div>
+          <div class="wallet-balance">$1,247.50</div>
+          <button class="btn-withdraw">Withdraw Funds</button>
+        </div>
+
+        <div class="wallet-stats">
+          <div class="stat-box">
+            <div class="stat-label">
+              <svg width="12" height="12" fill="none" stroke="#22c55e" stroke-width="2" viewBox="0 0 24 24">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+              </svg>
+              This Week
+            </div>
+            <div class="stat-value">$385</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">
+              <svg width="12" height="12" fill="none" stroke="#3b6ef5" stroke-width="2" viewBox="0 0 24 24">
+                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+              This Month
+            </div>
+            <div class="stat-value">$1,247</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="recent-title">Recent Earnings</div>
+          <div class="earnings-list">
+            <div class="earning-row">
+              <div class="earning-info">
+                <div class="earning-name">Fix React useEffect loop</div>
+                <div class="earning-time">2 hours ago</div>
+              </div>
+              <div class="earning-amount">+$45</div>
+            </div>
+            <div class="earning-row">
+              <div class="earning-info">
+                <div class="earning-name">SQL query optimization</div>
+                <div class="earning-time">Yesterday</div>
+              </div>
+              <div class="earning-amount">+$80</div>
+            </div>
+            <div class="earning-row">
+              <div class="earning-info">
+                <div class="earning-name">Debug API endpoint</div>
+                <div class="earning-time">2 days ago</div>
+              </div>
+              <div class="earning-amount">+$60</div>
+            </div>
+            <div class="earning-row">
+              <div class="earning-info">
+                <div class="earning-name">TypeScript type fixes</div>
+                <div class="earning-time">3 days ago</div>
+              </div>
+              <div class="earning-amount">+$50</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div><!-- /content-area -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- Mobile overlay -->
+<div class="overlay" id="overlay"></div>
+
+<script>
+  const sidebar   = document.getElementById('sidebar');
+  const hamburger = document.getElementById('hamburger');
+  const overlay   = document.getElementById('overlay');
+
+  function openMenu() {
+    sidebar.classList.add('open');
+    overlay.classList.add('visible');
+    hamburger.classList.add('open');
+    hamburger.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+    hamburger.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', () => {
+    sidebar.classList.contains('open') ? closeMenu() : openMenu();
+  });
+
+  overlay.addEventListener('click', closeMenu);
+
+  // Close on nav item click (mobile UX)
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (window.innerWidth <= 860) closeMenu();
+    });
+  });
+
+  // Keyboard: Escape closes menu
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeMenu();
+  });
+</script>
+</body>
+</html>
