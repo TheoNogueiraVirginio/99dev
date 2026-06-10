@@ -219,8 +219,9 @@ def salvarDemanda(titulo, tecnologia, descricao, orcamento, status, id):
         writer = csv.writer(file, delimiter='\t')
         writer.writerow([titulo, tecnologia, descricao, orcamento, status, id])
 
-def lerDemandas(busca=None, filtro_status=None):
+def lerDemandas(busca=None, filtro_status=None, tipo_usuario=None):
     demandas = []
+    demandasDev = []
     id_usuario = session.get("id_usuario")
     busca_normalizada = busca.lower().strip() if busca else None
 
@@ -251,4 +252,14 @@ def lerDemandas(busca=None, filtro_status=None):
                         'status': row[4],
                         'id': row[5]
                     })
+                demandasDev.append({
+                    'titulo': row[0],
+                    'tecnologia': row[1],
+                    'descricao': row[2],
+                    'orcamento': row[3],
+                    'status': row[4],
+                    'id': row[5]
+                })
+    if  tipo_usuario == "dev":
+        return demandasDev
     return demandas

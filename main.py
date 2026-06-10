@@ -307,12 +307,14 @@ def sairLogin():
 
 
 ##Rota para o dashboard do dev, só pode acessar se for dev, se for cliente da erro 403
-@app.route("/DashboardDev")
+@app.route("/DashboardDev",methods=['GET'])
 @login_required
 def dashboardDev():
     if session.get("tipo_usuario") != "dev":
         abort(403)
-    return render_template('dashboardDev.html')
+
+    demandas = lerDemandas(tipo_usuario="dev")
+    return render_template('dashboardDev.html', demandas=demandas)
 
 @app.errorhandler(403)
 def acesso_proibido(error):
