@@ -305,6 +305,14 @@ def sairLogin():
     flash('Você saiu da sua conta, logue novamente!')
     return redirect ('/login')
 
+
+@app.route("/DashboardDev")
+@login_required
+def dashboardDev():
+    if session.get("tipo_usuario") != "dev":
+        abort(403)
+    return render_template('DashboardDev.html')
+
 @app.errorhandler(403)
 def acesso_proibido(error):
     return render_template('403.html'),403
