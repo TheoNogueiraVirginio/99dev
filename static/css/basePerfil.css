@@ -6,24 +6,27 @@
 }
 
 :root {
-    /* Cores mescladas do projeto */
-    --sidebar: #1E2636;
+    /* Cores da página */
+    --sidebar: #1f2a44;
     --sidebar-2: #172136;
-    --sidebar-active: #2664EB;
-    --page-bg: #F8FAFC;
+    --sidebar-active: #2f6bf2;
+    --page-bg: #f3f6fb;
     --text: #13213a;
-    --muted: #6B7280;
+    --muted: #66758f;
 }
 
 html, 
 body {
     min-height: 100%;
-    background: var(--page-bg);
-    color: var(--text);
-    display: flex;
 }
 
-/* Controles mobile (ocultos no desktop) */
+body {
+    display: flex;
+    background: var(--page-bg);
+    color: var(--text);
+}
+
+/* --- Controles mobile --- */
 .menu-toggle {
     position: absolute;
     top: 0;
@@ -88,7 +91,7 @@ body {
     cursor: pointer;
 }
 
-/* Barra lateral (sidebar) */
+/* --- Barra lateral (sidebar) --- */
 aside {
     width: 254px;
     min-height: 100vh;
@@ -104,25 +107,18 @@ aside {
 }
 
 .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
     padding: 10px 8px 6px;
-}
-
-.logo i {
-    font-size: 1.8rem;
-    color: #fff;
 }
 
 .logo h1 {
     font-size: 1.7rem;
     line-height: 1;
-    margin-bottom: 4px;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
 }
 
 .logo p {
-    color: #9CA3AF;
+    color: rgba(255, 255, 255, 0.72);
     font-size: 0.95rem;
 }
 
@@ -148,7 +144,7 @@ aside nav a,
     min-height: 48px;
     padding: 0 16px;
     border-radius: 14px;
-    color: #9CA3AF;
+    color: rgba(255, 255, 255, 0.92);
     text-decoration: none;
     font-size: 1rem;
     font-weight: 600;
@@ -158,18 +154,21 @@ aside nav a,
 aside nav a:hover, 
 .user-info a:hover {
     background: rgba(255, 255, 255, 0.08);
-    color: white;
     transform: translateX(2px);
 }
 
-/* Conteúdo principal (main) */
+.user-info {
+    margin-top: auto;
+}
+
+/* --- Conteúdo principal (main) --- */
 main {
     width: calc(100% - 254px);
     margin-left: 254px;
     padding: 0 0 32px;
 }
 
-/* Responsividade do menu */
+/* --- Responsividade do menu --- */
 @media (max-width: 980px) {
     body {
         flex-direction: column;
