@@ -271,3 +271,17 @@ def lerDemandas(busca=None, filtro_status=None, tipo_usuario=None):
     if  tipo_usuario == "dev":
         return demandasDev
     return demandas
+
+def adicionar_saldo_cliente(id_cliente, saldo):
+    perfil = Cliente.query.get(id_cliente)
+    
+    if not perfil:
+        raise ValueError("Cliente não encontrado.")
+        
+    perfil.saldo += saldo
+    
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
