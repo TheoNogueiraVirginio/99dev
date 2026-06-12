@@ -9,6 +9,7 @@ class Cliente(db.Model):
     senha = db.Column(db.String(256), nullable=False)
     descricao = db.Column(db.Text, nullable=True)
     foto_perfil = db.Column(db.String(150), nullable=True)
+    saldo = db.Column(db.Float, default= 0, nullable=False)
     
 class Desenvolvedor(db.Model):
     __tablename__ = 'perfis_dev'
