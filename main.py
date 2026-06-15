@@ -2,14 +2,15 @@ from flask import flash, render_template, redirect, request, session, abort, url
 
 from flask_wtf.file import FileField, FileAllowed
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, TextAreaField, IntegerField
+from wtforms import StringField, PasswordField, BooleanField, TextAreaField, IntegerField, FloatField
 from wtforms.validators import input_required, Email, Optional
 
 #importando a função de cadastro do usuário
 from app import app, db, google
 from app.models import Cliente, Desenvolvedor
 
-from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente
+from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente, adicionar_saldo_cliente
+
 from app.decorators import login_required
 
 with app.app_context():
@@ -60,6 +61,9 @@ class FiltroForm(FlaskForm):
 @app.route("/")
 def home():
     return render_template('home.html')
+
+class AdicionarSaldoForm(FlaskForm):
+    valor = FloatField('Valor do Depósito (R$)', validators=[input_required(message="Digite um valor para depositar.")])
 
 # rota provisoria
 @app.route('/cadastro', methods=['GET', 'POST'])
