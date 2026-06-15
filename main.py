@@ -326,6 +326,27 @@ def dashboardDev():
 def chat():
     return render_template('chat.html')
 
+@app.route('/adicionar-saldo', methods=['POST'])
+@login_required
+def adicionar_saldo():
+    if session.get("tipo_usuario") != "cliente":
+        abort(403)
+        
+    form = AdicionarSaldoForm()
+    
+    if form.validate_on_submit():
+        try:
+            id_cliente = session["id_usuario"]
+            valor_deposito = form.valor.data
+            
+            adicionar_saldo_cliente(id_cliente=id_cliente, saldo=valor_deposito)
+            
+            flash(f"Saldo de R$ {valor_deposito:.2f} adicionado com sucesso!", "success")
+        except Exception as e:
+            flash(f"Erro ao processar o depósito: {str(e)}", "error")
+            
+    return redirect('/dashboard')
+
 @app.errorhandler(403)
 def acesso_proibido(error):
     return render_template('403.html'),403
