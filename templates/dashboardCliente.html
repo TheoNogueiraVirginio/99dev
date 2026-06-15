@@ -31,6 +31,19 @@
     {% endif %}
 {% endwith %}
 
+<div class="wallet-card">
+    <div class="wallet-info">
+        <i class="fa-solid fa-wallet"></i>
+        <div>
+            <span>Seu Saldo:</span>
+            <strong>R$ {{ "%.2f" % usuario.saldo if usuario.saldo is not none else "0.00" }}</strong>
+        </div>
+    </div>
+    <a href="#saldo-modal" class="btn-add-saldo">
+        <i class="fa-solid fa-plus"></i> Adicionar Saldo
+    </a>
+</div>
+
 <section class="novaTarefa">
     <h2>Nova Tarefa</h2>
     <form action="#" method="post">
@@ -85,4 +98,26 @@
         </tbody>
     </table>
 </section>
+
+<div id="saldo-modal" class="modal-overlay">
+    <div class="modal-content">
+        <a href="#" class="close-btn" aria-label="Close Modal">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+
+        <h2>Adicionar Saldo na Carteira</h2>
+        <p>Insira o valor que deseja depositar na sua conta do 99Dev.</p>
+
+        <form action="{{ url_for('adicionar_saldo') }}" method="POST">
+            {{ form.hidden_tag() }}
+
+            <div class="input-group">
+                <label for="valor">Valor do Depósito (R$)</label>
+                <input type="number" id="valor" name="valor" step="0.01" min="1" placeholder="Ex: 50.00" required>
+            </div>
+
+            <button type="submit" class="btn-save">Confirmar Depósito</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

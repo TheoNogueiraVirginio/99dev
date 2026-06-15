@@ -105,6 +105,70 @@ header input:focus {
     color: #9f2436;
 }
 
+/* --- Seção: Carteira de Saldo --- */
+.wallet-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-bg);
+    margin: 30px 28px 0;
+    padding: 24px 28px;
+    border-radius: 22px;
+    border: 1px solid rgba(219, 228, 240, 0.95);
+    box-shadow: var(--shadow);
+    max-width: 1280px;
+}
+
+.wallet-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.wallet-info i {
+    font-size: 2.2rem;
+    color: var(--sidebar-active);
+}
+
+.wallet-info span {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #61718a;
+    margin-bottom: 2px;
+}
+
+.wallet-info strong {
+    font-size: 1.6rem;
+    color: #20304a;
+}
+
+.btn-add-saldo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 48px;
+    background: linear-gradient(180deg, #2f6bf2, #245ad6);
+    color: #ffffff;
+    padding: 0 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 12px 28px rgba(47, 107, 242, 0.28);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.btn-add-saldo:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.03);
+    box-shadow: 0 16px 30px rgba(47, 107, 242, 0.34);
+}
+
+.btn-add-saldo:active {
+    transform: translateY(0);
+}
+
 /* --- Seção: Nova Tarefa --- */
 .novaTarefa {
     margin: 30px 28px 0;
@@ -343,6 +407,122 @@ header input:focus {
     white-space: nowrap;
 }
 
+/* --- Estrutura do Modal de CSS Puro (:target) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(13, 28, 58, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+}
+
+.modal-overlay:target {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 35px 30px;
+    border-radius: 22px;
+    width: 90%;
+    max-width: 420px;
+    position: relative;
+    box-shadow: 0 25px 50px rgba(13, 28, 58, 0.15);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay:target .modal-content {
+    transform: translateY(0);
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 1.5rem;
+    color: #8a97aa;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+    color: #9f2436;
+}
+
+.modal-content h2 {
+    font-size: 1.45rem;
+    color: var(--text);
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+}
+
+.modal-content p {
+    font-size: 0.95rem;
+    color: #6d7c92;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.modal-content .input-group {
+    margin-bottom: 20px;
+}
+
+.modal-content label {
+    display: block;
+    font-weight: 600;
+    color: #20304a;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.modal-content input {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #dbe4f0;
+    border-radius: 12px;
+    padding: 0 16px;
+    font-size: 1rem;
+    color: var(--text);
+    outline: none;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-content input:focus {
+    border-color: #8fb0ff;
+    box-shadow: 0 0 0 4px rgba(47, 107, 242, 0.08);
+}
+
+.modal-content .btn-save {
+    width: 100%;
+    height: 48px;
+    border: 0;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #2f6bf2, #245ad6);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(47, 107, 242, 0.25);
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.modal-content .btn-save:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+}
+
 /* --- Responsividade do Dashboard --- */
 @media (max-width: 980px) {
     header {
@@ -358,6 +538,20 @@ header input:focus {
 
     header input {
         width: 100%;
+    }
+
+    .wallet-card {
+        margin-left: 16px;
+        margin-right: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        padding: 20px;
+    }
+
+    .btn-add-saldo {
+        width: 100%;
+        justify-content: center;
     }
 
     .novaTarefa,
