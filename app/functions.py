@@ -299,3 +299,6 @@ def registrar_pagamento(id_cliente, titulo_demanda, valor):
     except Exception:
         db.session.rollback()
         raise
+    
+def ler_pagamentos_cliente(id_cliente):
+    return Pagamento.query.filter_by(id_cliente=id_cliente).order_by(Pagamento.data_pagamento.desc()).all()
