@@ -7,7 +7,7 @@ from flask import session
 from flask_mail import Message
 import bcrypt
 from app import mail, serializer
-from app.models import Cliente, Desenvolvedor, db
+from app.models import Cliente, Desenvolvedor, Pagamento, db
 
 import secrets
 
@@ -280,6 +280,20 @@ def adicionar_saldo_cliente(id_cliente, saldo):
         
     perfil.saldo += saldo
     
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+    
+def registrar_pagamento(id_cliente, titulo_demanda, valor):
+    novo_pagamento = Pagamento(
+        id_cliente=id_cliente,
+        titulo_demanda=titulo_demanda,
+        valor=valor
+    )
+    
+    db.session.add(novo_pagamento)
     try:
         db.session.commit()
     except Exception:
