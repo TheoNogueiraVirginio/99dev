@@ -9,8 +9,17 @@
 {% block content %}
 <header>
     <input type="text" name="busca" form="filtro-projetos" placeholder="Pesquisar projetos..." value="{{ request.args.get('busca', '') }}">
-    <div class="fotoUsuario">
-    </div>
+        <a href="/editar-perfil" class="link-perfil">
+        <div class="fotoUsuario">
+            <div class="moldura-perfil">
+                {% if foto_perfil %}
+                    <img src="{{ url_for('static', filename='uploads/perfil/' ~ foto_perfil) }}" alt="Foto de perfil">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar padrão do sistema">
+                {% endif %}
+            </div>
+        </div>
+    </a>
 </header>
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
