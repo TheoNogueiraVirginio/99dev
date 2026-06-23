@@ -134,6 +134,46 @@
         </tbody>
     </table>
 </section>
+<section class="tarefas">
+    <div class="tarefas-header">
+        <h2>Histórico de Demandas Realizadas</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Projeto Concluído</th>
+                <th>Tecnologia</th>
+                <th>Orçamento</th>
+                <th>Status Final</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for realizada in demandas_realizadas %}
+            <tr>
+                <td data-label="Projeto">
+                    <div class="task-title">{{ realizada.titulo }}</div>
+                    <div class="task-subtitle">{{ realizada.descricao }}</div>
+                </td>
+                <td data-label="Tech Stack">
+                    <span class="tech-pill">{{ realizada.tecnologia }}</span>
+                </td>
+                <td data-label="Cost">R$ {{ realizada.orcamento }}</td>
+                <td data-label="Status">
+                    <span class="status-pill" style="background: #e0f2fe; color: #0369a1; border-color: #bae6fd;">
+                        {{ realizada.status }}
+                    </span>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 30px; color: #6d7c92;">
+                    Nenhuma demanda finalizada ou realizada encontrada no histórico.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
 
 <div id="saldo-modal" class="modal-overlay">
     <div class="modal-content">
