@@ -1,0 +1,208 @@
+/* --- Seção: Cabeçalho da Carteira --- */
+.carteira-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 28px;
+    background-color: transparent;
+    margin-bottom: 10px;
+}
+
+.carteira-header h2 {
+    color: #20304a;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.btn-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #f1f5f9;
+    color: #20304a;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    border: 1px solid #dbe4f0;
+    transition: all 0.2s ease;
+}
+
+.btn-voltar:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+}
+
+/* --- Seção: Carteira de Saldo (Seu código) --- */
+.wallet-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-bg, #ffffff); /* Fallback para branco adicionado */
+    margin: 30px 28px 0;
+    padding: 24px 28px;
+    border-radius: 22px;
+    border: 1px solid rgba(219, 228, 240, 0.95);
+    box-shadow: var(--shadow, 0 4px 6px -1px rgba(0, 0, 0, 0.05)); /* Fallback adicionado */
+    max-width: 1280px;
+}
+
+.wallet-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.wallet-info i {
+    font-size: 2.2rem;
+    color: var(--sidebar-active, #2f6bf2); /* Fallback adicionado */
+}
+
+.wallet-info span {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #61718a;
+    margin-bottom: 2px;
+}
+
+.wallet-info strong {
+    font-size: 1.6rem;
+    color: #20304a;
+}
+
+.btn-add-saldo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 48px;
+    background: linear-gradient(180deg, #2f6bf2, #245ad6);
+    color: #ffffff;
+    padding: 0 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 12px 28px rgba(47, 107, 242, 0.28);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.btn-add-saldo:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.03);
+    box-shadow: 0 16px 30px rgba(47, 107, 242, 0.34);
+}
+
+.btn-add-saldo:active {
+    transform: translateY(0);
+}
+
+/* --- Seção: Modal de Saldo (Funcionalidade de abrir/fechar sem JS) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 1000;
+}
+
+.modal-overlay:target {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 32px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay:target .modal-content {
+    transform: translateY(0);
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 1.2rem;
+    color: #61718a;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+    color: #ef4444;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 1.4rem;
+    color: #20304a;
+}
+
+.modal-content p {
+    color: #61718a;
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+    line-height: 1.4;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 24px;
+}
+
+.input-group label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #20304a;
+    font-size: 0.95rem;
+}
+
+.input-group input {
+    padding: 14px;
+    border: 1px solid #dbe4f0;
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.input-group input:focus {
+    border-color: #2f6bf2;
+    box-shadow: 0 0 0 3px rgba(47, 107, 242, 0.1);
+}
+
+.btn-save {
+    width: 100%;
+    padding: 14px;
+    background-color: #2f6bf2;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-save:hover {
+    background-color: #245ad6;
+}

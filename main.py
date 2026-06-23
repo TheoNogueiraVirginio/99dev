@@ -347,6 +347,18 @@ def adicionar_saldo():
             
     return redirect('/dashboard')
 
+@app.route('/carteira', methods=['GET', 'POST'])
+@login_required
+def carteiraCliente():
+    if session.get("tipo_usuario") != "cliente":
+        abort(403)
+    
+    id = session["id_usuario"]
+    usuario = Cliente.query.get(id)
+    form = AdicionarSaldoForm()
+    foto_perfil = usuario.foto_perfil if usuario else None
+    return render_template('carteiraCliente.html', usuario=usuario, form=form, foto_perfil=foto_perfil)
+
 @app.errorhandler(403)
 def acesso_proibido(error):
     return render_template('403.html'),403
