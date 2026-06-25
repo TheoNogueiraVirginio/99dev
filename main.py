@@ -9,7 +9,7 @@ from wtforms.validators import input_required, Email, Optional
 from app import app, db, google
 from app.models import Cliente, Desenvolvedor
 
-from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente, ler_demandas_realizadas_cliente
+from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente, ler_demandas_realizadas_cliente, salvar_mensagem_suporte
 
 from app.decorators import login_required
 
@@ -367,6 +367,38 @@ def adicionar_saldo():
 @app.errorhandler(403)
 def acesso_proibido(error):
     return render_template('403.html'),403
+
+@app.route('/suporte', methods=['GET', 'POST'])
+@login_required
+def suporte():
+    form = SuporteForm()
+    
+    id_usuario = session.get("id_usuario")
+    tipo_usuario = session.get("tipo_usuario")
+    
+    if tipo_usuario == 'dev':
+        usuario = Desenvolvedor.query.get(id_usuario)
+    else:
+        usuario = Cliente.query.get(id_usuario)
+        
+    foto_perfil = usuario.foto_perfil if usuario else None
+
+    if form.validate_on_submit():
+        try:
+
+            salvar_mensagem_suporte(
+                id_usuario=id_usuario,
+                tipo_usuario=tipo_usuario,
+                assunto=form.assunto.data,
+                mensagem=form.mensagem.data
+            )
+            
+            flash("Sua mensagem foi enviada com sucesso à equipe de suporte! Entraremos em contato em breve.", "success")
+            return redirect('/suporte')
+        except Exception as e:
+            flash(f"Ocorreu um erro ao tentar registrar sua mensagem: {str(e)}", "error")
+
+    return render_template('suporte.html', form=form, foto_perfil=foto_perfil, usuario=usuario)
 
 # executa a aplicação
 if __name__ == '__main__':
