@@ -7,7 +7,7 @@ from flask import session
 from flask_mail import Message
 import bcrypt
 from app import mail, serializer
-from app.models import Cliente, Desenvolvedor, db
+from app.models import Cliente, Desenvolvedor, Pagamento, db
 
 import secrets
 
@@ -285,3 +285,45 @@ def adicionar_saldo_cliente(id_cliente, saldo):
     except Exception:
         db.session.rollback()
         raise
+    
+def registrar_pagamento(id_cliente, titulo_demanda, valor):
+    novo_pagamento = Pagamento(
+        id_cliente=id_cliente,
+        titulo_demanda=titulo_demanda,
+        valor=valor
+    )
+    
+    db.session.add(novo_pagamento)
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+    
+def ler_pagamentos_cliente(id_cliente):
+    return Pagamento.query.filter_by(id_cliente=id_cliente).order_by(Pagamento.data_pagamento.desc()).all()
+
+def ler_demandas_realizadas_cliente(id_cliente):
+    demandas_realizadas = []
+    
+    if DEMANDAS_CSV_PATH.exists():
+        with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as file:
+            reader = csv.reader(file, delimiter='\t')
+            for row in reader:
+
+                if len(row) < 6:
+                    continue
+                
+                if row[5].strip().isdigit() and int(row[5]) == id_cliente:
+                    
+                    if row[4].strip() in ["Fechada", "Concluída"]:
+                        demandas_realizadas.append({
+                            'titulo': row[0],
+                            'tecnologia': row[1],
+                            'descricao': row[2],
+                            'orcamento': row[3],
+                            'status': row[4],
+                            'id': row[5]
+                        })
+                        
+    return demandas_realizadas

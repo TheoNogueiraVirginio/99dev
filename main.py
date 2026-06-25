@@ -9,7 +9,7 @@ from wtforms.validators import input_required, Email, Optional
 from app import app, db, google
 from app.models import Cliente, Desenvolvedor
 
-from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente, adicionar_saldo_cliente
+from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente, ler_demandas_realizadas_cliente
 
 from app.decorators import login_required
 
@@ -277,6 +277,8 @@ def dashboardCliente():
     id = session["id_usuario"]
     usuario = Cliente.query.get(id)
     demandas = lerDemandas()
+    pagamentos = ler_pagamentos_cliente(id)
+    demandas_realizadas = ler_demandas_realizadas_cliente(id)
 
     if form.validate_on_submit():
         try:
@@ -292,9 +294,19 @@ def dashboardCliente():
             return redirect('/dashboard')
         except Exception as e:
             flash(f"Falha ao cadastrar demanda: {str(e)}", "error")
+            
     foto_perfil = usuario.foto_perfil if usuario else None
-    return render_template('dashboardCliente.html', form=form, demandas=demandas,foto_perfil=foto_perfil,usuario=usuario)
-
+    
+    return render_template(
+        'dashboardCliente.html', 
+        form=form, 
+        demandas=demandas, 
+        foto_perfil=foto_perfil, 
+        usuario=usuario, 
+        pagamentos=pagamentos,
+        demandas_realizadas=demandas_realizadas
+    )
+    
 @app.route("/MeusProjetos", methods=['GET', 'POST'])
 @login_required
 def meusProjetos():

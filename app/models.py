@@ -30,3 +30,10 @@ class Desenvolvedor(db.Model):
     foto_banner = db.Column(db.String(150), nullable=True)
     saldo = db.Column(db.Float,default=1000.0, nullable=False)
     exibir_dados = db.Column(db.Boolean, default=True, nullable=False)
+    
+class Pagamento(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    id_cliente = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable=False)
+    titulo_demanda = db.Column(db.String(255), nullable=False)
+    valor = db.Column(db.Float, nullable=False)
+    data_pagamento = db.Column(db.DateTime, default=db.func.current_timestamp())
