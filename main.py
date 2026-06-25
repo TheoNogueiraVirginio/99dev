@@ -357,7 +357,7 @@ def adicionar_saldo():
         except Exception as e:
             flash(f"Erro ao processar o depósito: {str(e)}", "error")
             
-    return redirect('/dashboard')
+    return redirect('/carteira')
 
 @app.route('/carteira', methods=['GET', 'POST'])
 @login_required
