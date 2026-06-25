@@ -1,50 +1,75 @@
+/* --- Container Principal da Carteira --- */
+.carteira-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 20px 28px;
+}
+
 /* --- Seção: Cabeçalho da Carteira --- */
 .carteira-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 28px;
-    background-color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 24px;
 }
 
 .carteira-header h2 {
     color: #20304a;
     font-size: 1.8rem;
-    margin: 0;
+    margin: 0 0 4px 0;
 }
 
-.btn-voltar {
-    display: inline-flex;
+/* --- Seção: Mensagens --- */
+.mensagens-container {
+    margin-bottom: 20px;
+}
+
+.alert-message {
+    display: flex;
     align-items: center;
-    gap: 8px;
-    background-color: #f1f5f9;
-    color: #20304a;
-    padding: 10px 18px;
-    border-radius: 8px;
-    text-decoration: none;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: 12px;
     font-weight: 600;
-    border: 1px solid #dbe4f0;
-    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    animation: fadeIn 0.3s ease;
 }
 
-.btn-voltar:hover {
-    background-color: #e2e8f0;
-    color: #0f172a;
+/* Mensagem de sucesso */
+.alert-message.success {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+.alert-message.success i {
+    color: #10b981;
+    font-size: 1.2rem;
 }
 
-/* --- Seção: Carteira de Saldo (Seu código) --- */
+/* Mensagem de Erro */
+.alert-message.error {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+.alert-message.error i {
+    color: #ef4444;
+    font-size: 1.2rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Seção: Carteira de Saldo --- */
 .wallet-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--card-bg, #ffffff); /* Fallback para branco adicionado */
-    margin: 30px 28px 0;
+    background-color: var(--card-bg, #ffffff);
     padding: 24px 28px;
     border-radius: 22px;
     border: 1px solid rgba(219, 228, 240, 0.95);
-    box-shadow: var(--shadow, 0 4px 6px -1px rgba(0, 0, 0, 0.05)); /* Fallback adicionado */
-    max-width: 1280px;
+    box-shadow: var(--shadow, 0 4px 6px -1px rgba(0, 0, 0, 0.05));
 }
 
 .wallet-info {
@@ -55,7 +80,7 @@
 
 .wallet-info i {
     font-size: 2.2rem;
-    color: var(--sidebar-active, #2f6bf2); /* Fallback adicionado */
+    color: var(--sidebar-active, #2f6bf2);
 }
 
 .wallet-info span {
@@ -69,6 +94,9 @@
 .wallet-info strong {
     font-size: 1.6rem;
     color: #20304a;
+    word-break: break-word;
+    max-width: 100%;
+    display: block;
 }
 
 .btn-add-saldo {
@@ -97,7 +125,7 @@
     transform: translateY(0);
 }
 
-/* --- Seção: Modal de Saldo (Funcionalidade de abrir/fechar sem JS) --- */
+/* --- Seção: Modal de Saldo --- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -205,4 +233,217 @@
 
 .btn-save:hover {
     background-color: #245ad6;
+}
+
+/*--- Seção: Histórico de Transações ---  */
+.tarefas {
+    margin-top: 40px;
+    background: #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(219, 228, 240, 0.95);
+    overflow: hidden;
+}
+
+.tarefas-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid #dbe4f0;
+    background-color: #f8fafc;
+}
+
+.tarefas-header h2 {
+    font-size: 1.2rem;
+    color: #20304a;
+    margin: 0;
+}
+
+.tarefas table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tarefas th {
+    background-color: #f8fafc;
+    padding: 16px 28px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #61718a;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #dbe4f0;
+}
+
+.tarefas td {
+    padding: 16px 28px;
+    border-bottom: 1px solid #dbe4f0;
+    vertical-align: middle;
+    color: #20304a;
+}
+
+.tarefas tr:last-child td {
+    border-bottom: none;
+}
+
+.task-title {
+    font-weight: 600;
+    color: #20304a;
+    margin-bottom: 4px;
+}
+
+.task-subtitle {
+    font-size: 0.85rem;
+    color: #61718a;
+}
+
+.tech-pill {
+    background-color: #f1f5f9;
+    color: #475569;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-pill {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+.status-concluido {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border-color: #bae6fd;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    color: #6d7c92;
+}
+
+
+/* Responsividade */
+
+@media (max-width: 768px) {
+    /* Reduz o espaçamento geral da tela */
+    .carteira-container {
+        padding: 16px;
+    }
+
+    .carteira-header h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Ajusta margem para título ficar abaixo do botão */
+    .carteira-header {
+        margin-top: 60px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    /* Ajustes do card de Saldo */
+    .wallet-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 20px;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .wallet-info i {
+        font-size: 1.8rem;
+    }
+
+    .wallet-info strong {
+        font-size: 1.4rem;
+    }
+
+    /* Faz o botão ocupar toda a largura do card */
+    .btn-add-saldo {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* --- Responsividade da Tabela de Histórico --- */
+    .tarefas table, 
+    .tarefas thead, 
+    .tarefas tbody, 
+    .tarefas th, 
+    .tarefas td, 
+    .tarefas tr {
+        display: block;
+    }
+
+    .tarefas thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .tarefas tr {
+        border-bottom: 2px solid #dbe4f0;
+        margin-bottom: 10px;
+    }
+
+    .tarefas td {
+        position: relative;
+        padding-left: 45%;
+        border-bottom: 1px solid #f1f5f9;
+        min-height: 50px;
+        text-align: right;
+    }
+
+    .tarefas td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 16px;
+        width: 40%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: 700;
+        color: #61718a;
+        font-size: 0.85rem;
+        text-align: left;
+    }
+
+    .tarefas td:last-child {
+        border-bottom: none;
+    }
+
+    .tarefas td .task-title,
+    .tarefas td .task-subtitle {
+        text-align: right;
+    }
+
+    .tarefas td.empty-state {
+        padding: 30px 16px !important;
+        text-align: center;
+    }
+
+    .tarefas td.empty-state::before {
+        content: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .alert-message {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+
+    .modal-content {
+        width: 90%;
+        padding: 24px;
+    }
+    
+    .modal-content h2 {
+        font-size: 1.2rem;
+    }
 }
