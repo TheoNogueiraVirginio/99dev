@@ -71,4 +71,81 @@
     </table>
 </section>
 
+<section class="tarefas">
+    <div class="tarefas-header">
+        <h2>Histórico de Pagamentos</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Serviço (Demanda)</th>
+                <th>Data do Pagamento</th>
+                <th style="text-align: right;">Valor Pago</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pagamento in pagamentos %}
+            <tr>
+                <td data-label="Serviço">
+                    <div class="task-title">{{ pagamento.titulo_demanda }}</div>
+                </td>
+                <td data-label="Data">
+                    <span class="tech-pill">{{ pagamento.data_pagamento.strftime('%d/%m/%Y às %H:%M') }}</span>
+                </td>
+                <td data-label="Valor Pago" style="text-align: right; color: #187a4d; font-weight: 700;">
+                    R$ {{ "%.2f" % pagamento.valor }}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3" style="text-align: center; padding: 30px; color: #6d7c92;">
+                    Nenhum pagamento registrado ainda.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="tarefas">
+    <div class="tarefas-header">
+        <h2>Histórico de Demandas Realizadas</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Projeto Concluído</th>
+                <th>Tecnologia</th>
+                <th>Orçamento</th>
+                <th>Status Final</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for realizada in demandas_realizadas %}
+            <tr>
+                <td data-label="Projeto">
+                    <div class="task-title">{{ realizada.titulo }}</div>
+                    <div class="task-subtitle">{{ realizada.descricao }}</div>
+                </td>
+                <td data-label="Tech Stack">
+                    <span class="tech-pill">{{ realizada.tecnologia }}</span>
+                </td>
+                <td data-label="Cost">R$ {{ realizada.orcamento }}</td>
+                <td data-label="Status">
+                    <span class="status-pill" style="background: #e0f2fe; color: #0369a1; border-color: #bae6fd;">
+                        {{ realizada.status }}
+                    </span>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 30px; color: #6d7c92;">
+                    Nenhuma demanda finalizada ou realizada encontrada no histórico.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
 {% endblock %}
