@@ -7,33 +7,85 @@
 {% endblock %}
 
 {% block content %}
-<header class="carteira-header">
-    <div>
-        <h2>Carteira e Faturamento</h2>
+<div class="carteira-container">
+    
+    <!-- Cabeçalho da Carteira -->
+    <header class="carteira-header">
+        <h2>Carteira e Depósitos</h2>
+    </header>
+
+    <!-- Mensagens de depósito  -->
+    <div class="mensagens-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    <div class="alert-message {{ category }}">
+                        <i class="fa-solid {% if category == 'success' %}fa-circle-check{% else %}fa-circle-exclamation{% endif %}"></i>
+                        {{ msg }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
     </div>
-</header>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, msg in messages %}
-            <div class="error-message {{ category }}">{{ msg }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
-
-<div class="wallet-card">
-    <div class="wallet-info">
-        <i class="fa-solid fa-wallet"></i>
-        <div>
-            <span>Seu Saldo:</span>
-            <strong>R$ {{ "%.2f" % usuario.saldo if usuario.saldo is not none else "0.00" }}</strong>
+    <!-- Card da Carteira -->
+    <div class="wallet-card">
+        <div class="wallet-info">
+            <i class="fa-solid fa-wallet"></i>
+            <div>
+                <span>Seu Saldo:</span>
+                <strong>R$ {{ "%.2f" % usuario.saldo if usuario.saldo is not none else "0.00" }}</strong>
+            </div>
         </div>
+        <a href="#saldo-modal" class="btn-add-saldo">
+            <i class="fa-solid fa-plus"></i> Adicionar Saldo
+        </a>
     </div>
-    <a href="#saldo-modal" class="btn-add-saldo">
-        <i class="fa-solid fa-plus"></i> Adicionar Saldo
-    </a>
+    
+    <!-- Section histórico de transações -->
+    <section class="tarefas">
+        <div class="tarefas-header">
+            <h2>Histórico de Demandas Realizadas</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Projeto Concluído</th>
+                    <th>Tecnologia</th>
+                    <th>Orçamento</th>
+                    <th>Status Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for realizada in demandas_realizadas %}
+                <tr>
+                    <td data-label="Projeto">
+                        <div class="task-title">{{ realizada.titulo }}</div>
+                        <div class="task-subtitle">{{ realizada.descricao }}</div>
+                    </td>
+                    <td data-label="Tech Stack">
+                        <span class="tech-pill">{{ realizada.tecnologia }}</span>
+                    </td>
+                    <td data-label="Cost">R$ {{ "%.2f" % realizada.orcamento }}</td>
+                    <td data-label="Status">
+                        <span class="status-pill">
+                            {{ realizada.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4">
+                        Nenhuma demanda finalizada ou realizada encontrada no histórico.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
 </div>
 
+<!-- Modal -->
 <div id="saldo-modal" class="modal-overlay">
     <div class="modal-content">
         <a href="#" class="close-btn" aria-label="Close Modal">
