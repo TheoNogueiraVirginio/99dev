@@ -362,7 +362,19 @@ def adicionar_saldo():
         except Exception as e:
             flash(f"Erro ao processar o depósito: {str(e)}", "error")
             
-    return redirect('/dashboard')
+    return redirect('/carteira')
+
+@app.route('/carteira', methods=['GET', 'POST'])
+@login_required
+def carteiraCliente():
+    if session.get("tipo_usuario") != "cliente":
+        abort(403)
+    
+    id = session["id_usuario"]
+    usuario = Cliente.query.get(id)
+    form = AdicionarSaldoForm()
+    foto_perfil = usuario.foto_perfil if usuario else None
+    return render_template('carteiraCliente.html', usuario=usuario, form=form, foto_perfil=foto_perfil)
 
 @app.errorhandler(403)
 def acesso_proibido(error):
