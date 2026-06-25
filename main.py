@@ -58,6 +58,11 @@ class DemandaForm(FlaskForm):
 
 class FiltroForm(FlaskForm):
     filtro = StringField('Filtrar por status')
+
+class SuporteForm(FlaskForm):
+    assunto = StringField('Assunto do Contato', validators=[input_required(message="Por favor, insira o assunto da sua mensagem.")])
+    mensagem = TextAreaField('Descrição detalhada do problema ou dúvida', validators=[input_required(message="O campo de mensagem não pode ficar vazio.")])    
+    
 @app.route("/")
 def home():
     return render_template('home.html')
