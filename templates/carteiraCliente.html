@@ -42,6 +42,43 @@
         </a>
     </div>
     
+    <!-- Section histórico de Pagamentos -->
+    <section class="tarefas">
+    <div class="tarefas-header">
+        <h2>Histórico de Pagamentos</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Serviço (Demanda)</th>
+                <th>Data do Pagamento</th>
+                <th style="text-align: right;">Valor Pago</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pagamento in pagamentos %}
+            <tr>
+                <td data-label="Serviço">
+                    <div class="task-title">{{ pagamento.titulo_demanda }}</div>
+                </td>
+                <td data-label="Data">
+                    <span class="tech-pill">{{ pagamento.data_pagamento.strftime('%d/%m/%Y às %H:%M') }}</span>
+                </td>
+                <td data-label="Valor Pago" style="text-align: right; color: #187a4d; font-weight: 700;">
+                    R$ {{ "%.2f" % pagamento.valor }}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3" style="text-align: center; padding: 30px; color: #6d7c92;">
+                    Nenhum pagamento registrado ainda.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </section>
+
     <!-- Section histórico de transações -->
     <section class="tarefas">
         <div class="tarefas-header">
