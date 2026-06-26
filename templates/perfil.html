@@ -32,7 +32,7 @@
                 {% if usuario.foto_perfil %}
                     <img src="{{ url_for('static', filename='uploads/perfil/' ~ usuario.foto_perfil) }}" alt="Foto de {{ usuario.nome }}">
                 {% else %}
-                    <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar Padrão">
+                    <img src="{{ url_for('static', filename='img/avatar.png') }}" alt="Avatar Padrão">
                 {% endif %}
             </div>
             
