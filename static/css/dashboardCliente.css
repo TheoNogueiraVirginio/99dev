@@ -29,70 +29,6 @@
     color: #9f2436;
 }
 
-/* --- Seção: Carteira de Saldo --- */
-.wallet-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--card-bg);
-    margin: 30px 28px 0;
-    padding: 24px 28px;
-    border-radius: 22px;
-    border: 1px solid rgba(219, 228, 240, 0.95);
-    box-shadow: var(--shadow);
-    max-width: 1280px;
-}
-
-.wallet-info {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.wallet-info i {
-    font-size: 2.2rem;
-    color: var(--sidebar-active);
-}
-
-.wallet-info span {
-    display: block;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #61718a;
-    margin-bottom: 2px;
-}
-
-.wallet-info strong {
-    font-size: 1.6rem;
-    color: #20304a;
-}
-
-.btn-add-saldo {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    height: 48px;
-    background: linear-gradient(180deg, #2f6bf2, #245ad6);
-    color: #ffffff;
-    padding: 0 20px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1rem;
-    box-shadow: 0 12px 28px rgba(47, 107, 242, 0.28);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-}
-
-.btn-add-saldo:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.03);
-    box-shadow: 0 16px 30px rgba(47, 107, 242, 0.34);
-}
-
-.btn-add-saldo:active {
-    transform: translateY(0);
-}
-
 /* --- Seção: Nova Tarefa --- */
 .novaTarefa {
     margin: 30px 28px 0;
@@ -463,21 +399,7 @@
     header input {
         width: 100%;
     }
-
-    .wallet-card {
-        margin-left: 16px;
-        margin-right: 16px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 18px;
-        padding: 20px;
-    }
-
-    .btn-add-saldo {
-        width: 100%;
-        justify-content: center;
-    }
-
+    
     .novaTarefa,
     .error-message {
         margin-left: 16px;
