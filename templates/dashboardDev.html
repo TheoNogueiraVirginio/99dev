@@ -1,231 +1,91 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+{% extends "basePerfil.html" %}
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>99 Dev — Developer Portal</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboardDev.css') }}" />
-</head>
+{% block title %}Dashboard Dev - 99dev{% endblock %}
 
-<body>
-    <div class="app">
+{% block head_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboardDev.css') }}">
+{% endblock %}
 
-        <!-- ── Sidebar ── -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-logo">
-                <div class="logo-mark">
-                    <div class="logo-icon">&lt;/&gt;</div>
-                    <div class="logo-text">
-                        <h2>99 Dev</h2>
-                        <span>Developer Portal</span>
-                    </div>
-                </div>
+{% block content %}
+<header>
+    <input type="text" placeholder="Pesquisar demandas disponíveis...">
+
+    <a href="/perfil-dev" class="link-perfil">
+        <div class="fotoUsuario">
+            <div class="moldura-perfil">
+                {% if foto_perfil %}
+                    <img src="{{ url_for('static', filename='uploads/perfil/' ~ foto_perfil) }}" alt="Foto de perfil">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar padrão do sistema">
+                {% endif %}
             </div>
+        </div>
+    </a>
+</header>
 
-            <nav class="sidebar-nav">
-                <a class="nav-item active" href="#">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                    Radar
-                </a>
-                <a class="nav-item" href="#">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <rect x="2" y="7" width="20" height="14" rx="2" />
-                        <path d="M16 7V5a2 2 0 0 0-4 0v2" />
-                    </svg>
-                    My Earnings
-                </a>
-                <a class="nav-item" href="#">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                    </svg>
-                    Profile
-                </a>
-            </nav>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, msg in messages %}
+            <div class="error-message {{ category }}">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 
-            <div class="sidebar-user">
-                <div class="avatar">{{ usuario.iniciais if usuario else 'SC' }}</div>
-                <div class="user-info">
-                    <div class="name">{{ usuario.nome if usuario else 'Sarah Chen' }}</div>
-                    <div class="email">{{ usuario.email if usuario else 'sarah@dev.com' }}</div>
-                </div>
-            </div>
-        </aside>
+<div class="wallet-card">
+    <div class="wallet-info">
+        <i class="fa-solid fa-wallet"></i>
+        <div>
+            <span>Seus Ganhos / Saldo:</span>
+            <strong>R$ {{ "%.2f" % saldo if saldo is not none else "0.00" }}</strong>
+        </div>
+    </div>
+    <span class="badge-dev-status">
+        <i class="fa-solid fa-circle-check"></i> Desenvolvedor Verificado
+    </span>
+</div>
 
-        <!-- ── Main ── -->
-        <div class="main">
-
-            <!-- Mobile top bar -->
-            <header class="topbar" id="topbar">
-                <div class="logo-mark">
-                    <div class="logo-icon">&lt;/&gt;</div>
-                    <div class="logo-text">
-                        <h2>99 Dev</h2>
-                        <span>Developer Portal</span>
-                    </div>
-                </div>
-                <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false">
-                    <span></span><span></span><span></span>
-                </button>
-            </header>
-
-            <!-- Content area: tasks + wallet -->
-            <div class="content-area">
-                <div style="flex:1; display:flex; flex-direction:column; overflow:hidden; min-width:0;">
-
-                    <!-- Status bar -->
-                    <div class="status-bar">
-                        <h1>Available Tasks</h1>
-                        <div class="status-indicator">
-                            <span>You're Online</span>
-                            <div class="toggle-wrap">
-                                <label class="toggle" aria-label="Toggle online status">
-                                    <input type="checkbox" checked />
-                                    <div class="toggle-track"></div>
-                                    <div class="toggle-thumb"></div>
-                                </label>
-                            </div>
-                            <span class="ready-label">
-                                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"
-                                    viewBox="0 0 24 24">
-                                    <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                                </svg>
-                                Ready for tasks
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Task cards -->
-                    <div class="tasks-scroll">
-                        <div class="tasks-grid">
-
-                            {% for demanda in demandas %}
-                            <div class="task-card">
-                                <div class="card-header">
-                                    <h3 class="card-title">{{ demanda.titulo }}</h3>
-                                    {% if demanda.prioridade %}
-                                    <span class="badge badge-{{ demanda.prioridade | lower }}">
-                                        {{ demanda.prioridade | upper }}
-                                    </span>
-                                    {% endif %}
-                                </div>
-
-                                <p class="card-desc">{{ demanda.descricao }}</p>
-
-                                <div class="tags">
-                                    {% if demanda.tecnologias is iterable and demanda.tecnologias is not string %}
-                                    {% for tech in demanda.tecnologias %}
-                                    <span class="tag">{{ tech }}</span>
-                                    {% endfor %}
-                                    {% else %}
-                                    <span class="tag">{{ demanda.tecnologia }}</span>
-                                    {% endif %}
-                                </div>
-
-                                <div class="card-meta">
-                                    <div class="meta-left">
-                                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"
-                                            viewBox="0 0 24 24">
-                                            <circle cx="12" cy="12" r="10" />
-                                            <polyline points="12 6 12 12 16 14" />
-                                        </svg>
-                                        {{ demanda.tempo_estimado if demanda.tempo_estimado else '–' }}
-                                    </div>
-                                    <div class="meta-right">
-                                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"
-                                            viewBox="0 0 24 24">
-                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                            <circle cx="12" cy="7" r="4" />
-                                        </svg>
-                                        {{ demanda.cliente if demanda.cliente else 'Cliente' }}
-                                    </div>
-                                </div>
-
-                                <div class="card-footer">
-                                    <div>
-                                        <div class="payment-label">Task Payment</div>
-                                        <div class="payment-amount">${{ demanda.orcamento }}</div>
-                                    </div>
-                                    <a class="btn-accept" href="/mensagens">Accept Task</a>
-                                </div>
-                            </div>
-                            {% else %}
-                            <div class="tasks-empty">
-                                <p>Nenhuma demanda disponível no momento.</p>
-                            </div>
-                            {% endfor %}
-
-                        </div><!-- /tasks-grid -->
-                    </div><!-- /tasks-scroll -->
-                </div>
-
-                <!-- ── Wallet Panel ── -->
-                <aside class="wallet-panel">
-                    <div class="wallet-title">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                            <rect x="2" y="7" width="20" height="14" rx="2" />
-                            <path d="M16 7V5a2 2 0 0 0-4 0v2" />
-                        </svg>
-                        Wallet Summary
-                    </div>
-
-                    <div class="wallet-card">
-                        <div class="wallet-balance-label">Current Balance</div>
-                        <div class="wallet-balance">
-                            ${{ saldo }}
-                        </div>
-                        <button class="btn-withdraw">Withdraw Funds</button>
-                    </div>
-
-            </div><!-- /content-area -->
-        </div><!-- /main -->
-    </div><!-- /app -->
-
-    <!-- Mobile overlay -->
-    <div class="overlay" id="overlay"></div>
-
-    <script>
-        const sidebar = document.getElementById('sidebar');
-        const hamburger = document.getElementById('hamburger');
-        const overlay = document.getElementById('overlay');
-
-        function openMenu() {
-            sidebar.classList.add('open');
-            overlay.classList.add('visible');
-            hamburger.classList.add('open');
-            hamburger.setAttribute('aria-expanded', 'true');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeMenu() {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('visible');
-            hamburger.classList.remove('open');
-            hamburger.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-        }
-
-        hamburger.addEventListener('click', () => {
-            sidebar.classList.contains('open') ? closeMenu() : openMenu();
-        });
-
-        overlay.addEventListener('click', closeMenu);
-
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                if (window.innerWidth <= 860) closeMenu();
-            });
-        });
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closeMenu();
-        });
-    </script>
-</body>
-
-</html>
+<section class="tarefas">
+    <div class="tarefas-header">
+        <h2>Demandas Disponíveis no Mercado</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Título do Projeto</th>
+                <th>Tecnologia Exigida</th>
+                <th>Status</th>
+                <th>Orçamento Proposto</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for demanda in demandas %}
+            <tr>
+                <td data-label="Projeto">
+                    <div class="task-title">{{ demanda.titulo }}</div>
+                    <div class="task-subtitle">{{ demanda.descricao }}</div>
+                </td>
+                <td data-label="Tecnologia">
+                    <span class="tech-pill">{{ demanda.tecnologia }}</span>
+                </td>
+                <td data-label="Status">
+                    <span class="status-pill">{{ demanda.status }}</span>
+                </td>
+                <td data-label="Orçamento" class="valor-orcamento">
+                    R$ {{ demanda.orcamento }}
+                </td>
+                <td data-label="Ações">
+                    <a class="action-link" href="#">Candidatar-se</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 30px; color: #6d7c92;">
+                    Nenhuma demanda disponível para o seu perfil no momento.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
