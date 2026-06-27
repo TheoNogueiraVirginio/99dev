@@ -326,17 +326,21 @@ def sairLogin():
     flash('Você saiu da sua conta, logue novamente!')
     return redirect ('/login')
 
-
 ##Rota para o dashboard do dev, só pode acessar se for dev, se for cliente da erro 403
-@app.route("/DashboardDev",methods=['GET'])
+@app.route("/DashboardDev", methods=['GET'])
 @login_required
 def dashboardDev():
     if session.get("tipo_usuario") != "dev":
         abort(403)
 
+    id_dev = session["id_usuario"]
+    usuario = Desenvolvedor.query.get(id_dev)
     demandas = lerDemandas(tipo_usuario="dev")
-    saldo = exibirSaldo(session["id_usuario"])
-    return render_template('dashboardDev.html', demandas=demandas, saldo=saldo)
+    saldo = exibirSaldo(id_dev)
+    
+    foto_perfil = usuario.foto_perfil if usuario else None
+    
+    return render_template('dashboardDev.html', demandas=demandas, saldo=saldo, usuario=usuario, foto_perfil=foto_perfil)
 
 @app.route("/mensagens")
 @login_required
