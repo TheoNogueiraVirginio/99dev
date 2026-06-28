@@ -9,7 +9,7 @@ from wtforms.validators import input_required, Email, Optional
 from app import app, db, google
 from app.models import Cliente, Desenvolvedor
 
-from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente, ler_demandas_realizadas_cliente, salvar_mensagem_suporte
+from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente, ler_demandas_realizadas_cliente, salvar_mensagem_suporte, salvar_mensagem_suporte_dev
 
 from app.decorators import login_required
 
@@ -419,6 +419,31 @@ def suporte():
             flash(f"Ocorreu um erro ao tentar registrar sua mensagem: {str(e)}", "error")
 
     return render_template('suporte.html', form=form, foto_perfil=foto_perfil, usuario=usuario)
+
+@app.route('/suporte-dev', methods=['GET', 'POST'])
+@login_required
+def suporteDev():
+    if session.get("tipo_usuario") != "dev":
+        abort(403)
+
+    form = SuporteDevForm()
+    id_dev = session["id_usuario"]
+    usuario = Desenvolvedor.query.get(id_dev)
+    foto_perfil = usuario.foto_perfil if usuario else None
+
+    if form.validate_on_submit():
+        try:
+            salvar_mensagem_suporte_dev(
+                id_dev=id_dev,
+                assunto=form.assunto.data,
+                mensagem=form.mensagem.data
+            )
+            flash("Ticket de suporte enviado com sucesso! Nossa equipe técnica retornará em breve.", "success")
+            return redirect('/suporte-dev')
+        except Exception as e:
+            flash(f"Ocorreu um erro ao enviar sua solicitação: {str(e)}", "error")
+
+    return render_template('suporteDev.html', form=form, usuario=usuario, foto_perfil=foto_perfil)
 
 # executa a aplicação
 if __name__ == '__main__':
