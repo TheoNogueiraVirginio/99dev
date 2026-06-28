@@ -110,7 +110,6 @@ header input:focus {
     opacity: 0;
     pointer-events: none;
 }
-
 .menu-button {
     display: none;
     position: fixed;
@@ -149,22 +148,13 @@ header input:focus {
     pointer-events: none;
     transition: opacity 0.25s ease;
 }
-
-.menu-close {
-    display: none;
-    align-self: flex-end;
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
-    font-size: 1.9rem;
-    line-height: 1;
-    text-align: center;
-    cursor: pointer;
+.menu-button{
+    transition: left .28s ease, transform .28s ease;
 }
 
+.menu-toggle:checked + .menu-button{
+    left: calc(min(84vw,320px) - 64px);
+}
 /* --- Barra lateral (sidebar) --- */
 aside {
     width: 254px;
@@ -269,12 +259,6 @@ main {
     main {
         width: 100%;
         margin-left: 0;
-    }
-
-    .menu-close {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
     }
 
     .menu-toggle:checked ~ aside {
