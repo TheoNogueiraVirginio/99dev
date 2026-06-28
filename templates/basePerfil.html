@@ -5,15 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}99Dev{% endblock %}</title>
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/basePerfil.css') }}">
-    
+
     {% block head_css %}{% endblock %}
 </head>
 
 <body>
 
+    {# ── Controles do menu mobile ───────────────────────────────── #}
     <input type="checkbox" id="menu-toggle" class="menu-toggle">
     <label for="menu-toggle" class="menu-button" aria-label="Abrir menu">
         <span></span>
@@ -22,11 +23,8 @@
     </label>
     <label for="menu-toggle" class="menu-overlay" aria-hidden="true"></label>
 
+    {# ── Sidebar ────────────────────────────────────────────────── #}
     <aside>
-        <!-- duplicata do "X" -->
-        <!-- <label for="menu-toggle" class="menu-close" aria-label="Fechar menu">×</label> -->
-
-        
         <div class="logo">
             <h1>99dev</h1>
             <p>
@@ -37,50 +35,97 @@
                 {% endif %}
             </p>
         </div>
-        
+
         <hr>
-        
-        <nav>
+
+        <nav aria-label="Menu principal">
             <ul>
                 {% if session.get('tipo_usuario') == 'cliente' %}
                     <li>
-                        <a href="/dashboard">Dashboard</a>
+                        <a href="/dashboard"
+                           class="{{ 'active' if request.path == '/dashboard' else '' }}">
+                            <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+                            Dashboard
+                        </a>
                     </li>
                     <li>
-                        <a href="/MeusProjetos">Meus Projetos</a>
+                        <a href="/MeusProjetos"
+                           class="{{ 'active' if request.path == '/MeusProjetos' else '' }}">
+                            <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
+                            Meus Projetos
+                        </a>
                     </li>
                     <li>
-                        <a href="/suporte">Suporte</a>
-                    <li>
-                        <a href="/carteira">Carteira</a>
+                        <a href="/suporte"
+                           class="{{ 'active' if request.path == '/suporte' else '' }}">
+                            <i class="fa-solid fa-headset" aria-hidden="true"></i>
+                            Suporte
+                        </a>
                     </li>
-                
+                    <li>
+                        <a href="/carteira"
+                           class="{{ 'active' if request.path == '/carteira' else '' }}">
+                            <i class="fa-solid fa-wallet" aria-hidden="true"></i>
+                            Carteira
+                        </a>
+                    </li>
+
                 {% else %}
                     <li>
-                        <a href="/DashboardDev">Início</a>
+                        <a href="/DashboardDev"
+                           class="{{ 'active' if request.path == '/DashboardDev' else '' }}">
+                            <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+                            Início
+                        </a>
                     </li>
                     <li>
-                        <a href="/perfil-dev">Profile</a>
+                        <a href="/perfil-dev"
+                           class="{{ 'active' if request.path.startswith('/perfil') else '' }}">
+                            <i class="fa-solid fa-user" aria-hidden="true"></i>
+                            Perfil
+                        </a>
                     </li>
                     <li>
-                        <a href="/suporte-dev">Suporte</a>
+                        <a href="/suporte-dev"
+                           class="{{ 'active' if request.path == '/suporte-dev' else '' }}">
+                            <i class="fa-solid fa-headset" aria-hidden="true"></i>
+                            Suporte
+                        </a>
                     </li>
                 {% endif %}
             </ul>
         </nav>
-        
+
         <hr>
-        
+
         <div class="user-info">
-            <a href="/logout">Sair</a>
+            <a href="/logout">
+                <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+                Sair
+            </a>
         </div>
     </aside>
 
+    {# ── Conteúdo principal ─────────────────────────────────────── #}
     <main>
         {% include "header.html" %}
-        {% block content %}
-        {% endblock %}
-    </main>
-</body>
 
+        {# Flash messages globais #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages" role="alert" aria-live="polite">
+                    {% for category, msg in messages %}
+                        <div class="flash-msg {{ category }}">
+                            <i class="fa-solid {{ 'fa-circle-check' if category == 'success' else 'fa-circle-exclamation' }}" aria-hidden="true"></i>
+                            {{ msg }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
 </html>
