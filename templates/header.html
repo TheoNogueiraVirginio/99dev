@@ -1,15 +1,32 @@
 <header>
-    <input type="text" placeholder="Pesquisar projetos...">
+    <input type="text" placeholder="Pesquisar projetos…" aria-label="Pesquisar projetos">
 
-    <a href="/editar-perfil" class="link-perfil">
-        <div class="fotoUsuario">
-            <div class="moldura-perfil">
-                {% if foto_perfil %}
-                <img src="{{ url_for('static', filename='uploads/perfil/' ~ foto_perfil) }}" alt="Foto de perfil">
-                {% else %}
-                <img src="{{ url_for('static', filename='img/avatar.png') }}" alt="Avatar padrão do sistema">
-                {% endif %}
+    <div class="header-actions">
+        {# Botão de notificações #}
+        <a href="#" class="btn-notificacoes" aria-label="Notificações">
+            <i class="fa-solid fa-bell"></i>
+            {# Remova o badge abaixo quando não houver notificações pendentes #}
+            <span class="notif-badge" aria-hidden="true"></span>
+        </a>
+
+        {# Nome do usuário — visível em telas médias+ #}
+        {% if session.get('nome_usuario') %}
+        <span class="header-user-name">{{ session.get('nome_usuario') }}</span>
+        {% endif %}
+
+        {# Avatar com link para edição de perfil #}
+        <a href="/editar-perfil" class="link-perfil" aria-label="Editar perfil">
+            <div class="fotoUsuario">
+                <div class="moldura-perfil">
+                    {% if foto_perfil %}
+                    <img src="{{ url_for('static', filename='uploads/perfil/' ~ foto_perfil) }}"
+                         alt="Foto de perfil de {{ session.get('nome_usuario', 'usuário') }}">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='img/avatar.png') }}"
+                         alt="Avatar padrão do sistema">
+                    {% endif %}
+                </div>
             </div>
-        </div>
-    </a>
+        </a>
+    </div>
 </header>
