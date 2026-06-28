@@ -62,6 +62,10 @@ class FiltroForm(FlaskForm):
 class SuporteForm(FlaskForm):
     assunto = StringField('Assunto do Contato', validators=[input_required(message="Por favor, insira o assunto da sua mensagem.")])
     mensagem = TextAreaField('Descrição detalhada do problema ou dúvida', validators=[input_required(message="O campo de mensagem não pode ficar vazio.")])    
+
+class SuporteDevForm(FlaskForm):
+    assunto = StringField('Assunto da Solicitação', validators=[input_required(message="O assunto é obrigatório.")])
+    mensagem = TextAreaField('Detalhes do Problema ou Dúvida', validators=[input_required(message="A mensagem não pode ficar vazia.")])
     
 @app.route("/")
 def home():
