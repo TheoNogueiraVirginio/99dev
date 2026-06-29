@@ -8,14 +8,6 @@
 
 {% block content %}
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, msg in messages %}
-            <div class="error-message {{ category }}">{{ msg }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
-
 <div class="wallet-card">
     <div class="wallet-info">
         <i class="fa-solid fa-wallet"></i>
