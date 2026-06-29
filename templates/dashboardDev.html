@@ -21,6 +21,7 @@
     </span>
 </div>
 
+<!-- ── Demandas disponíveis ── -->
 <section class="tarefas">
     <div class="tarefas-header">
         <h2>Demandas Disponíveis no Mercado</h2>
@@ -46,13 +47,31 @@
                     <span class="tech-pill">{{ demanda.tecnologia }}</span>
                 </td>
                 <td data-label="Status">
-                    <span class="status-pill">{{ demanda.status }}</span>
+                    <span class="status-pill status-{{ demanda.status | lower | replace(' ','_') }}">
+                        {{ demanda.status }}
+                    </span>
                 </td>
                 <td data-label="Orçamento" class="valor-orcamento">
                     R$ {{ demanda.orcamento }}
                 </td>
                 <td data-label="Ações">
-                    <a class="action-link" href="#">Candidatar-se</a>
+                    {% set ja_candidatou = candidaturas | selectattr('demanda_uuid','equalto', demanda.uuid) | list %}
+                    {% if ja_candidatou %}
+                        <a class="action-link action-chat" href="/chat/{{ ja_candidatou[0].id }}">
+                            <i class="fa-solid fa-comment-dots"></i> Abrir Chat
+                        </a>
+                    {% elif demanda.status in ['Aberta'] %}
+                        <button class="action-link btn-candidatar"
+                            data-uuid="{{ demanda.uuid }}"
+                            data-titulo="{{ demanda.titulo }}"
+                            data-id-cliente="{{ demanda.id }}"
+                            data-orcamento="{{ demanda.orcamento }}"
+                            data-descricao="{{ demanda.descricao }}">
+                            Candidatar-se
+                        </button>
+                    {% else %}
+                        <span class="action-link-disabled">Indisponível</span>
+                    {% endif %}
                 </td>
             </tr>
             {% else %}
@@ -65,4 +84,150 @@
         </tbody>
     </table>
 </section>
+
+<!-- ── Minhas Candidaturas ── -->
+{% if candidaturas %}
+<section class="tarefas" style="margin-top: 22px;">
+    <div class="tarefas-header">
+        <h2>Minhas Candidaturas</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Demanda</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in candidaturas %}
+            <tr>
+                <td data-label="Demanda">
+                    <div class="task-title">{{ c.demanda_titulo }}</div>
+                    {% if c.proposta %}
+                    <div class="task-subtitle">{{ c.proposta[:80] }}{% if c.proposta|length > 80 %}…{% endif %}</div>
+                    {% endif %}
+                </td>
+                <td data-label="Status">
+                    <span class="status-pill status-{{ c.status }}">{{ c.status | capitalize }}</span>
+                </td>
+                <td data-label="Data" style="color:#6d7c92; font-size:.9rem;">
+                    {{ c.data.strftime('%d/%m/%Y') }}
+                </td>
+                <td data-label="Chat">
+                    <a class="action-link action-chat" href="/chat/{{ c.id }}">
+                        <i class="fa-solid fa-comment-dots"></i> Chat
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+
+
+<!-- ════════════════════════════════════════════════════════
+     Modal de Candidatura
+════════════════════════════════════════════════════════ -->
+<div id="modalCandidatura" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitulo" hidden>
+    <div class="modal-box">
+        <button class="modal-close" id="btnFecharModal" aria-label="Fechar">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="modal-header">
+            <div class="modal-icon"><i class="fa-solid fa-code"></i></div>
+            <div>
+                <h3 id="modalTitulo">Candidatar-se à Demanda</h3>
+                <p class="modal-subtitle" id="modalSubtitulo"></p>
+            </div>
+        </div>
+
+        <div class="modal-demanda-info" id="modalInfoDemanda"></div>
+
+        <form id="formCandidatura" action="/candidatar" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="demanda_uuid"   id="inputUuid">
+            <input type="hidden" name="demanda_titulo" id="inputTitulo">
+            <input type="hidden" name="id_cliente"     id="inputIdCliente">
+
+            <div class="modal-field">
+                <label for="proposta">
+                    <i class="fa-solid fa-file-pen"></i> Sua Proposta
+                    <span class="label-hint">Descreva como você abordaria este projeto</span>
+                </label>
+                <textarea id="proposta" name="proposta" rows="5"
+                    placeholder="Ex: Tenho 3 anos de experiência com React e já desenvolvi sistemas similares. Posso entregar em 2 semanas…"
+                    maxlength="1000"></textarea>
+                <div class="char-counter"><span id="charCount">0</span>/1000</div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="btnCancelar">Cancelar</button>
+                <button type="submit" class="btn-primary">
+                    <i class="fa-solid fa-paper-plane"></i> Fazer sua Proposta
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+(function () {
+    const modal      = document.getElementById('modalCandidatura');
+    const subtitle   = document.getElementById('modalSubtitulo');
+    const infoBadges = document.getElementById('modalInfoDemanda');
+    const inputUuid  = document.getElementById('inputUuid');
+    const inputTit   = document.getElementById('inputTitulo');
+    const inputCli   = document.getElementById('inputIdCliente');
+    const textarea   = document.getElementById('proposta');
+    const charCount  = document.getElementById('charCount');
+
+    function openModal(btn) {
+        inputUuid.value = btn.dataset.uuid;
+        inputTit.value  = btn.dataset.titulo;
+        inputCli.value  = btn.dataset.idCliente;
+
+        subtitle.textContent = btn.dataset.titulo;
+        infoBadges.innerHTML = `
+            <span class="info-badge"><i class="fa-solid fa-circle-dollar-to-slot"></i> R$ ${btn.dataset.orcamento}</span>
+            <span class="info-badge info-desc">${btn.dataset.descricao.substring(0, 120)}${btn.dataset.descricao.length > 120 ? '…' : ''}</span>
+        `;
+
+        textarea.value = '';
+        charCount.textContent = '0';
+        modal.removeAttribute('hidden');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => textarea.focus(), 100);
+    }
+
+    function closeModal() {
+        modal.setAttribute('hidden', '');
+        document.body.style.overflow = '';
+    }
+
+    // Botões de candidatar
+    document.querySelectorAll('.btn-candidatar').forEach(btn => {
+        btn.addEventListener('click', () => openModal(btn));
+    });
+
+    document.getElementById('btnFecharModal').addEventListener('click', closeModal);
+    document.getElementById('btnCancelar').addEventListener('click', closeModal);
+
+    // Fechar clicando fora
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+    // Fechar com Esc
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hasAttribute('hidden')) closeModal(); });
+
+    // Contador de caracteres
+    textarea.addEventListener('input', () => {
+        charCount.textContent = textarea.value.length;
+    });
+})();
+</script>
+
 {% endblock %}
