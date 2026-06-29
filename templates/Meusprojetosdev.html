@@ -1,0 +1,138 @@
+{% extends "basePerfil.html" %}
+
+{% block title %}Meus Projetos — 99dev{% endblock %}
+
+{% block head_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/meusProjetosDev.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="mpd-page">
+
+  <!-- ══ Cabeçalho da página ══ -->
+  <div class="mpd-header">
+    <div class="mpd-header-text">
+      <h1><i class="fa-solid fa-laptop-code"></i> Meus Projetos</h1>
+      <p>Demandas aceitas e atribuídas a você. Aqui você acompanha o andamento, envia entregas e recebe pagamentos.</p>
+    </div>
+    <div class="mpd-header-badge">
+      <i class="fa-solid fa-code-branch"></i>
+      {{ projetos | length }} projeto{{ 's' if projetos | length != 1 else '' }} ativo{{ 's' if projetos | length != 1 else '' }}
+    </div>
+  </div>
+
+  <!-- ══ Sem projetos ══ -->
+  {% if not projetos %}
+  <div class="mpd-empty">
+    <div class="mpd-empty-icon"><i class="fa-solid fa-folder-open"></i></div>
+    <h2>Nenhum projeto ativo ainda</h2>
+    <p>Quando um cliente aceitar sua proposta, o projeto aparece aqui.</p>
+    <a href="/DashboardDev" class="mpd-btn-primary">
+      <i class="fa-solid fa-magnifying-glass"></i> Ver demandas disponíveis
+    </a>
+  </div>
+
+  {% else %}
+
+  <!-- ══ Grid de cards ══ -->
+  <div class="mpd-grid">
+    {% for p in projetos %}
+    <div class="mpd-card">
+
+      <!-- Cabeçalho do card -->
+      <div class="mpd-card-head">
+        <div class="mpd-card-icon">
+          <i class="fa-solid fa-code"></i>
+        </div>
+        <div class="mpd-card-title-area">
+          <h2 class="mpd-card-title">{{ p.titulo }}</h2>
+          <span class="mpd-tech-pill">{{ p.tecnologia }}</span>
+        </div>
+        <span class="mpd-status-badge">
+          <i class="fa-solid fa-circle-dot"></i> Em Desenvolvimento
+        </span>
+      </div>
+
+      <!-- Descrição -->
+      {% if p.descricao %}
+      <p class="mpd-card-desc">
+        {{ p.descricao[:180] }}{% if p.descricao | length > 180 %}…{% endif %}
+      </p>
+      {% endif %}
+
+      <!-- Métricas rápidas -->
+      <div class="mpd-card-metrics">
+        <div class="mpd-metric">
+          <i class="fa-solid fa-circle-dollar-to-slot"></i>
+          <div>
+            <span class="mpd-metric-label">Orçamento</span>
+            <span class="mpd-metric-value">R$ {{ p.orcamento }}</span>
+          </div>
+        </div>
+        <div class="mpd-metric">
+          <i class="fa-solid fa-calendar-check"></i>
+          <div>
+            <span class="mpd-metric-label">Aceito em</span>
+            <span class="mpd-metric-value">{{ p.candidatura.data.strftime('%d/%m/%Y') }}</span>
+          </div>
+        </div>
+        <div class="mpd-metric">
+          <i class="fa-solid fa-user"></i>
+          <div>
+            <span class="mpd-metric-label">Cliente</span>
+            <span class="mpd-metric-value">
+              {{ p.candidatura.dev.nome or '—' }}
+              {# cliente está em id_cliente — exibimos o id por ora #}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Proposta resumida -->
+      {% if p.candidatura.proposta %}
+      <div class="mpd-proposta-box">
+        <div class="mpd-proposta-label"><i class="fa-solid fa-file-pen"></i> Sua Proposta</div>
+        <p>{{ p.candidatura.proposta[:200] }}{% if p.candidatura.proposta | length > 200 %}…{% endif %}</p>
+      </div>
+      {% endif %}
+
+      <!-- Linha de progresso (visual / placeholder Sprint futura) -->
+      <div class="mpd-progress-area">
+        <div class="mpd-progress-label">
+          <span>Progresso</span>
+          <span class="mpd-progress-pct">Em andamento</span>
+        </div>
+        <div class="mpd-progress-bar">
+          <div class="mpd-progress-fill" style="width: 30%"></div>
+        </div>
+        <div class="mpd-progress-steps">
+          <span class="mpd-step mpd-step-done"><i class="fa-solid fa-check"></i> Proposta aceita</span>
+          <span class="mpd-step mpd-step-active"><i class="fa-solid fa-circle-dot"></i> Em desenvolvimento</span>
+          <span class="mpd-step"><i class="fa-regular fa-circle"></i> Entrega</span>
+          <span class="mpd-step"><i class="fa-regular fa-circle"></i> Pagamento</span>
+        </div>
+      </div>
+
+      <!-- Ações do card -->
+      <div class="mpd-card-actions">
+        <a href="/chat/{{ p.candidatura.id }}" class="mpd-btn-primary">
+          <i class="fa-solid fa-comment-dots"></i> Abrir Chat
+        </a>
+        <button class="mpd-btn-secondary mpd-btn-disabled" disabled title="Disponível em breve">
+          <i class="fa-solid fa-upload"></i> Enviar Entrega
+        </button>
+        <button class="mpd-btn-secondary mpd-btn-disabled" disabled title="Disponível após entrega">
+          <i class="fa-solid fa-receipt"></i> Ver Pagamento
+        </button>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+
+  {% endif %}
+
+</div><!-- /mpd-page -->
+
+{% endblock %}
