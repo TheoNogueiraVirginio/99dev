@@ -497,3 +497,20 @@
     .modal-actions { flex-direction: column-reverse; }
     .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
 }
+
+/* ── Link "Ver projetos ativos" no header da seção ── */
+.link-ver-projetos {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--sidebar-active);
+    text-decoration: none;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 5px 12px;
+    transition: background .15s;
+}
+.link-ver-projetos:hover { background: #dbeafe; }
