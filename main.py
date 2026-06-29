@@ -3,7 +3,7 @@ from flask import flash, render_template, redirect, request, session, abort, url
 from flask_wtf.file import FileField, FileAllowed
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, TextAreaField, IntegerField, FloatField
-from wtforms.validators import input_required, Email, Optional
+from wtforms.validators import input_required, Email, Optional, NumberRange
 
 #importando a função de cadastro do usuário
 from app import app, db, google
@@ -72,7 +72,7 @@ def home():
     return render_template('home.html')
 
 class AdicionarSaldoForm(FlaskForm):
-    valor = FloatField('Valor do Depósito (R$)', validators=[input_required(message="Digite um valor para depositar.")])
+    valor = FloatField('Valor do Depósito (R$)', validators=[input_required(message="Digite um valor para depositar."), NumberRange(min=0.01,message="O valor tem que ser maior que 0")])
 
 # rota provisoria
 @app.route('/cadastro', methods=['GET', 'POST'])
@@ -369,7 +369,10 @@ def adicionar_saldo():
             flash(f"Saldo de R$ {valor_deposito:.2f} adicionado com sucesso!", "success")
         except Exception as e:
             flash(f"Erro ao processar o depósito: {str(e)}", "error")
-            
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(error, "error")
     return redirect('/carteira')
 
 @app.route('/carteira', methods=['GET', 'POST'])
