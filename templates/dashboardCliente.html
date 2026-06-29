@@ -104,4 +104,50 @@
     </table>
 </section>
 
+<!-- ── Candidaturas de Devs ── -->
+{% if candidaturas %}
+<section class="tarefas" style="margin-top: 22px;">
+    <div class="tarefas-header">
+        <h2><i class="fa-solid fa-handshake" style="color:#2f6bf2;margin-right:8px;"></i>Devs Interessados nas Suas Demandas</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Demanda</th>
+                <th>Desenvolvedor</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Chat</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in candidaturas %}
+            <tr>
+                <td data-label="Demanda">
+                    <div class="task-title">{{ c.demanda_titulo }}</div>
+                </td>
+                <td data-label="Desenvolvedor">
+                    <div class="task-title">{{ c.dev.nome or c.dev.email }}</div>
+                    {% if c.dev.titulo %}<div class="task-subtitle">{{ c.dev.titulo }}</div>{% endif %}
+                </td>
+                <td data-label="Status">
+                    <span class="status-pill" style="background:#fef9c3;color:#854d0e;border-color:#fde68a;">
+                        {{ c.status | capitalize }}
+                    </span>
+                </td>
+                <td data-label="Data" style="color:#6d7c92;font-size:.9rem;">
+                    {{ c.data.strftime('%d/%m/%Y') }}
+                </td>
+                <td data-label="Chat">
+                    <a class="action-link" href="/chat/{{ c.id }}">
+                        <i class="fa-solid fa-comment-dots"></i> Conversar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+
 {% endblock %}
