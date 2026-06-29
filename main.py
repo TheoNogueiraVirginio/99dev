@@ -6,9 +6,7 @@ from wtforms import StringField, PasswordField, BooleanField, TextAreaField, Int
 from wtforms.validators import input_required, Email, Optional, NumberRange
 
 from app import app, db, google
-from app.models import Cliente, Desenvolvedor, Candidatura
-
-from app.functions import (
+from app.models import Cliente, Desenvolvedor, Candidaturafrom app.functions import (
     atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo,
     gerenciar_login_google, lerDemandas, salvarDemanda,
     solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev,
