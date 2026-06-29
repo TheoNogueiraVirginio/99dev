@@ -6,7 +6,7 @@ from wtforms import StringField, PasswordField, BooleanField, TextAreaField, Int
 from wtforms.validators import input_required, Email, Optional, NumberRange
 
 from app import app, db, google
-from app.models import Cliente, Desenvolvedor, Candidatura 
+from app.models import Cliente, Desenvolvedor, Candidatura
 from app.functions import (
     atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo,
     gerenciar_login_google, lerDemandas, salvarDemanda,
@@ -439,6 +439,28 @@ def enviar_mensagem(candidatura_id):
     })
 
 
+@app.route('/candidatura/<int:candidatura_id>/aceitar', methods=['POST'])
+@login_required
+def aceitar_candidatura(candidatura_id):
+    if session.get("tipo_usuario") != "cliente":
+        return jsonify({"error": "Apenas clientes podem aceitar propostas."}), 403
+
+    candidatura = Candidatura.query.get_or_404(candidatura_id)
+    if candidatura.id_cliente != session["id_usuario"]:
+        return jsonify({"error": "Sem permissão."}), 403
+
+    if candidatura.status != 'pendente':
+        return jsonify({"error": "Esta candidatura não está mais pendente."}), 400
+
+    from app.functions import enviar_mensagem_chat, atualizar_status_demanda
+    candidatura.status = 'aceita'
+    db.session.commit()
+    atualizar_status_demanda(candidatura.demanda_uuid, 'Em Desenvolvimento')
+    enviar_mensagem_chat(candidatura_id, session["id_usuario"], 'cliente',
+                         '✅ Proposta aceita! O projeto agora está em desenvolvimento.')
+    return jsonify({"ok": True, "status": "aceita"})
+
+
 @app.route('/chat/<int:candidatura_id>/poll')
 @login_required
 def poll_mensagens(candidatura_id):
@@ -454,13 +476,17 @@ def poll_mensagens(candidatura_id):
     ultimo_id = int(request.args.get("ultimo_id", 0))
     mensagens = ler_mensagens_chat(candidatura_id, ultimo_id)
 
-    return jsonify([{
-        "id": m.id,
-        "conteudo": m.conteudo,
-        "tipo_remetente": m.tipo_remetente,
-        "remetente_id": m.remetente_id,
-        "data": m.data.strftime('%H:%M'),
-    } for m in mensagens])
+    cand = Candidatura.query.get(candidatura_id)
+    return jsonify({
+        "status": cand.status,
+        "mensagens": [{
+            "id": m.id,
+            "conteudo": m.conteudo,
+            "tipo_remetente": m.tipo_remetente,
+            "remetente_id": m.remetente_id,
+            "data": m.data.strftime("%%H:%%M"),
+        } for m in mensagens]
+    })
 
 
 # ─── main ─────────────────────────────────────────────────────────────────────
