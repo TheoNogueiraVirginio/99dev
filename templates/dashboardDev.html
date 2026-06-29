@@ -148,7 +148,6 @@
         <div class="modal-demanda-info" id="modalInfoDemanda"></div>
 
         <form id="formCandidatura" action="/candidatar" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="demanda_uuid"   id="inputUuid">
             <input type="hidden" name="demanda_titulo" id="inputTitulo">
             <input type="hidden" name="id_cliente"     id="inputIdCliente">
