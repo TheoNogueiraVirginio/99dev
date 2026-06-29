@@ -1,22 +1,32 @@
-from flask import flash, render_template, redirect, request, session, abort, url_for
+from flask import flash, jsonify, render_template, redirect, request, session, abort, url_for
 
 from flask_wtf.file import FileField, FileAllowed
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, TextAreaField, IntegerField, FloatField
 from wtforms.validators import input_required, Email, Optional, NumberRange
 
-#importando a função de cadastro do usuário
 from app import app, db, google
-from app.models import Cliente, Desenvolvedor
+from app.models import Cliente, Desenvolvedor, Candidatura
 
-from app.functions import atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo, gerenciar_login_google, lerDemandas, salvarDemanda, solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev, atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente, ler_demandas_realizadas_cliente, salvar_mensagem_suporte, salvar_mensagem_suporte_dev
+from app.functions import (
+    atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo,
+    gerenciar_login_google, lerDemandas, salvarDemanda,
+    solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev,
+    atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente,
+    ler_demandas_realizadas_cliente, salvar_mensagem_suporte,
+    salvar_mensagem_suporte_dev,
+    # novos
+    candidatar_dev, ler_candidaturas_dev, ler_candidaturas_cliente,
+    enviar_mensagem_chat, ler_mensagens_chat,
+)
 
 from app.decorators import login_required
 
 with app.app_context():
     db.create_all()
 
-## formulário de cadastro
+# ─── Forms ────────────────────────────────────────────────────────────────────
+
 class CadastroForm(FlaskForm):
     email = StringField('Email', validators=[Email(message="Email inválido")])
     senha = PasswordField('senha', validators=[input_required()])
@@ -61,104 +71,74 @@ class FiltroForm(FlaskForm):
 
 class SuporteForm(FlaskForm):
     assunto = StringField('Assunto do Contato', validators=[input_required(message="Por favor, insira o assunto da sua mensagem.")])
-    mensagem = TextAreaField('Descrição detalhada do problema ou dúvida', validators=[input_required(message="O campo de mensagem não pode ficar vazio.")])    
+    mensagem = TextAreaField('Descrição detalhada do problema ou dúvida', validators=[input_required(message="O campo de mensagem não pode ficar vazio.")])
 
 class SuporteDevForm(FlaskForm):
     assunto = StringField('Assunto da Solicitação', validators=[input_required(message="O assunto é obrigatório.")])
     mensagem = TextAreaField('Detalhes do Problema ou Dúvida', validators=[input_required(message="A mensagem não pode ficar vazia.")])
-    
+
+class AdicionarSaldoForm(FlaskForm):
+    valor = FloatField('Valor do Depósito (R$)', validators=[input_required(message="Digite um valor para depositar."), NumberRange(min=0.01, message="O valor tem que ser maior que 0")])
+
+# ─── Rotas existentes ─────────────────────────────────────────────────────────
+
 @app.route("/")
 def home():
     return render_template('home.html')
 
-class AdicionarSaldoForm(FlaskForm):
-    valor = FloatField('Valor do Depósito (R$)', validators=[input_required(message="Digite um valor para depositar."), NumberRange(min=0.01,message="O valor tem que ser maior que 0")])
-
-# rota provisoria
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
     form = CadastroForm()
-    
-    #cadastro valido
     if form.validate_on_submit():
-        
-        if form.dev.data:
-            cargo_definido = 'dev'
-        else:
-            cargo_definido = 'cliente'
-            
-        #envia payload para a função de cadastro do usuário
+        cargo_definido = 'dev' if form.dev.data else 'cliente'
         try:
-            cadastrar_usuario(
-                email=form.email.data,
-                senha=form.senha.data,
-                cargo=cargo_definido
-            )
+            cadastrar_usuario(email=form.email.data, senha=form.senha.data, cargo=cargo_definido)
         except Exception as e:
             flash(f"Falha ao cadastrar usuário: {str(e)}", "error")
             return render_template('cadastro.html', form=form, error=str(e))
-        
         return redirect('/login')
-        
     return render_template('cadastro.html', form=form)
 
-@app.route('/login', methods=["GET","POST"])
+@app.route('/login', methods=["GET", "POST"])
 def login():
     form = CadastroForm()
-
     if form.validate_on_submit():
         try:
             usuario = autenticar_usuario(form.email.data, form.senha.data)
-
             session["id_usuario"] = usuario.id
             session["tipo_usuario"] = "dev" if isinstance(usuario, Desenvolvedor) else "cliente"
             flash("Login realizado com sucesso!", "success")
             if session["tipo_usuario"] == 'dev':
                 return redirect('/DashboardDev')
             return redirect('/dashboard')
-
         except ValueError as e:
             flash(str(e), "error")
-
     return render_template('login.html', form=form)
 
-#rota para iniciar a autenticação via Google
 @app.route('/login/google')
 def login_google():
-    #Se não vier nada, assume 'cliente'
     session['cargo_pretendido'] = request.args.get('cargo', 'cliente')
-
-    # Monta a URL de callback e redireciona o usuário para a tela do Google
     redirect_uri = url_for('authorize_google', _external=True)
     return google.authorize_redirect(redirect_uri)
 
-#rota para callback de autorização do Google
 @app.route('/authorize/google')
 def authorize_google():
     try:
-        # O usuário voltou do Google. Pegamos o token e os dados dele:
         token = google.authorize_access_token()
         user_info = token.get('userinfo')
         email = user_info['email']
-        
         cargo_escolhido = session.pop('cargo_pretendido', 'cliente')
-        
         usuario = gerenciar_login_google(email, cargo_escolhido)
-        
         session["id_usuario"] = usuario.id
         session["tipo_usuario"] = "dev" if isinstance(usuario, Desenvolvedor) else "cliente"
         flash("Login com Google realizado com sucesso!", "success")
-        
-        # 5. Redireciona para o painel correto
         if session["tipo_usuario"] == "dev":
             return redirect("/DashboardDev")
         return redirect("/dashboard")
-            
-    except Exception as e:
+    except Exception:
         flash("Ocorreu um erro ao tentar fazer login com o Google.", "error")
         return redirect('/login')
 
-#rota para a página de recuperação de senha
 @app.route('/recuperar-senha', methods=['GET', 'POST'])
 def recuperar_senha():
     form = RecuperarSenhaForm()
@@ -169,74 +149,58 @@ def recuperar_senha():
         except Exception as e:
             flash(f"Falha ao enviar email: {str(e)}", "error")
     return render_template('recuperar-senha.html', form=form)
- 
-#rota nova senha botar token de recuperação de senha depois
+
 @app.route('/nova-senha/<token>', methods=['GET', 'POST'])
 def nova_senha(token):
     form = NovaSenhaForm()
     if form.validate_on_submit():
-        
         if form.password.data != form.password_confirm.data:
             flash("As senhas não coincidem", "error")
             return render_template('nova-senha.html', form=form)
-        
         email = validar_token(token)
         if not email:
             flash("Token inválido ou expirado", "error")
             return redirect('/recuperar-senha')
-
         atualizar_senha(email=email, nova_senha=form.password.data)
         flash("Senha atualizada com sucesso", "success")
         return redirect('/login')
-
     return render_template('nova-senha.html', form=form)
 
 @app.route('/editar-perfil', methods=['GET', 'POST'])
-@login_required 
+@login_required
 def perfil():
     id_usuario = session.get("id_usuario")
     usuario = Cliente.query.get(id_usuario)
-    
     if not usuario:
         flash("Usuário não encontrado.", "error")
         return redirect('/login')
     if session.get("tipo_usuario") == 'dev':
         abort(403)
     form = EditarPerfilForm()
-    
     if form.validate_on_submit():
-            
         try:
-            atualizar_perfil_cliente(
-                id_cliente=id_usuario,
-                novo_email=form.email.data,
-                nova_senha=form.nova_senha.data,
-                nova_descricao=form.descricao.data,
-                arquivo_foto=form.foto.data
-            )
-            flash("Perfil updated com sucesso!", "success")
+            atualizar_perfil_cliente(id_cliente=id_usuario, novo_email=form.email.data,
+                                     nova_senha=form.nova_senha.data,
+                                     nova_descricao=form.descricao.data,
+                                     arquivo_foto=form.foto.data)
+            flash("Perfil atualizado com sucesso!", "success")
             return redirect('/editar-perfil')
-            
         except Exception as e:
             flash(str(e), "error")
-            
     elif request.method == 'GET':
         form.email.data = usuario.email
         form.dev.data = (session.get("tipo_usuario") == 'dev')
         form.pessoa.data = (session.get("tipo_usuario") == 'cliente')
-        form.descricao.data = usuario.descricao    
-    foto_perfil= usuario.foto_perfil    
-    return render_template('perfil-editar.html',foto_perfil=foto_perfil, form=form)
+        form.descricao.data = usuario.descricao
+    return render_template('perfil-editar.html', foto_perfil=usuario.foto_perfil, form=form)
 
 @app.route('/perfil-dev', methods=['GET', 'POST'])
 @login_required
 def perfildev():
     form = EditarDevForm()
-
     if session.get("tipo_usuario") != "dev":
         abort(403)
     usuario = Desenvolvedor.query.get(session["id_usuario"])
-
     if request.method == 'GET' and usuario:
         form.nome.data = usuario.nome
         form.titulo.data = usuario.titulo
@@ -246,76 +210,50 @@ def perfildev():
         form.github.data = usuario.github
         form.linkedin.data = usuario.linkedin
         form.exibir_dados.data = usuario.exibir_dados
-
     if form.validate_on_submit():
         try:
-            id_do_usuario_logado = session["id_usuario"]
-            
-            
-            atualizar_perfil_dev(
-                id_dev=id_do_usuario_logado,
-                nome=form.nome.data,
-                titulo=form.titulo.data,
-                valor_hora=form.valor_hora.data,
-                skills=form.skills.data,
-                resumo=form.resumo.data,
-                github=form.github.data,
-                linkedin=form.linkedin.data,
-                foto_perfil=form.foto_perfil.data,
-                foto_banner=form.foto_banner.data,
-                novo_exibir_dados=form.exibir_dados.data
-            )
-            
+            atualizar_perfil_dev(id_dev=session["id_usuario"], nome=form.nome.data,
+                                  titulo=form.titulo.data, valor_hora=form.valor_hora.data,
+                                  skills=form.skills.data, resumo=form.resumo.data,
+                                  github=form.github.data, linkedin=form.linkedin.data,
+                                  foto_perfil=form.foto_perfil.data,
+                                  foto_banner=form.foto_banner.data,
+                                  novo_exibir_dados=form.exibir_dados.data)
             flash("Perfil atualizado com sucesso!", "success")
             return redirect('/perfil-dev')
-            
         except Exception as e:
             flash(f"Erro ao atualizar perfil: {str(e)}", "error")
-            
     return render_template('perfil.html', form=form, usuario=usuario)
-
 
 @app.route("/dashboard", methods=['GET', 'POST'])
 @login_required
 def dashboardCliente():
     form = DemandaForm()
-
     if session.get("tipo_usuario") != "cliente":
         abort(403)
-
     id = session["id_usuario"]
     usuario = Cliente.query.get(id)
     demandas = lerDemandas()
     pagamentos = ler_pagamentos_cliente(id)
     demandas_realizadas = ler_demandas_realizadas_cliente(id)
+    candidaturas = ler_candidaturas_cliente(id)
 
     if form.validate_on_submit():
         try:
-            salvarDemanda(
-                titulo=form.titulo.data,
-                tecnologia=form.tecnologia.data,
-                descricao=form.descricao.data,
-                orcamento=form.orcamento.data,
-                status="Aberta",
-                id=id
-            )
+            salvarDemanda(titulo=form.titulo.data, tecnologia=form.tecnologia.data,
+                          descricao=form.descricao.data, orcamento=form.orcamento.data,
+                          status="Aberta", id=id)
             flash("Demanda cadastrada com sucesso!", "success")
             return redirect('/dashboard')
         except Exception as e:
             flash(f"Falha ao cadastrar demanda: {str(e)}", "error")
-            
-    foto_perfil = usuario.foto_perfil if usuario else None
-    
-    return render_template(
-        'dashboardCliente.html', 
-        form=form, 
-        demandas=demandas, 
-        foto_perfil=foto_perfil, 
-        usuario=usuario, 
-        pagamentos=pagamentos,
-        demandas_realizadas=demandas_realizadas
-    )
-    
+
+    return render_template('dashboardCliente.html', form=form, demandas=demandas,
+                           foto_perfil=usuario.foto_perfil if usuario else None,
+                           usuario=usuario, pagamentos=pagamentos,
+                           demandas_realizadas=demandas_realizadas,
+                           candidaturas=candidaturas)
+
 @app.route("/MeusProjetos", methods=['GET', 'POST'])
 @login_required
 def meusProjetos():
@@ -324,49 +262,37 @@ def meusProjetos():
     demandas = lerDemandas(busca=busca, filtro_status=filtro_status)
     return render_template('MeusProjetos.html', demandas=demandas)
 
-@app.route("/logout",methods=['GET'])
+@app.route("/logout", methods=['GET'])
 def sairLogin():
     session.clear()
     flash('Você saiu da sua conta, logue novamente!')
-    return redirect ('/login')
+    return redirect('/login')
 
-##Rota para o dashboard do dev, só pode acessar se for dev, se for cliente da erro 403
 @app.route("/DashboardDev", methods=['GET'])
 @login_required
 def dashboardDev():
     if session.get("tipo_usuario") != "dev":
         abort(403)
-
     id_dev = session["id_usuario"]
     usuario = Desenvolvedor.query.get(id_dev)
     demandas = lerDemandas(tipo_usuario="dev")
     saldo = exibirSaldo(id_dev)
-    
+    candidaturas = ler_candidaturas_dev(id_dev)
     foto_perfil = usuario.foto_perfil if usuario else None
-    
-    return render_template('dashboardDev.html', demandas=demandas, saldo=saldo, usuario=usuario, foto_perfil=foto_perfil)
-
-@app.route("/mensagens")
-@login_required
-def chat():
-    return render_template('chat.html')
+    return render_template('dashboardDev.html', demandas=demandas, saldo=saldo,
+                           usuario=usuario, foto_perfil=foto_perfil,
+                           candidaturas=candidaturas)
 
 @app.route('/adicionar-saldo', methods=['POST'])
 @login_required
 def adicionar_saldo():
     if session.get("tipo_usuario") != "cliente":
         abort(403)
-        
     form = AdicionarSaldoForm()
-    
     if form.validate_on_submit():
         try:
-            id_cliente = session["id_usuario"]
-            valor_deposito = form.valor.data
-            
-            adicionar_saldo_cliente(id_cliente=id_cliente, saldo=valor_deposito)
-            
-            flash(f"Saldo de R$ {valor_deposito:.2f} adicionado com sucesso!", "success")
+            adicionar_saldo_cliente(id_cliente=session["id_usuario"], saldo=form.valor.data)
+            flash(f"Saldo de R$ {form.valor.data:.2f} adicionado com sucesso!", "success")
         except Exception as e:
             flash(f"Erro ao processar o depósito: {str(e)}", "error")
     else:
@@ -380,47 +306,32 @@ def adicionar_saldo():
 def carteiraCliente():
     if session.get("tipo_usuario") != "cliente":
         abort(403)
-    
     id = session["id_usuario"]
     usuario = Cliente.query.get(id)
     form = AdicionarSaldoForm()
-    foto_perfil = usuario.foto_perfil if usuario else None
-    return render_template('carteiraCliente.html', usuario=usuario, form=form, foto_perfil=foto_perfil)
+    return render_template('carteiraCliente.html', usuario=usuario, form=form,
+                           foto_perfil=usuario.foto_perfil if usuario else None)
 
 @app.errorhandler(403)
 def acesso_proibido(error):
-    return render_template('403.html'),403
+    return render_template('403.html'), 403
 
 @app.route('/suporte', methods=['GET', 'POST'])
 @login_required
 def suporte():
     form = SuporteForm()
-    
     id_usuario = session.get("id_usuario")
     tipo_usuario = session.get("tipo_usuario")
-    
-    if tipo_usuario == 'dev':
-        usuario = Desenvolvedor.query.get(id_usuario)
-    else:
-        usuario = Cliente.query.get(id_usuario)
-        
+    usuario = Desenvolvedor.query.get(id_usuario) if tipo_usuario == 'dev' else Cliente.query.get(id_usuario)
     foto_perfil = usuario.foto_perfil if usuario else None
-
     if form.validate_on_submit():
         try:
-
-            salvar_mensagem_suporte(
-                id_usuario=id_usuario,
-                tipo_usuario=tipo_usuario,
-                assunto=form.assunto.data,
-                mensagem=form.mensagem.data
-            )
-            
-            flash("Sua mensagem foi enviada com sucesso à equipe de suporte! Entraremos em contato em breve.", "success")
+            salvar_mensagem_suporte(id_usuario=id_usuario, tipo_usuario=tipo_usuario,
+                                    assunto=form.assunto.data, mensagem=form.mensagem.data)
+            flash("Sua mensagem foi enviada com sucesso à equipe de suporte!", "success")
             return redirect('/suporte')
         except Exception as e:
             flash(f"Ocorreu um erro ao tentar registrar sua mensagem: {str(e)}", "error")
-
     return render_template('suporte.html', form=form, foto_perfil=foto_perfil, usuario=usuario)
 
 @app.route('/suporte-dev', methods=['GET', 'POST'])
@@ -428,26 +339,132 @@ def suporte():
 def suporteDev():
     if session.get("tipo_usuario") != "dev":
         abort(403)
-
     form = SuporteDevForm()
     id_dev = session["id_usuario"]
     usuario = Desenvolvedor.query.get(id_dev)
     foto_perfil = usuario.foto_perfil if usuario else None
-
     if form.validate_on_submit():
         try:
-            salvar_mensagem_suporte_dev(
-                id_dev=id_dev,
-                assunto=form.assunto.data,
-                mensagem=form.mensagem.data
-            )
-            flash("Ticket de suporte enviado com sucesso! Nossa equipe técnica retornará em breve.", "success")
+            salvar_mensagem_suporte_dev(id_dev=id_dev, assunto=form.assunto.data,
+                                        mensagem=form.mensagem.data)
+            flash("Ticket de suporte enviado com sucesso!", "success")
             return redirect('/suporte-dev')
         except Exception as e:
             flash(f"Ocorreu um erro ao enviar sua solicitação: {str(e)}", "error")
-
     return render_template('suporteDev.html', form=form, usuario=usuario, foto_perfil=foto_perfil)
 
-# executa a aplicação
+
+# ─── Candidatura ──────────────────────────────────────────────────────────────
+
+@app.route('/candidatar', methods=['POST'])
+@login_required
+def candidatar():
+    if session.get("tipo_usuario") != "dev":
+        abort(403)
+
+    dev_id = session["id_usuario"]
+    demanda_uuid = request.form.get("demanda_uuid", "").strip()
+    demanda_titulo = request.form.get("demanda_titulo", "").strip()
+    id_cliente = request.form.get("id_cliente", "").strip()
+    proposta = request.form.get("proposta", "").strip()
+
+    if not demanda_uuid or not demanda_titulo or not id_cliente:
+        flash("Dados da demanda inválidos.", "error")
+        return redirect('/DashboardDev')
+
+    try:
+        candidatura = candidatar_dev(
+            dev_id=dev_id,
+            demanda_uuid=demanda_uuid,
+            demanda_titulo=demanda_titulo,
+            id_cliente=int(id_cliente),
+            proposta=proposta,
+        )
+        flash("Candidatura enviada! Agora você pode conversar com o cliente.", "success")
+        return redirect(f'/chat/{candidatura.id}')
+    except ValueError as e:
+        flash(str(e), "error")
+        return redirect('/DashboardDev')
+
+
+# ─── Chat ─────────────────────────────────────────────────────────────────────
+
+@app.route('/chat/<int:candidatura_id>')
+@login_required
+def chat(candidatura_id):
+    candidatura = Candidatura.query.get_or_404(candidatura_id)
+    id_usuario = session["id_usuario"]
+    tipo = session["tipo_usuario"]
+
+    if tipo == "dev" and candidatura.dev_id != id_usuario:
+        abort(403)
+    if tipo == "cliente" and candidatura.id_cliente != id_usuario:
+        abort(403)
+
+    dev = Desenvolvedor.query.get(candidatura.dev_id)
+    cliente = Cliente.query.get(candidatura.id_cliente)
+    mensagens = ler_mensagens_chat(candidatura_id)
+
+    return render_template('chat.html',
+                           candidatura=candidatura,
+                           dev=dev,
+                           cliente=cliente,
+                           mensagens=mensagens,
+                           tipo_usuario=tipo,
+                           id_usuario=id_usuario)
+
+
+@app.route('/chat/<int:candidatura_id>/enviar', methods=['POST'])
+@login_required
+def enviar_mensagem(candidatura_id):
+    candidatura = Candidatura.query.get_or_404(candidatura_id)
+    id_usuario = session["id_usuario"]
+    tipo = session["tipo_usuario"]
+
+    if tipo == "dev" and candidatura.dev_id != id_usuario:
+        abort(403)
+    if tipo == "cliente" and candidatura.id_cliente != id_usuario:
+        abort(403)
+
+    conteudo = request.json.get("conteudo", "").strip() if request.is_json else request.form.get("conteudo", "").strip()
+    if not conteudo:
+        return jsonify({"error": "Mensagem vazia"}), 400
+
+    msg = enviar_mensagem_chat(candidatura_id, id_usuario, tipo, conteudo)
+    return jsonify({
+        "id": msg.id,
+        "conteudo": msg.conteudo,
+        "tipo_remetente": msg.tipo_remetente,
+        "remetente_id": msg.remetente_id,
+        "data": msg.data.strftime('%H:%M'),
+    })
+
+
+@app.route('/chat/<int:candidatura_id>/poll')
+@login_required
+def poll_mensagens(candidatura_id):
+    candidatura = Candidatura.query.get_or_404(candidatura_id)
+    id_usuario = session["id_usuario"]
+    tipo = session["tipo_usuario"]
+
+    if tipo == "dev" and candidatura.dev_id != id_usuario:
+        abort(403)
+    if tipo == "cliente" and candidatura.id_cliente != id_usuario:
+        abort(403)
+
+    ultimo_id = int(request.args.get("ultimo_id", 0))
+    mensagens = ler_mensagens_chat(candidatura_id, ultimo_id)
+
+    return jsonify([{
+        "id": m.id,
+        "conteudo": m.conteudo,
+        "tipo_remetente": m.tipo_remetente,
+        "remetente_id": m.remetente_id,
+        "data": m.data.strftime('%H:%M'),
+    } for m in mensagens])
+
+
+# ─── main ─────────────────────────────────────────────────────────────────────
+
 if __name__ == '__main__':
     app.run(debug=True, port=3001)
