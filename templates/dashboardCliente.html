@@ -8,14 +8,6 @@
 
 {% block content %}
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, msg in messages %}
-            <div class="error-message {{ category }}">{{ msg }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
-
 <section class="novaTarefa">
     <h2>Nova Tarefa</h2>
     <form action="#" method="post">
