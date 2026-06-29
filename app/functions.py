@@ -269,7 +269,10 @@ def lerDemandas(busca=None, filtro_status=None, tipo_usuario=None):
                             continue
                     demandas.append(demanda)
 
-                demandasDev.append(demanda)
+                # Mercado só exibe demandas disponíveis para candidatura
+                STATUS_VISIVEIS = {'Aberta', 'aberta'}
+                if row[4].strip() in STATUS_VISIVEIS:
+                    demandasDev.append(demanda)
 
     if tipo_usuario == "dev":
         return demandasDev
@@ -333,6 +336,50 @@ def candidatar_dev(dev_id, demanda_uuid, demanda_titulo, id_cliente, proposta):
     atualizar_status_demanda(demanda_uuid, 'Pendente')
 
     return nova
+
+
+def ler_projetos_dev(dev_id):
+    """Retorna candidaturas aceitas do dev, enriquecidas com dados da demanda do CSV."""
+    from app.models import Candidatura
+
+    aceitas = Candidatura.query.filter_by(dev_id=dev_id, status='aceita').order_by(
+        Candidatura.data.desc()
+    ).all()
+
+    # Enriquecer com dados do CSV (orcamento, tecnologia, descricao)
+    demanda_map = {}
+    if DEMANDAS_CSV_PATH.exists():
+        with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as f:
+            reader = csv.reader(f, delimiter='\t')
+            for row in reader:
+                if len(row) < 6:
+                    continue
+                row_uuid = (
+                    row[6].strip()
+                    if len(row) > 6 and row[6].strip()
+                    else _uuid_legado(row[0], row[5])
+                )
+                demanda_map[row_uuid] = {
+                    'titulo':     row[0],
+                    'tecnologia': row[1],
+                    'descricao':  row[2],
+                    'orcamento':  row[3],
+                    'status':     row[4],
+                }
+
+    projetos = []
+    for c in aceitas:
+        info = demanda_map.get(c.demanda_uuid, {})
+        projetos.append({
+            'candidatura':  c,
+            'titulo':       info.get('titulo',     c.demanda_titulo),
+            'tecnologia':   info.get('tecnologia', '—'),
+            'descricao':    info.get('descricao',  ''),
+            'orcamento':    info.get('orcamento',  '—'),
+            'status_demanda': info.get('status',   'Em Desenvolvimento'),
+        })
+
+    return projetos
 
 
 def ler_candidaturas_dev(dev_id):

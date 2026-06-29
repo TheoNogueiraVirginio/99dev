@@ -85,11 +85,19 @@
     </table>
 </section>
 
-<!-- ── Minhas Candidaturas ── -->
-{% if candidaturas %}
+<!-- ── Minhas Candidaturas (pendentes) ── -->
+{% set candidaturas_pendentes = candidaturas | rejectattr('status', 'equalto', 'aceita') | list %}
+{% if candidaturas_pendentes %}
 <section class="tarefas" style="margin-top: 22px;">
     <div class="tarefas-header">
         <h2>Minhas Candidaturas</h2>
+        {% set aceitas_count = candidaturas | selectattr('status', 'equalto', 'aceita') | list | length %}
+        {% if aceitas_count > 0 %}
+        <a href="/MeusProjetosDev" class="link-ver-projetos">
+            <i class="fa-solid fa-laptop-code"></i>
+            Ver {{ aceitas_count }} projeto{{ 's' if aceitas_count != 1 else '' }} ativo{{ 's' if aceitas_count != 1 else '' }} →
+        </a>
+        {% endif %}
     </div>
     <table>
         <thead>
@@ -101,7 +109,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for c in candidaturas %}
+            {% for c in candidaturas_pendentes %}
             <tr>
                 <td data-label="Demanda">
                     <div class="task-title">{{ c.demanda_titulo }}</div>

@@ -16,7 +16,7 @@ from app.functions import (
     salvar_mensagem_suporte_dev,
     # novos
     candidatar_dev, ler_candidaturas_dev, ler_candidaturas_cliente,
-    enviar_mensagem_chat, ler_mensagens_chat,
+    enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev,
 )
 
 from app.decorators import login_required
@@ -351,6 +351,20 @@ def suporteDev():
         except Exception as e:
             flash(f"Ocorreu um erro ao enviar sua solicitação: {str(e)}", "error")
     return render_template('suporteDev.html', form=form, usuario=usuario, foto_perfil=foto_perfil)
+
+
+@app.route("/MeusProjetosDev")
+@login_required
+def meusProjetosDev():
+    if session.get("tipo_usuario") != "dev":
+        abort(403)
+    id_dev = session["id_usuario"]
+    usuario = Desenvolvedor.query.get(id_dev)
+    projetos = ler_projetos_dev(id_dev)
+    return render_template('meusProjetosDev.html',
+                           projetos=projetos,
+                           usuario=usuario,
+                           foto_perfil=usuario.foto_perfil if usuario else None)
 
 
 # ─── Candidatura ──────────────────────────────────────────────────────────────
