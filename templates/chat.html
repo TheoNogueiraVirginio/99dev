@@ -1,114 +1,89 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>99 Dev — Chat</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}" />
-</head>
-<body>
+{% extends "basePerfil.html" %}
+
+{% block title %}Chat — {{ candidatura.demanda_titulo }} — 99dev{% endblock %}
+
+{% block head_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+{% endblock %}
+
+{% block content %}
 
 <div class="chat-page">
 
-  <!-- ── Top Header ── -->
+  <!-- ── Header ── -->
   <header class="chat-header">
-    <button class="btn-back" aria-label="Voltar">
+    <a class="btn-back" href="{{ '/DashboardDev' if tipo_usuario == 'dev' else '/dashboard' }}" aria-label="Voltar">
       <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"
            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
         <polyline points="15 18 9 12 15 6"/>
       </svg>
-    </button>
+    </a>
     <div class="header-task">
-      <h1>Fix React useEffect infinite loop</h1>
-      <div class="task-id">Task ID: #101</div>
+      <h1>{{ candidatura.demanda_titulo }}</h1>
+      <div class="task-meta">
+        <span class="chat-status-pill chat-status-{{ candidatura.status }}">{{ candidatura.status | capitalize }}</span>
+      </div>
     </div>
   </header>
 
   <!-- ── Participant Bar ── -->
   <div class="participant-bar">
+    {% if tipo_usuario == 'dev' %}
+      {% set outro_nome = cliente.nome or cliente.email %}
+      {% set outro_role = 'Cliente' %}
+    {% else %}
+      {% set outro_nome = dev.nome or dev.email %}
+      {% set outro_role = 'Desenvolvedor' %}
+    {% endif %}
     <div class="participant-info">
-      <div class="avatar">JD</div>
+      <div class="avatar">{{ outro_nome[:2] | upper }}</div>
       <div>
-        <div class="participant-name">John Doe</div>
-        <div class="participant-role">Client</div>
+        <div class="participant-name">{{ outro_nome }}</div>
+        <div class="participant-role">{{ outro_role }}</div>
       </div>
     </div>
-    <div class="online-badge">
-      <div class="online-dot"></div>
-      Online
-    </div>
+    {% if candidatura.proposta %}
+    <button class="btn-ver-proposta" id="btnVerProposta">
+        <i class="fa-solid fa-file-lines"></i> Ver proposta
+    </button>
+    {% endif %}
   </div>
+
+  <!-- ── Proposta (colapsável) ── -->
+  {% if candidatura.proposta %}
+  <div class="proposta-box" id="propostaBox" hidden>
+    <div class="proposta-label"><i class="fa-solid fa-file-pen"></i> Proposta do Desenvolvedor</div>
+    <p>{{ candidatura.proposta }}</p>
+  </div>
+  {% endif %}
 
   <!-- ── Messages ── -->
   <div class="messages-area" id="messagesArea">
+    <div class="date-divider"><span>Conversa</span></div>
 
-    <div class="date-divider">
-      <span>Today</span>
-    </div>
-
-    <!-- Them: message 1 -->
-    <div class="msg-row them">
-      <div class="msg-avatar">JD</div>
+    {% for msg in mensagens %}
+    {% set eh_meu = (msg.remetente_id == id_usuario) %}
+    <div class="msg-row {{ 'me' if eh_meu else 'them' }}" data-id="{{ msg.id }}">
+      {% if not eh_meu %}
+      <div class="msg-avatar">
+        {% if tipo_usuario == 'dev' %}{{ (cliente.nome or cliente.email)[:2] | upper }}
+        {% else %}{{ (dev.nome or dev.email)[:2] | upper }}{% endif %}
+      </div>
+      {% endif %}
       <div class="msg-group">
-        <div class="bubble">
-          Hi! Thanks for accepting this task. The useEffect is causing infinite re-renders in my dashboard component.
-        </div>
-        <div class="bubble-time">10:30 AM</div>
+        <div class="bubble">{{ msg.conteudo }}</div>
+        <div class="bubble-time">{{ msg.data.strftime('%H:%M') }}</div>
       </div>
     </div>
+    {% endfor %}
 
-    <!-- Me: message 2 -->
-    <div class="msg-row me">
-      <div class="msg-group">
-        <div class="bubble">
-          Hello! I'd be happy to help. Can you share the component code or a GitHub link?
-        </div>
-        <div class="bubble-time">10:32 AM</div>
-      </div>
-    </div>
-
-    <!-- Them: message 3 -->
-    <div class="msg-row them">
-      <div class="msg-avatar">JD</div>
-      <div class="msg-group">
-        <div class="bubble">
-          Sure, here's the repo: github.com/client/dashboard-app
-        </div>
-        <div class="bubble-time">10:33 AM</div>
-      </div>
-    </div>
-
-    <!-- Me: message 4 -->
-    <div class="msg-row me">
-      <div class="msg-group">
-        <div class="bubble">
-          Perfect! I see the issue. You're updating state inside useEffect without proper dependencies. Let me prepare the fix.
-        </div>
-        <div class="bubble-time">10:45 AM</div>
-      </div>
-    </div>
-
-  </div><!-- /messages-area -->
+    <div id="msgAnchor"></div>
+  </div>
 
   <!-- ── Input Bar ── -->
   <div class="input-bar">
     <div class="input-wrap">
-      <button class="btn-icon" aria-label="Anexar arquivo">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-        </svg>
-      </button>
-      <input type="text" id="msgInput" placeholder="Type a message…" autocomplete="off" />
-      <button class="btn-icon" aria-label="Emoji">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-          <line x1="9" y1="9" x2="9.01" y2="9"/>
-          <line x1="15" y1="9" x2="15.01" y2="9"/>
-        </svg>
-      </button>
+      <textarea id="msgInput" placeholder="Digite sua mensagem…" rows="1" autocomplete="off"></textarea>
     </div>
     <button class="btn-send" id="btnSend" aria-label="Enviar mensagem">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"
@@ -121,43 +96,136 @@
 
 </div><!-- /chat-page -->
 
+<!-- ── Proposta overlay ── -->
+{% if candidatura.proposta %}
+<div id="modalProposta" class="modal-backdrop" hidden>
+  <div class="modal-box" style="max-width:520px">
+    <button class="modal-close" id="btnFecharProposta"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-header">
+      <div class="modal-icon"><i class="fa-solid fa-file-pen"></i></div>
+      <div>
+        <h3>Proposta do Desenvolvedor</h3>
+        <p class="modal-subtitle">{{ dev.nome or dev.email }}</p>
+      </div>
+    </div>
+    <div style="padding: 0 4px 4px; color:#344969; line-height:1.7; white-space: pre-wrap;">{{ candidatura.proposta }}</div>
+  </div>
+</div>
+{% endif %}
+
 <script>
-  const messagesArea = document.getElementById('messagesArea');
-  const msgInput     = document.getElementById('msgInput');
-  const btnSend      = document.getElementById('btnSend');
+(function () {
+    const area    = document.getElementById('messagesArea');
+    const input   = document.getElementById('msgInput');
+    const btnSend = document.getElementById('btnSend');
+    const anchor  = document.getElementById('msgAnchor');
 
-  // Scroll to bottom on load
-  messagesArea.scrollTop = messagesArea.scrollHeight;
+    const CANDIDATURA_ID = {{ candidatura.id }};
+    const TIPO_USUARIO   = "{{ tipo_usuario }}";
+    const ID_USUARIO     = {{ id_usuario }};
+    const OUTRO_AVATAR   = "{{ outro_nome[:2] | upper }}";
 
-  function getTime() {
-    return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  }
+    // Último ID visto para polling
+    let ultimoId = 0;
+    document.querySelectorAll('.msg-row[data-id]').forEach(el => {
+        ultimoId = Math.max(ultimoId, parseInt(el.dataset.id) || 0);
+    });
 
-  function sendMessage() {
-    const text = msgInput.value.trim();
-    if (!text) return;
-
-    const row = document.createElement('div');
-    row.className = 'msg-row me';
-    row.innerHTML = `
-      <div class="msg-group">
-        <div class="bubble">${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
-        <div class="bubble-time">${getTime()}</div>
-      </div>`;
-
-    messagesArea.appendChild(row);
-    msgInput.value = '';
-    messagesArea.scrollTop = messagesArea.scrollHeight;
-  }
-
-  btnSend.addEventListener('click', sendMessage);
-
-  msgInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
+    function scrollDown() {
+        anchor.scrollIntoView({ behavior: 'smooth' });
     }
-  });
+    scrollDown();
+
+    // ── Renderiza mensagem recebida via poll ──
+    function renderMensagem(msg) {
+        const ehMeu = (msg.remetente_id === ID_USUARIO);
+        const row = document.createElement('div');
+        row.className = `msg-row ${ehMeu ? 'me' : 'them'}`;
+        row.dataset.id = msg.id;
+
+        const avatarHtml = ehMeu ? '' : `<div class="msg-avatar">${OUTRO_AVATAR}</div>`;
+        row.innerHTML = `
+            ${avatarHtml}
+            <div class="msg-group">
+                <div class="bubble">${escHtml(msg.conteudo)}</div>
+                <div class="bubble-time">${msg.data}</div>
+            </div>`;
+
+        area.insertBefore(row, anchor);
+        scrollDown();
+        ultimoId = Math.max(ultimoId, msg.id);
+    }
+
+    function escHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                  .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    // ── Envio de mensagem ──
+    async function enviarMensagem() {
+        const texto = input.value.trim();
+        if (!texto) return;
+
+        input.value = '';
+        input.style.height = 'auto';
+        btnSend.disabled = true;
+
+        try {
+            const resp = await fetch(`/chat/${CANDIDATURA_ID}/enviar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json',
+                           'X-CSRFToken': document.cookie.match(/csrf[^;]+=([^;]+)/)?.[1] || '' },
+                body: JSON.stringify({ conteudo: texto }),
+            });
+            if (resp.ok) {
+                const msg = await resp.json();
+                renderMensagem(msg);
+            }
+        } catch (err) {
+            console.error('Erro ao enviar:', err);
+        } finally {
+            btnSend.disabled = false;
+            input.focus();
+        }
+    }
+
+    btnSend.addEventListener('click', enviarMensagem);
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarMensagem(); }
+    });
+
+    // Auto-resize textarea
+    input.addEventListener('input', () => {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    });
+
+    // ── Polling (a cada 3 segundos) ──
+    async function poll() {
+        try {
+            const resp = await fetch(`/chat/${CANDIDATURA_ID}/poll?ultimo_id=${ultimoId}`);
+            if (resp.ok) {
+                const msgs = await resp.json();
+                msgs.forEach(m => {
+                    if (m.remetente_id !== ID_USUARIO) renderMensagem(m);
+                    else ultimoId = Math.max(ultimoId, m.id);
+                });
+            }
+        } catch (_) {}
+    }
+    setInterval(poll, 3000);
+
+    // ── Modal da proposta ──
+    const btnVer = document.getElementById('btnVerProposta');
+    const modalP = document.getElementById('modalProposta');
+    const btnFec = document.getElementById('btnFecharProposta');
+
+    if (btnVer && modalP) {
+        btnVer.addEventListener('click', () => { modalP.removeAttribute('hidden'); document.body.style.overflow='hidden'; });
+        btnFec.addEventListener('click', () => { modalP.setAttribute('hidden',''); document.body.style.overflow=''; });
+        modalP.addEventListener('click', e => { if(e.target===modalP){ modalP.setAttribute('hidden',''); document.body.style.overflow=''; } });
+    }
+})();
 </script>
-</body>
-</html>
+
+{% endblock %}
