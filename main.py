@@ -63,7 +63,7 @@ class DemandaForm(FlaskForm):
     titulo = StringField('Título do Projeto', validators=[input_required(message="O título é obrigatório.")])
     tecnologia = StringField('Tecnologia Principal', validators=[input_required(message="A tecnologia é obrigatória.")])
     descricao = TextAreaField('Descrição Detalhada', validators=[input_required(message="A descrição é obrigatória.")])
-    orcamento = IntegerField('Orçamento Estimado (R$)', validators=[input_required(message="O orçamento é obrigatório.")])
+    orcamento = IntegerField('Orçamento Estimado (R$)', validators=[input_required(message="O orçamento é obrigatório."),NumberRange(min=1, message="O valor tem que ser maior que 0 e ser inteiro")])
 
 class FiltroForm(FlaskForm):
     filtro = StringField('Filtrar por status')
@@ -246,7 +246,9 @@ def dashboardCliente():
             return redirect('/dashboard')
         except Exception as e:
             flash(f"Falha ao cadastrar demanda: {str(e)}", "error")
-
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(error, "error")
     return render_template('dashboardCliente.html', form=form, demandas=demandas,
                            foto_perfil=usuario.foto_perfil if usuario else None,
                            usuario=usuario, pagamentos=pagamentos,
