@@ -596,6 +596,24 @@ def negar_demanda(titulo, id_cliente):
         
     return redirect('/dashboard')
 
+@app.route("/avaliar-dev/<string:titulo>/<int:id_cliente>", methods=['POST'])
+@login_required
+def avaliar_dev(titulo, id_cliente):
+    form = AvaliacaoForm()
+    if session.get("tipo_usuario") != "cliente":
+        abort(403)
+        
+    candidatura = Candidatura.query.filter_by(demanda_titulo=titulo, cliente_id=id_cliente, status="Aceita").first()
+    
+    if form.validate_on_submit() and candidatura:
+        try:
+            salvar_avaliacao(titulo, session["id_usuario"], "cliente", candidatura.dev_id, form.nota.data, form.comentario.data)
+            flash("Avaliação do desenvolvedor registrada com sucesso!", "success")
+        except Exception as e:
+            flash("Erro ao salvar avaliação.", "error")
+            
+    return redirect('/dashboard')
+
 
 # ─── main ─────────────────────────────────────────────────────────────────────
 
