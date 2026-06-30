@@ -16,4 +16,5 @@ Bot de Atendimento para WhatsApp	Python, Twilio, IA	Criar um chatbot integrado a
 
 Correção de Bug no Carrinho de Compras	JavaScript, PHP	Identificar e corrigir falha que está limpando o carrinho de compras quando o usuário atualiza a página.	400	Fechada	1
 
-Dashboard Financeiro em Tempo Real	Vue.js, WebSockets	Desenvolver gráficos dinâmicos para exibir o fluxo de caixa da empresa atualizado em tempo real.	3200	Aguardando Aprovação	2
+Dashboard Financeiro em Tempo Real	Vue.js, WebSockets	Desenvolver gráficos dinâmicos para exibir o fluxo de caixa da empresa atualizado em tempo real.	3200	Concluída	2
+aa	aaa	aaa	213	Aberta	2	6f7b8383-622c-41f9-81f2-42a9ef7cc00c

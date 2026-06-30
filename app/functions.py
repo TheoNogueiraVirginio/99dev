@@ -471,7 +471,7 @@ def ler_demandas_realizadas_cliente(id_cliente):
                         })
     return demandas_realizadas
 
-def atualizar_status_demanda(titulo_demanda, id_cliente, novo_status):
+def atualizar_status_por_titulo(titulo_demanda, id_cliente, novo_status):
     linhas = []
     atualizado = False
     
