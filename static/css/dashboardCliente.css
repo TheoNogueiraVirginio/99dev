@@ -548,3 +548,63 @@
     color: #374151;
     border-color: #e5e7eb;
 }
+
+/* --- Estilização de Controlos de Decisão  --- */
+.actions-wrapper {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.form-action-client {
+    display: inline;
+}
+
+.btn-action-client {
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-action-client:active {
+    transform: scale(0.95);
+}
+
+.btn-approve {
+    background-color: #10b981;
+    color: #ffffff;
+}
+
+.btn-approve:hover {
+    background-color: #059669;
+}
+
+.btn-deny {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+
+.btn-deny:hover {
+    background-color: #dc2626;
+}
+
+@media (max-width: 640px) {
+    .actions-wrapper {
+        justify-content: flex-start;
+        width: 100%;
+        margin-top: 4px;
+    }
+    
+    .btn-action-client {
+        flex: 1;
+        justify-content: center;
+        padding: 10px;
+    }
+}
