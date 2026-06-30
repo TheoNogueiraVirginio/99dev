@@ -20,6 +20,8 @@
         <div class="banner">
         {% if usuario.foto_banner %}
             <img src="{{ url_for('static', filename='uploads/banner/' ~ usuario.foto_banner) }}" alt="Banner do Perfil" class="banner-img">
+        {% else %}
+            <img src="{{ url_for('static', filename='img/banner.png') }}" alt="Banner padrão" class="banner-img">
         {% endif %}
     
         <button class="btn-banner-edit" aria-label="Edit Banner">
@@ -229,7 +231,7 @@
                     {% if foto_banner %}
                         <img src="{{ url_for('static', filename='uploads/banner/' ~ foto_banner) }}" alt="Banner atual" class="preview-banner">
                     {% else %}
-                        <img src="{{ url_for('static', filename='uploads/banner/banner.png') }}" alt="Banner padrão" class="preview-banner">
+                        <img src="{{ url_for('static', filename='img/banner.png') }}" alt="Banner padrão" class="preview-banner">
                     {% endif %}
                 </div>
                 {{ form.foto_banner() }}
