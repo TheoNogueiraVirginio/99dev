@@ -480,6 +480,27 @@ def ler_demandas_realizadas_cliente(id_cliente):
                         })
     return demandas_realizadas
 
+def atualizar_status_demanda(titulo_demanda, id_cliente, novo_status):
+    linhas = []
+    atualizado = False
+    
+    if DEMANDAS_CSV_PATH.exists():
+        with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as file:
+            reader = csv.reader(file, delimiter='\t')
+            
+            for row in reader:
+                if len(row) >= 6:
+                    if row[0] == titulo_demanda and str(row[5]) == str(id_cliente):
+                        row[4] = novo_status  
+                        atualizado = True
+                linhas.append(row)
+                
+        if atualizado:
+            with DEMANDAS_CSV_PATH.open('w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file, delimiter='\t')
+                writer.writerows(linhas)
+                
+    return atualizado
 
 # ─── Suporte ──────────────────────────────────────────────────────────────────
 
