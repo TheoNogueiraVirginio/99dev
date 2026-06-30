@@ -514,3 +514,35 @@
     transition: background .15s;
 }
 .link-ver-projetos:hover { background: #dbeafe; }
+
+/* --- Estilos de Ações da Tabela (Entregas e Status) --- */
+.form-entrega {
+    display: inline;
+}
+
+.btn-entregar {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.status-acao {
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.icon-action {
+    margin-right: 4px;
+}
+
+.status-analise {
+    color: #6d7c92; 
+}
+
+.status-finalizado {
+    color: #187a4d; 
+}

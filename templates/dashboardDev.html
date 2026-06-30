@@ -55,22 +55,22 @@
                     R$ {{ demanda.orcamento }}
                 </td>
                 <td data-label="Ações">
-                    {% set ja_candidatou = candidaturas | selectattr('demanda_uuid','equalto', demanda.uuid) | list %}
-                    {% if ja_candidatou %}
-                        <a class="action-link action-chat" href="/chat/{{ ja_candidatou[0].id }}">
-                            <i class="fa-solid fa-comment-dots"></i> Abrir Chat
-                        </a>
-                    {% elif demanda.status in ['Aberta'] %}
-                        <button class="action-link btn-candidatar"
-                            data-uuid="{{ demanda.uuid }}"
-                            data-titulo="{{ demanda.titulo }}"
-                            data-id-cliente="{{ demanda.id }}"
-                            data-orcamento="{{ demanda.orcamento }}"
-                            data-descricao="{{ demanda.descricao }}">
-                            Candidatar-se
-                        </button>
+                    {% if demanda.status == "Em Andamento" %}
+                        <form action="{{ url_for('entregar_demanda', titulo=demanda.titulo, id_cliente=demanda.id) }}" method="post" class="form-entrega">
+                            <button type="submit" class="action-link btn-entregar">
+                                <i class="fa-solid fa-paper-plane icon-action"></i> Entregar
+                            </button>
+                        </form>
+                    {% elif demanda.status == "Aguardando Aprovação" %}
+                        <span class="status-acao status-analise">
+                            <i class="fa-solid fa-clock icon-action"></i> Em Análise
+                        </span>
+                    {% elif demanda.status in ["Concluída", "Fechada"] %}
+                        <span class="status-acao status-finalizado">
+                            <i class="fa-solid fa-circle-check icon-action"></i> Finalizado
+                        </span>
                     {% else %}
-                        <span class="action-link-disabled">Indisponível</span>
+                        <a class="action-link" href="#">Candidatar-se</a>
                     {% endif %}
                 </td>
             </tr>
