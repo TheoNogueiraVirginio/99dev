@@ -113,9 +113,11 @@
                 </td>
                 <td data-label="Cost">R$ {{ realizada.orcamento }}</td>
                 <td data-label="Status">
-                    <span class="status-pill" style="background: #e0f2fe; color: #0369a1; border-color: #bae6fd;">
-                        {{ realizada.status }}
-                    </span>
+                    <span class="status-pill concluida" style="margin-bottom: 8px; display: inline-block;">{{ realizada.status }}</span>
+                    <br>
+                    <button type="button" class="btn-review-trigger" onclick="abrirModalAvaliacao('{{ realizada.titulo }}', '{{ realizada.id }}')">
+                        <i class="fa-solid fa-star"></i> Avaliar Dev
+                    </button>
                 </td>
             </tr>
             {% else %}
@@ -186,3 +188,49 @@
 {% endif %}
 
 {% endblock %}
+
+<div id="modal-avaliacao" class="review-modal-overlay">
+    <div class="review-modal-card">
+        <h3><i class="fa-solid fa-star-half-stroke" style="color: #2f6bf2; margin-right: 8px;"></i> Avaliar Desenvolvedor</h3>
+        <p id="nome-projeto-modal" style="color: #6d7c92; margin-bottom: 20px; font-size: 0.9rem; font-weight: 600;"></p>
+        
+        <form id="form-submeter-avaliacao" method="post" action="">
+            {{ form_avaliacao.hidden_tag() }}
+            
+            <label for="nota_campo" style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem;">Sua Nota (1 a 5 Estrelas):</label>
+            <select name="nota" id="nota_campo" class="review-select">
+                <option value="5">⭐⭐⭐⭐⭐ (5 / 5 - Excelente)</option>
+                <option value="4">⭐⭐⭐⭐ (4 / 5 - Muito Bom)</option>
+                <option value="3">⭐⭐⭐ (3 / 5 - Bom)</option>
+                <option value="2">⭐⭐ (2 / 5 - Razoável)</option>
+                <option value="1">⭐ (1 / 5 - Ruim)</option>
+            </select>
+            
+            <label for="comentario_campo" style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; margin-top: 15px;">Escreva o seu comentário:</label>
+            {{ form_avaliacao.comentario(placeholder="Como foi a comunicação e a entrega do desenvolvedor neste projeto?", id="comentario_campo", class="review-textarea") }}
+            
+            <div class="review-modal-actions">
+                <button type="button" class="btn-cancel-review" onclick="fecharModalAvaliacao()">Cancelar</button>
+                <button type="submit" class="btn-submit-review">Enviar Avaliação</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function abrirModalAvaliacao(titulo, idCliente) {
+    const modal = document.getElementById('modal-avaliacao');
+    const form = document.getElementById('form-submeter-avaliacao');
+    
+    // Atualiza o texto e a rota dinamicamente
+    document.getElementById('nome-projeto-modal').innerText = "Projeto: " + titulo;
+    form.action = `/avaliar-dev/${encodeURIComponent(titulo)}/${idCliente}`;
+    
+    // Mostra a janela
+    modal.classList.add('active');
+}
+
+function fecharModalAvaliacao() {
+    document.getElementById('modal-avaliacao').classList.remove('active');
+}
+</script>

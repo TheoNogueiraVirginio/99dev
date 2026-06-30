@@ -230,6 +230,8 @@ def perfildev():
 @login_required
 def dashboardCliente():
     form = DemandaForm()
+    form_avaliacao = AvaliacaoForm()
+    
     if session.get("tipo_usuario") != "cliente":
         abort(403)
     id = session["id_usuario"]
@@ -251,7 +253,7 @@ def dashboardCliente():
     for field, errors in form.errors.items():
         for error in errors:
             flash(error, "error")
-    return render_template('dashboardCliente.html', form=form, demandas=demandas,
+    return render_template('dashboardCliente.html', form=form, demandas=demandas, form_avaliacao=form_avaliacao,
                            foto_perfil=usuario.foto_perfil if usuario else None,
                            usuario=usuario, pagamentos=pagamentos,
                            demandas_realizadas=demandas_realizadas,
