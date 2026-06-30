@@ -17,6 +17,7 @@ DATA_DIR = BASE_DIR / 'data'
 DEMANDAS_CSV_PATH = DATA_DIR / 'demandas.csv'
 SUPORTE_CSV_PATH = DATA_DIR / 'suporte.csv'
 SUPORTE_DEV_CSV_PATH = DATA_DIR / 'suporte_dev.csv'
+AVALIACOES_CSV_PATH = DATA_DIR / 'avaliacoes.csv'
 
 
 def cadastrar_usuario(email, senha, cargo):
@@ -510,3 +511,11 @@ def salvar_mensagem_suporte_dev(id_dev, assunto, mensagem):
     with SUPORTE_DEV_CSV_PATH.open('a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file, delimiter='\t')
         writer.writerow([data_envio, id_dev, assunto, mensagem])
+        
+def salvar_avaliacao(titulo_demanda, id_avaliador, tipo_avaliador, id_avaliado, nota, comentario):
+    import datetime
+    data_registro = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    with AVALIACOES_CSV_PATH.open('a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file, delimiter='\t')
+        writer.writerow([data_registro, titulo_demanda, id_avaliador, tipo_avaliador, id_avaliado, nota, comentario])
