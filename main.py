@@ -14,7 +14,7 @@ from app.functions import (
     atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente,
     ler_demandas_realizadas_cliente, salvar_mensagem_suporte,
     salvar_mensagem_suporte_dev, candidatar_dev, ler_candidaturas_dev, ler_candidaturas_cliente,
-    enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda
+    enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda, salvar_avaliacao
 )
 
 from app.decorators import login_required
@@ -594,6 +594,24 @@ def negar_demanda(titulo, id_cliente):
     except Exception as e:
         flash(f"Falha ao processar recusa da entrega: {str(e)}", "error")
         
+    return redirect('/dashboard')
+
+@app.route("/avaliar-dev/<string:titulo>/<int:id_cliente>", methods=['POST'])
+@login_required
+def avaliar_dev(titulo, id_cliente):
+    form = AvaliacaoForm()
+    if session.get("tipo_usuario") != "cliente":
+        abort(403)
+        
+    candidatura = Candidatura.query.filter_by(demanda_titulo=titulo, cliente_id=id_cliente, status="Aceita").first()
+    
+    if form.validate_on_submit() and candidatura:
+        try:
+            salvar_avaliacao(titulo, session["id_usuario"], "cliente", candidatura.dev_id, form.nota.data, form.comentario.data)
+            flash("Avaliação do desenvolvedor registrada com sucesso!", "success")
+        except Exception as e:
+            flash("Erro ao salvar avaliação.", "error")
+            
     return redirect('/dashboard')
 
 
