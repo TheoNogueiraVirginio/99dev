@@ -14,16 +14,16 @@
         <label for="titulo">Título da tarefa:</label>
         {{ form.hidden_tag() }}
         {{ form.titulo(placeholder="Título da tarefa", id="titulo") }}
-        
+
         <label for="techStack">Tecnologias da tarefa:</label>
         {{ form.tecnologia(placeholder="Tecnologias da tarefa", id="techStack") }}
-        
+
         <label for="descricao">Descrição da tarefa:</label>
         {{ form.descricao(placeholder="Descrição da tarefa", id="descricao") }}
-        
+
         <label for="orcamento">Orçamento da tarefa(BRL):</label>
         {{ form.orcamento(placeholder="Orçamento da tarefa", id="orcamento") }}
-        
+
         <button type="submit">Criar Tarefa</button>
     </form>
 </section>
@@ -56,7 +56,32 @@
                 <td data-label="Status"><span class="status-pill">{{ demanda.status }}</span></td>
                 <td data-label="Developer"><span class="developer-placeholder">Finding match...</span></td>
                 <td data-label="Cost">R$ {{ demanda.orcamento }}</td>
-                <td data-label="Actions"><a class="action-link" href="#">View Task</a></td>
+
+                <td data-label="Actions">
+                    {% set status_limpo = demanda.status.strip() %}
+                    {% if status_limpo == "Aguardando Aprovação" %}
+                    <div class="actions-wrapper">
+                        <form action="{{ url_for('aprovar_demanda', titulo=demanda.titulo, id_cliente=demanda.id) }}"
+                            method="post" class="form-action-client">
+                            <button type="submit" class="btn-action-client btn-approve"
+                                title="Aprovar entrega e finalizar">
+                                <i class="fa-solid fa-check"></i> Aceitar
+                            </button>
+                        </form>
+                        <form action="{{ url_for('negar_demanda', titulo=demanda.titulo, id_cliente=demanda.id) }}"
+                            method="post" class="form-action-client">
+                            <button type="submit" class="btn-action-client btn-deny"
+                                title="Recusar entrega e solicitar ajustes">
+                                <i class="fa-solid fa-xmark"></i> Recusar
+                            </button>
+                        </form>
+                    </div>
+                    {% else %}
+                    <a class="action-link" href="#">View Task</a>
+                    {% endif %}
+                </td>
+
+
             </tr>
             {% endfor %}
         </tbody>
@@ -108,7 +133,8 @@
 {% if candidaturas %}
 <section class="tarefas" style="margin-top: 22px;">
     <div class="tarefas-header">
-        <h2><i class="fa-solid fa-handshake" style="color:#2f6bf2;margin-right:8px;"></i>Devs Interessados nas Suas Demandas</h2>
+        <h2><i class="fa-solid fa-handshake" style="color:#2f6bf2;margin-right:8px;"></i>Devs Interessados nas Suas
+            Demandas</h2>
     </div>
     <table>
         <thead>
@@ -133,15 +159,15 @@
                 <td data-label="Status">
                     {% set status_limpo = demanda.status.strip() %}
                     {% if status_limpo == "Aberta" %}
-                        <span class="status-pill aberta">Aberta</span>
+                    <span class="status-pill aberta">Aberta</span>
                     {% elif status_limpo == "Em Andamento" %}
-                        <span class="status-pill em-andamento">Em Andamento</span>
+                    <span class="status-pill em-andamento">Em Andamento</span>
                     {% elif status_limpo == "Aguardando Aprovação" %}
-                        <span class="status-pill aguardando-aprovacao">Aguardando Aprovação</span>
+                    <span class="status-pill aguardando-aprovacao">Aguardando Aprovação</span>
                     {% elif status_limpo == "Concluída" %}
-                        <span class="status-pill concluida">Concluída</span>
+                    <span class="status-pill concluida">Concluída</span>
                     {% else %}
-                        <span class="status-pill fechada">{{ demanda.status }}</span>
+                    <span class="status-pill fechada">{{ demanda.status }}</span>
                     {% endif %}
                 </td>
                 <td data-label="Data" style="color:#6d7c92;font-size:.9rem;">
