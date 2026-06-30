@@ -13,10 +13,8 @@ from app.functions import (
     solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev,
     atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente,
     ler_demandas_realizadas_cliente, salvar_mensagem_suporte,
-    salvar_mensagem_suporte_dev,
-    # novos
-    candidatar_dev, ler_candidaturas_dev, ler_candidaturas_cliente,
-    enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev,
+    salvar_mensagem_suporte_dev, candidatar_dev, ler_candidaturas_dev, ler_candidaturas_cliente,
+    enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda
 )
 
 from app.decorators import login_required
@@ -503,6 +501,25 @@ def poll_mensagens(candidatura_id):
             "data": m.data.strftime("%%H:%%M"),
         } for m in mensagens]
     })
+    
+@app.route("/entregar-demanda/<string:titulo>/<int:id_cliente>", methods=['POST'])
+@login_required
+def entregar_demanda(titulo, id_cliente):
+    if session.get("tipo_usuario") != "dev":
+        abort(403)
+        
+    try:
+        sucesso = atualizar_status_demanda(titulo, id_cliente, "Aguardando Aprovação")
+        
+        if sucesso:
+            flash("Entrega da demanda enviada com sucesso! Aguarde a aprovação do cliente.", "success")
+        else:
+            flash("Erro: Não foi possível localizar a demanda para entrega.", "error")
+            
+    except Exception as e:
+        flash(f"Falha ao processar entrega da demanda: {str(e)}", "error")
+        
+    return redirect('/DashboardDev')
 
 
 # ─── main ─────────────────────────────────────────────────────────────────────
