@@ -540,7 +540,7 @@ def aprovar_demanda(titulo, id_cliente):
             candidatura = Candidatura.query.filter_by(
                 demanda_titulo=titulo, 
                 id_cliente=id_cliente, 
-                status="Aceita"
+                status="aceita"
             ).first()
             
             if candidatura:
