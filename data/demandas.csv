@@ -1,1 +1,19 @@
-Fé que funciona	Deus	Tenho fé que vai	666	Em Desenvolvimento	1	296b4d11-9361-453d-a9b2-10a39c5db7c4
+Integração de API de Pagamentos	Python, Flask, Stripe	Criar endpoint seguro no backend para processamento de pagamentos via cartão de crédito e webhooks.	1500	Aberta	1
+
+Refatoração de Interface Mobile	CSS3, Bootstrap, JS	Adaptar o dashboard atual para funcionar perfeitamente em dispositivos móveis, corrigindo quebras de layout.	850	Em Andamento	1
+
+Criação de Landing Page para Evento	HTML5, CSS3, Figma	Converter o design aprovado no Figma em uma landing page responsiva de alta conversão.	600	Aberta	2
+
+Script de Web Scraping Imobiliário	Python, BeautifulSoup	Desenvolver robô autônomo para extrair preços e links de anúncios imobiliários de portais concorrentes diariamente.	1200	Aguardando Aprovação	1
+
+Sistema de Login e Autenticação JWT	Node.js, Express	Implementar fluxo de registro, login e recuperação de senha com tokens de segurança JWT.	2100	Aberta	2
+
+Otimização de Banco de Dados	SQL, MySQL	Analisar e otimizar queries lentas, criando índices estruturados para o sistema de gestão de estoque.	3000	Concluída	1
+
+Painel Administrativo em React	React, Tailwind CSS	Criar interface administrativa para gerenciar usuários, suspender contas e visualizar métricas da plataforma.	4500	Em Andamento	2
+
+Bot de Atendimento para WhatsApp	Python, Twilio, IA	Criar um chatbot integrado ao WhatsApp para responder dúvidas frequentes dos clientes automaticamente.	2800	Aberta	1
+
+Correção de Bug no Carrinho de Compras	JavaScript, PHP	Identificar e corrigir falha que está limpando o carrinho de compras quando o usuário atualiza a página.	400	Fechada	1
+
+Dashboard Financeiro em Tempo Real	Vue.js, WebSockets	Desenvolver gráficos dinâmicos para exibir o fluxo de caixa da empresa atualizado em tempo real.	3200	Aguardando Aprovação	2
