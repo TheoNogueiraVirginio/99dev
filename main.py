@@ -539,7 +539,7 @@ def aprovar_demanda(titulo, id_cliente):
         if sucesso:
             candidatura = Candidatura.query.filter_by(
                 demanda_titulo=titulo, 
-                cliente_id=id_cliente, 
+                id_cliente=id_cliente, 
                 status="Aceita"
             ).first()
             
@@ -605,7 +605,11 @@ def avaliar_dev(titulo, id_cliente):
     if session.get("tipo_usuario") != "cliente":
         abort(403)
         
-    candidatura = Candidatura.query.filter_by(demanda_titulo=titulo, cliente_id=id_cliente, status="Aceita").first()
+    candidatura = Candidatura.query.filter_by(
+        demanda_titulo=titulo, 
+        id_cliente=id_cliente, 
+        status="Aceita"
+    ).first()
     
     if form.validate_on_submit() and candidatura:
         try:
