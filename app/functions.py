@@ -229,55 +229,45 @@ def salvarDemanda(titulo, tecnologia, descricao, orcamento, status, id):
         writer.writerow([titulo, tecnologia, descricao, orcamento, status, id, demanda_uuid])
 
 
-def lerDemandas(busca=None, filtro_status=None, tipo_usuario=None):
+def lerDemandas(tipo_usuario="cliente", id_usuario=None, busca=None, filtro_status=None):
     demandas = []
-    demandasDev = []
-    id_usuario = session.get("id_usuario")
-    busca_normalizada = busca.lower().strip() if busca else None
-
     if DEMANDAS_CSV_PATH.exists():
-        with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as file:
-            reader = csv.reader(file, delimiter='\t')
+        with DEMANDAS_CSV_PATH.open('r', encoding='utf-8') as f:
+            reader = csv.reader(f, delimiter='\t')
             for row in reader:
-                if len(row) < 6:
-                    continue
-                if not row[5].strip().isdigit():
-                    continue
-
-                demanda_uuid = (
-                    row[6].strip()
-                    if len(row) > 6 and row[6].strip()
-                    else _uuid_legado(row[0], row[5])
-                )
-
-                demanda = {
-                    'titulo': row[0],
-                    'tecnologia': row[1],
-                    'descricao': row[2],
-                    'orcamento': row[3],
-                    'status': row[4],
-                    'id': row[5],
-                    'uuid': demanda_uuid,
-                }
-
-                if id_usuario is not None and int(row[5]) == id_usuario:
-                    if filtro_status is not None and row[4] != filtro_status:
-                        continue
-                    if busca_normalizada:
-                        texto_busca = " ".join([row[0], row[1], row[2], row[4]]).lower()
-                        if busca_normalizada not in texto_busca:
+                # Garante que a linha tem o número mínimo de colunas
+                if len(row) >= 6:
+                    demanda = {
+                        'titulo': row[0],
+                        'tecnologia': row[1],
+                        'descricao': row[2],
+                        'orcamento': row[3],
+                        'status': row[4].strip(),
+                        'id': row[5].strip()
+                    }
+                    
+                    # 1. Aplica o Filtro de Busca (barra de pesquisa)
+                    if busca:
+                        termo = busca.lower()
+                        # Se o termo não estiver no título nem na tecnologia, pula esta linha
+                        if termo not in demanda['titulo'].lower() and termo not in demanda['tecnologia'].lower():
                             continue
-                    demandas.append(demanda)
+                            
+                    # 2. Aplica o Filtro de Status (dropdown de categorias)
+                    if filtro_status and filtro_status != 'Todos':
+                        if demanda['status'] != filtro_status:
+                            continue
 
-                # Mercado só exibe demandas disponíveis para candidatura
-                STATUS_VISIVEIS = {'Aberta', 'aberta'}
-                if row[4].strip() in STATUS_VISIVEIS:
-                    demandasDev.append(demanda)
-
-    if tipo_usuario == "dev":
-        return demandasDev
+                    # 3. Regras de Exibição por Tipo de Perfil
+                    if tipo_usuario == "dev":
+                        # O Dev vê as disponíveis e as que estão no fluxo de trabalho dele
+                        if demanda['status'] in ["Aberta", "Em Andamento", "Aguardando Aprovação"]:
+                            demandas.append(demanda)
+                    else:
+                        # O Cliente vê tudo (filtrado pela busca, se houver)
+                        demandas.append(demanda)
+                        
     return demandas
-
 
 def atualizar_status_demanda(demanda_uuid, novo_status):
     """Atualiza o status de uma demanda no CSV pelo seu UUID."""
