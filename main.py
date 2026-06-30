@@ -6,7 +6,7 @@ from wtforms import StringField, PasswordField, BooleanField, TextAreaField, Int
 from wtforms.validators import input_required, Email, Optional, NumberRange
 
 from app import app, db, google
-from app.models import Cliente, Desenvolvedor, Candidatura
+from app.models import Cliente, Desenvolvedor, Candidatura, Pagamento
 from app.functions import (
     atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo,
     gerenciar_login_google, lerDemandas, salvarDemanda,
@@ -559,11 +559,10 @@ def aprovar_demanda(titulo, id_cliente):
                         dev_id=dev.id
                     )
                     db.session.add(novo_pagamento)
-                    db.session.commit() # Salva a transação e os saldos
+                    db.session.commit()
                     
                     flash("Projeto aprovado e pagamento transferido com sucesso ao desenvolvedor!", "success")
                 else:
-                    # Caso o cliente tenha gasto o saldo em outra coisa
                     flash("Demanda aprovada, mas você não tem saldo suficiente. Recarregue a sua carteira.", "warning")
             else:
                 flash("Demanda aprovada, mas não encontramos o Desenvolvedor para pagar.", "warning")
