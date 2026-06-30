@@ -521,6 +521,40 @@ def entregar_demanda(titulo, id_cliente):
         
     return redirect('/DashboardDev')
 
+@app.route("/aprovar-demanda/<string:titulo>/<int:id_cliente>", methods=['POST'])
+@login_required
+def aprovar_demanda(titulo, id_cliente):
+    if session.get("tipo_usuario") != "cliente":
+        abort(403)
+        
+    try:
+        sucesso = atualizar_status_demanda(titulo, id_cliente, "Concluída")
+        if sucesso:
+            flash("Entrega do projeto aprovada com sucesso! O projeto foi movido para o histórico.", "success")
+        else:
+            flash("Erro: Não foi possível localizar a demanda indicada.", "error")
+    except Exception as e:
+        flash(f"Falha ao processar aprovação da demanda: {str(e)}", "error")
+        
+    return redirect('/dashboard')
+
+@app.route("/negar-demanda/<string:titulo>/<int:id_cliente>", methods=['POST'])
+@login_required
+def negar_demanda(titulo, id_cliente):
+    if session.get("tipo_usuario") != "cliente":
+        abort(403)
+        
+    try:
+        sucesso = atualizar_status_demanda(titulo, id_cliente, "Em Andamento")
+        if sucesso:
+            flash("Entrega recusada. O projeto retornou para o status Em Andamento para correções.", "success")
+        else:
+            flash("Erro: Não foi possível localizar a demanda indicada.", "error")
+    except Exception as e:
+        flash(f"Falha ao processar recusa da entrega: {str(e)}", "error")
+        
+    return redirect('/dashboard')
+
 
 # ─── main ─────────────────────────────────────────────────────────────────────
 
