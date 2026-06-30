@@ -214,7 +214,7 @@
                     {% if usuario.foto_perfil %}
                         <img src="{{ url_for('static', filename='uploads/perfil/' ~ usuario.foto_perfil) }}" alt="Foto de perfil atual" class="preview-avatar">
                     {% else %}
-                        <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar padrão" class="preview-avatar">
+                        <img src="{{ url_for('static', filename='img/avatar.png') }}" alt="Avatar padrão" class="preview-avatar">
                     {% endif %}
                 </div>
                 {{ form.foto_perfil() }}
@@ -229,7 +229,7 @@
                     {% if foto_banner %}
                         <img src="{{ url_for('static', filename='uploads/banner/' ~ foto_banner) }}" alt="Banner atual" class="preview-banner">
                     {% else %}
-                        <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Banner padrão" class="preview-banner">
+                        <img src="{{ url_for('static', filename='uploads/banner/banner.png') }}" alt="Banner padrão" class="preview-banner">
                     {% endif %}
                 </div>
                 {{ form.foto_banner() }}
