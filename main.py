@@ -14,7 +14,7 @@ from app.functions import (
     atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente,
     ler_demandas_realizadas_cliente, salvar_mensagem_suporte,
     salvar_mensagem_suporte_dev, candidatar_dev, ler_candidaturas_dev, ler_candidaturas_cliente,
-    enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda
+    enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda, salvar_avaliacao
 )
 
 from app.decorators import login_required
