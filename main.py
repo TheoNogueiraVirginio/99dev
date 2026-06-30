@@ -6,7 +6,7 @@ from wtforms import StringField, PasswordField, BooleanField, TextAreaField, Int
 from wtforms.validators import input_required, Email, Optional, NumberRange
 
 from app import app, db, google
-from app.models import Cliente, Desenvolvedor, Candidatura
+from app.models import Cliente, Desenvolvedor, Candidatura, Pagamento
 from app.functions import (
     atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo,
     gerenciar_login_google, lerDemandas, salvarDemanda,
@@ -529,11 +529,48 @@ def aprovar_demanda(titulo, id_cliente):
         
     try:
         sucesso = atualizar_status_demanda(titulo, id_cliente, "Concluída")
+        
         if sucesso:
-            flash("Entrega do projeto aprovada com sucesso! O projeto foi movido para o histórico.", "success")
+            candidatura = Candidatura.query.filter_by(
+                demanda_titulo=titulo, 
+                cliente_id=id_cliente, 
+                status="Aceita"
+            ).first()
+            
+            if candidatura:
+                dev = Desenvolvedor.query.get(candidatura.dev_id)
+                cliente = Cliente.query.get(id_cliente)
+                
+                todas_demandas = lerDemandas()
+                orcamento = 0.0
+                for d in todas_demandas:
+                    if d['titulo'] == titulo and str(d['id']) == str(id_cliente):
+                        orcamento = float(d['orcamento'])
+                        break
+                
+                if cliente.saldo >= orcamento:
+                    cliente.saldo -= orcamento
+                    dev.saldo += orcamento
+                    
+                    novo_pagamento = Pagamento(
+                        demanda_titulo=titulo,
+                        valor=orcamento,
+                        cliente_id=id_cliente,
+                        dev_id=dev.id
+                    )
+                    db.session.add(novo_pagamento)
+                    db.session.commit()
+                    
+                    flash("Projeto aprovado e pagamento transferido com sucesso ao desenvolvedor!", "success")
+                else:
+                    flash("Demanda aprovada, mas você não tem saldo suficiente. Recarregue a sua carteira.", "warning")
+            else:
+                flash("Demanda aprovada, mas não encontramos o Desenvolvedor para pagar.", "warning")
         else:
-            flash("Erro: Não foi possível localizar a demanda indicada.", "error")
+            flash("Erro: Não foi possível localizar a demanda indicada no sistema.", "error")
+            
     except Exception as e:
+        db.session.rollback() # Em caso de erro, desfaz a transação financeira por segurança
         flash(f"Falha ao processar aprovação da demanda: {str(e)}", "error")
         
     return redirect('/dashboard')
