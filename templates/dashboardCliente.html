@@ -131,9 +131,18 @@
                     {% if c.dev.titulo %}<div class="task-subtitle">{{ c.dev.titulo }}</div>{% endif %}
                 </td>
                 <td data-label="Status">
-                    <span class="status-pill" style="background:#fef9c3;color:#854d0e;border-color:#fde68a;">
-                        {{ c.status | capitalize }}
-                    </span>
+                    {% set status_limpo = demanda.status.strip() %}
+                    {% if status_limpo == "Aberta" %}
+                        <span class="status-pill aberta">Aberta</span>
+                    {% elif status_limpo == "Em Andamento" %}
+                        <span class="status-pill em-andamento">Em Andamento</span>
+                    {% elif status_limpo == "Aguardando Aprovação" %}
+                        <span class="status-pill aguardando-aprovacao">Aguardando Aprovação</span>
+                    {% elif status_limpo == "Concluída" %}
+                        <span class="status-pill concluida">Concluída</span>
+                    {% else %}
+                        <span class="status-pill fechada">{{ demanda.status }}</span>
+                    {% endif %}
                 </td>
                 <td data-label="Data" style="color:#6d7c92;font-size:.9rem;">
                     {{ c.data.strftime('%d/%m/%Y') }}
