@@ -226,9 +226,9 @@
 .task-subtitle {
     font-size: 0.85rem;
     color: #6d7c92;
-    /* Trunca a descrição em 2 linhas */
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2; 
     -webkit-box-orient: vertical;
     overflow: hidden;
     max-width: 260px;
@@ -500,6 +500,7 @@
     .task-subtitle {
         max-width: none;
         -webkit-line-clamp: 3;
+        line-clamp: 2;
         text-align: right;
     }
 }
