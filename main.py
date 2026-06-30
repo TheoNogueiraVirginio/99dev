@@ -76,6 +76,10 @@ class SuporteDevForm(FlaskForm):
 
 class AdicionarSaldoForm(FlaskForm):
     valor = FloatField('Valor do Depósito (R$)', validators=[input_required(message="Digite um valor para depositar."), NumberRange(min=0.01, message="O valor tem que ser maior que 0")])
+    
+class AvaliacaoForm(FlaskForm):
+    nota = IntegerField('Nota', validators=[input_required(message="Escolha uma nota de 1 a 5.")])
+    comentario = TextAreaField('Comentário', validators=[input_required(message="Deixe uma descrição.")])
 
 # ─── Rotas existentes ─────────────────────────────────────────────────────────
 
