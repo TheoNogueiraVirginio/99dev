@@ -330,6 +330,15 @@ def candidatar_dev(dev_id, demanda_uuid, demanda_titulo, id_cliente, proposta):
     return nova
 
 
+def buscar_candidatura_aceita(demanda_uuid):
+    from app.models import Candidatura
+
+    return Candidatura.query.filter_by(
+        demanda_uuid=demanda_uuid,
+        status='aceita',
+    ).order_by(Candidatura.data.desc()).first()
+
+
 def ler_projetos_dev(dev_id):
     """Retorna candidaturas aceitas do dev, enriquecidas com dados da demanda do CSV."""
     from app.models import Candidatura

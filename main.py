@@ -15,7 +15,7 @@ from app.functions import (
     ler_demandas_realizadas_cliente, salvar_mensagem_suporte,
     salvar_mensagem_suporte_dev, candidatar_dev, ler_candidaturas_dev, ler_candidaturas_cliente,
     enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda, salvar_avaliacao,
-    registrar_pagamento, validar_saldo_suficiente
+    registrar_pagamento, validar_saldo_suficiente, buscar_candidatura_aceita
 )
 
 from app.decorators import login_required
@@ -343,6 +343,24 @@ def pagar_demanda(demanda_uuid):
     if not demanda:
         abort(404)
 
+    if demanda.get("status") != "Concluída":
+        flash("Esta demanda ainda não foi aprovada. Aprove a entrega antes de efetuar o pagamento.", "error")
+        return redirect(request.referrer or url_for('dashboardCliente'))
+
+    candidatura = buscar_candidatura_aceita(demanda_uuid)
+    if not candidatura:
+        flash("Não foi possível localizar o desenvolvedor responsável por esta demanda.", "error")
+        return redirect(url_for('dashboardCliente'))
+
+    if candidatura.id_cliente != id_cliente:
+        flash("Não foi possível localizar o desenvolvedor responsável por esta demanda.", "error")
+        return redirect(url_for('dashboardCliente'))
+
+    dev = Desenvolvedor.query.get(candidatura.dev_id)
+    if not dev:
+        flash("Não foi possível localizar o desenvolvedor responsável por esta demanda.", "error")
+        return redirect(url_for('dashboardCliente'))
+
     try:
         valor_demanda = float(str(demanda.get("orcamento", "0")).replace(',', '.'))
     except (TypeError, ValueError):
@@ -358,6 +376,7 @@ def pagar_demanda(demanda_uuid):
     pagamento_confirmado = False
     try:
         usuario.saldo -= valor_demanda
+        dev.saldo += valor_demanda
         registrar_pagamento(id_cliente, demanda["titulo"], valor_demanda, commit=False)
         db.session.commit()
         pagamento_confirmado = True
@@ -365,13 +384,16 @@ def pagar_demanda(demanda_uuid):
         if not atualizar_status_por_titulo(demanda["titulo"], id_cliente, "Fechada"):
             raise RuntimeError("Não foi possível atualizar o status da demanda para Fechada.")
 
-        flash("Pagamento realizado com sucesso!", "success")
+        flash(f"Pagamento realizado com sucesso! R$ {valor_demanda:.2f} transferido para o desenvolvedor.", "success")
     except Exception as e:
         if pagamento_confirmado:
             try:
                 cliente = Cliente.query.get(id_cliente)
                 if cliente:
                     cliente.saldo += valor_demanda
+                dev_compensado = Desenvolvedor.query.get(candidatura.dev_id)
+                if dev_compensado:
+                    dev_compensado.saldo -= valor_demanda
                 pagamento = Pagamento.query.filter_by(
                     id_cliente=id_cliente,
                     titulo_demanda=demanda["titulo"],
