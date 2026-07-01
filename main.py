@@ -584,7 +584,29 @@ def poll_mensagens(candidatura_id):
 def entregar_demanda(titulo, id_cliente):
     if session.get("tipo_usuario") != "dev":
         abort(403)
-        
+
+    demanda = next(
+        (
+            item for item in lerDemandas(tipo_usuario="cliente")
+            if item.get("titulo") == titulo and str(item.get("id")) == str(id_cliente)
+        ),
+        None,
+    )
+
+    if not demanda or demanda.get("status") != "Em Desenvolvimento":
+        flash("Esta demanda não está disponível para entrega no momento.", "error")
+        return redirect('/MeusProjetosDev')
+
+    candidatura = Candidatura.query.filter_by(
+        dev_id=session["id_usuario"],
+        demanda_titulo=titulo,
+        id_cliente=id_cliente,
+        status="aceita",
+    ).first()
+
+    if not candidatura:
+        abort(403)
+
     try:
         sucesso = atualizar_status_por_titulo(titulo, id_cliente, "Aguardando Aprovação")
         
