@@ -92,7 +92,6 @@
         {% set eh_meu     = ((msg.tipo_remetente == tipo_usuario)) %}
         {% set lado       = 'right' if eh_meu else 'left' %}
         {% set cor_bubble = 'blue' if eh_dev else 'red' %}
-      {{ msg.remetente_id }} | {{ id_usuario }} | {{ msg.tipo_remetente }}
         <div class="msg-row msg-{{ lado }}" data-id="{{ msg.id }}" data-tipo="{{ msg.tipo_remetente }}">
         {% if not eh_meu %}
         <div class="msg-avatar avatar-{{ 'dev' if eh_dev else 'cliente' }}">
