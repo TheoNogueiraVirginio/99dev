@@ -53,7 +53,22 @@
                 <td data-label="Tech Stack">
                     <span class="tech-pill">{{ demanda.tecnologia }}</span>
                 </td>
-                <td data-label="Status"><span class="status-pill">{{ demanda.status }}</span></td>
+                
+                <td data-label="Status">
+                    {% set status_limpo = demanda.status.strip() %}
+                    {% if status_limpo == "Aberta" %}
+                    <span class="status-pill aberta">Aberta</span>
+                    {% elif status_limpo == "Em Andamento" %}
+                    <span class="status-pill em-andamento">Em Andamento</span>
+                    {% elif status_limpo == "Aguardando Aprovação" %}
+                    <span class="status-pill aguardando-aprovacao">Aguardando Aprovação</span>
+                    {% elif status_limpo == "Concluída" %}
+                    <span class="status-pill concluida">Concluída</span>
+                    {% else %}
+                    <span class="status-pill fechada">{{ demanda.status }}</span>
+                    {% endif %}
+                </td>
+                
                 <td data-label="Developer"><span class="developer-placeholder">Finding match...</span></td>
                 <td data-label="Cost">R$ {{ demanda.orcamento }}</td>
 
@@ -80,8 +95,6 @@
                     <a class="action-link" href="#">View Task</a>
                     {% endif %}
                 </td>
-
-
             </tr>
             {% endfor %}
         </tbody>
@@ -112,8 +125,11 @@
                     <span class="tech-pill">{{ realizada.tecnologia }}</span>
                 </td>
                 <td data-label="Cost">R$ {{ realizada.orcamento }}</td>
+                
                 <td data-label="Status">
-                    <span class="status-pill concluida" style="margin-bottom: 8px; display: inline-block;">{{ realizada.status }}</span>
+                    <span class="status-pill concluida" style="margin-bottom: 8px; display: inline-block;">
+                        {{ realizada.status }}
+                    </span>
                     <br>
                     <button type="button" class="btn-review-trigger" onclick="abrirModalAvaliacao('{{ realizada.titulo }}', '{{ realizada.id }}')">
                         <i class="fa-solid fa-star"></i> Avaliar Dev
@@ -131,7 +147,6 @@
     </table>
 </section>
 
-<!-- ── Candidaturas de Devs ── -->
 {% if candidaturas %}
 <section class="tarefas" style="margin-top: 22px;">
     <div class="tarefas-header">
@@ -158,20 +173,11 @@
                     <div class="task-title">{{ c.dev.nome or c.dev.email }}</div>
                     {% if c.dev.titulo %}<div class="task-subtitle">{{ c.dev.titulo }}</div>{% endif %}
                 </td>
+                
                 <td data-label="Status">
-                    {% set status_limpo = demanda.status.strip() %}
-                    {% if status_limpo == "Aberta" %}
-                    <span class="status-pill aberta">Aberta</span>
-                    {% elif status_limpo == "Em Andamento" %}
-                    <span class="status-pill em-andamento">Em Andamento</span>
-                    {% elif status_limpo == "Aguardando Aprovação" %}
-                    <span class="status-pill aguardando-aprovacao">Aguardando Aprovação</span>
-                    {% elif status_limpo == "Concluída" %}
-                    <span class="status-pill concluida">Concluída</span>
-                    {% else %}
-                    <span class="status-pill fechada">{{ demanda.status }}</span>
-                    {% endif %}
+                    <span class="status-pill status-{{ c.status }}">{{ c.status | capitalize }}</span>
                 </td>
+                
                 <td data-label="Data" style="color:#6d7c92;font-size:.9rem;">
                     {{ c.data.strftime('%d/%m/%Y') }}
                 </td>
@@ -187,7 +193,6 @@
 </section>
 {% endif %}
 
-{% endblock %}
 
 <div id="modal-avaliacao" class="review-modal-overlay">
     <div class="review-modal-card">
@@ -195,7 +200,7 @@
         <p id="nome-projeto-modal" style="color: #6d7c92; margin-bottom: 20px; font-size: 0.9rem; font-weight: 600;"></p>
         
         <form id="form-submeter-avaliacao" method="post" action="">
-            {{ form_avaliacao.hidden_tag() }}
+            {{ form_avaliacao.hidden_tag() if form_avaliacao else '' }}
             
             <label for="nota_campo" style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem;">Sua Nota (1 a 5 Estrelas):</label>
             <select name="nota" id="nota_campo" class="review-select">
@@ -207,7 +212,7 @@
             </select>
             
             <label for="comentario_campo" style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; margin-top: 15px;">Escreva o seu comentário:</label>
-            {{ form_avaliacao.comentario(placeholder="Como foi a comunicação e a entrega do desenvolvedor neste projeto?", id="comentario_campo", class="review-textarea") }}
+            {{ form_avaliacao.comentario(placeholder="Como foi a comunicação e a entrega do desenvolvedor neste projeto?", id="comentario_campo", class="review-textarea") if form_avaliacao else '' }}
             
             <div class="review-modal-actions">
                 <button type="button" class="btn-cancel-review" onclick="fecharModalAvaliacao()">Cancelar</button>
@@ -234,3 +239,5 @@ function fecharModalAvaliacao() {
     document.getElementById('modal-avaliacao').classList.remove('active');
 }
 </script>
+
+{% endblock %}
