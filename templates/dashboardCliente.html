@@ -78,19 +78,19 @@
                     {% if status_limpo == "Aguardando Aprovação" %}
                     {% set entrega = entregas_por_demanda.get((demanda.titulo, demanda.id)) %}
                     {% if entrega %}
-                    <a class="action-link" href="{{ url_for('baixar_entrega', entrega_id=entrega.id) }}">
+                    <a class="action-link" href="{{ url_for('entregas.baixar_entrega', entrega_id=entrega.id) }}">
                         <i class="fa-solid fa-download"></i> Baixar entrega ({{ entrega.nome_arquivo }})
                     </a>
                     {% endif %}
                     <div class="actions-wrapper">
-                        <form action="{{ url_for('aprovar_demanda', titulo=demanda.titulo, id_cliente=demanda.id) }}"
+                        <form action="{{ url_for('cliente.aprovar_demanda', titulo=demanda.titulo, id_cliente=demanda.id) }}"
                             method="post" class="form-action-client">
                             <button type="submit" class="btn-action-client btn-approve"
                                 title="Aprovar entrega e finalizar">
                                 <i class="fa-solid fa-check"></i> Aceitar
                             </button>
                         </form>
-                        <form action="{{ url_for('negar_demanda', titulo=demanda.titulo, id_cliente=demanda.id) }}"
+                        <form action="{{ url_for('cliente.negar_demanda', titulo=demanda.titulo, id_cliente=demanda.id) }}"
                             method="post" class="form-action-client">
                             <button type="submit" class="btn-action-client btn-deny"
                                 title="Recusar entrega e solicitar ajustes">
@@ -234,7 +234,7 @@
             </div>
         </div>
 
-        <form class="payment-form" action="{{ url_for('pagar_demanda', demanda_uuid=realizada.uuid) }}" method="POST">
+        <form class="payment-form" action="{{ url_for('cliente.pagar_demanda', demanda_uuid=realizada.uuid) }}" method="POST">
             <button type="submit" class="btn-confirm-payment">Confirmar e pagar</button>
         </form>
     </div>

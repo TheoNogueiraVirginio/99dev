@@ -149,7 +149,7 @@
           {% set entrega_key = (p.titulo, p.id_cliente) %}
           {% set entrega_enviada = entregas_por_demanda.get(entrega_key) %}
           {% if entrega_enviada %}
-          <a href="{{ url_for('baixar_entrega', entrega_id=entrega_enviada.id) }}" class="mpd-btn-secondary">
+          <a href="{{ url_for('entregas.baixar_entrega', entrega_id=entrega_enviada.id) }}" class="mpd-btn-secondary">
             <i class="fa-solid fa-file-arrow-down"></i> Ver arquivo enviado
           </a>
           {% else %}
@@ -168,7 +168,7 @@
           </button>
           <h3 id="upload-title-{{ p.candidatura.id }}">Enviar entrega</h3>
           <p class="mpd-upload-modal-text">Envie apenas arquivos .zip. O arquivo será validado novamente no backend antes de alterar o status da demanda.</p>
-          <form method="POST" action="{{ url_for('entregar_demanda', titulo=p.titulo, id_cliente=p.id_cliente) }}" enctype="multipart/form-data" class="mpd-upload-form" onsubmit="return confirm('Confirma o envio da entrega para este projeto?');">
+          <form method="POST" action="{{ url_for('dev.entregar_demanda', titulo=p.titulo, id_cliente=p.id_cliente) }}" enctype="multipart/form-data" class="mpd-upload-form" onsubmit="return confirm('Confirma o envio da entrega para este projeto?');">
             {{ form_entrega.hidden_tag() }}
             <label class="mpd-upload-label" for="arquivo_entrega_{{ p.candidatura.id }}">Arquivo .zip</label>
             {{ form_entrega.arquivo_entrega(id="arquivo_entrega_" ~ p.candidatura.id, class="mpd-upload-input", accept=".zip", required=true) }}
@@ -179,7 +179,7 @@
         </div>
       </div>
         {% if status_atual == 'Fechada' %}
-        <a href="{{ url_for('carteiraDev') }}" class="mpd-btn-secondary">
+        <a href="{{ url_for('dev.carteiraDev') }}" class="mpd-btn-secondary">
           <i class="fa-solid fa-receipt"></i> Ver Pagamento
         </a>
         {% else %}

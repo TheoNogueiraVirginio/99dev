@@ -21,7 +21,7 @@
         Está enfrentando alguma dificuldade ou encontrou um problema no sistema? Preencha os campos abaixo para abrir um chamado diretamente com o nosso time de atendimento.
     </p>
     
-    <form action="{{ url_for('suporte') }}" method="post">
+    <form action="{{ url_for('suporte.suporte') }}" method="post">
         {{ form.hidden_tag() }}
         
         <label for="assunto">Assunto da solicitação:</label>
