@@ -9,3 +9,5 @@ docs/_build/
 venv/
 .env
 .db
+static/uploads/
+uploads_privados/

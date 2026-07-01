@@ -1,4 +1,6 @@
-from flask import flash, jsonify, render_template, redirect, request, session, abort, url_for
+import os
+
+from flask import flash, jsonify, render_template, redirect, request, session, abort, url_for, send_from_directory
 
 from flask_wtf.file import FileField, FileAllowed
 from flask_wtf import FlaskForm
@@ -6,16 +8,17 @@ from wtforms import StringField, PasswordField, BooleanField, TextAreaField, Int
 from wtforms.validators import input_required, Email, Optional, NumberRange
 
 from app import app, db, google
-from app.models import Cliente, Desenvolvedor, Candidatura, Pagamento
+from app.models import Cliente, Desenvolvedor, Candidatura, Pagamento, Entrega
 from app.functions import (
     atualizar_senha, atualizar_status_por_titulo, cadastrar_usuario, autenticar_usuario, exibirSaldo,
     gerenciar_login_google, lerDemandas, salvarDemanda,
     solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev,
     atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente,
+    ler_pagamentos_dev,
     ler_demandas_realizadas_cliente, salvar_mensagem_suporte,
     salvar_mensagem_suporte_dev, candidatar_dev, ler_candidaturas_dev, ler_candidaturas_cliente,
     enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda, salvar_avaliacao,
-    registrar_pagamento, validar_saldo_suficiente
+    registrar_pagamento, validar_saldo_suficiente, buscar_candidatura_aceita, salvar_entrega
 )
 
 from app.decorators import login_required
@@ -78,6 +81,12 @@ class SuporteDevForm(FlaskForm):
 class AdicionarSaldoForm(FlaskForm):
     valor = FloatField('Valor do Depósito (R$)', validators=[input_required(message="Digite um valor para depositar."), NumberRange(min=0.01, message="O valor tem que ser maior que 0")])
     
+class FormularioEntregaForm(FlaskForm):
+    arquivo_entrega = FileField('Arquivo da entrega', validators=[
+        input_required(message="Envie o arquivo .zip da entrega."),
+        FileAllowed(['zip'], 'Apenas arquivos .zip são permitidos.')
+    ])
+
 class AvaliacaoForm(FlaskForm):
     nota = IntegerField('Nota', validators=[input_required(message="Escolha uma nota de 1 a 5.")])
     comentario = TextAreaField('Comentário', validators=[input_required(message="Deixe uma descrição.")])
@@ -241,6 +250,15 @@ def dashboardCliente():
     pagamentos = ler_pagamentos_cliente(id)
     demandas_realizadas = ler_demandas_realizadas_cliente(id)
     candidaturas = ler_candidaturas_cliente(id)
+    entregas_por_demanda = {}
+    for demanda in demandas:
+        if demanda.get("status") == "Aguardando Aprovação":
+            entrega = Entrega.query.filter_by(
+                demanda_titulo=demanda.get("titulo"),
+                id_cliente=id,
+            ).order_by(Entrega.id.desc()).first()
+            if entrega:
+                entregas_por_demanda[(demanda.get("titulo"), id)] = entrega
 
     if form.validate_on_submit():
         try:
@@ -258,7 +276,8 @@ def dashboardCliente():
                            foto_perfil=usuario.foto_perfil if usuario else None,
                            usuario=usuario, pagamentos=pagamentos,
                            demandas_realizadas=demandas_realizadas,
-                           candidaturas=candidaturas)
+                           candidaturas=candidaturas,
+                           entregas_por_demanda=entregas_por_demanda)
 
 @app.route("/MeusProjetos", methods=['GET', 'POST'])
 @login_required
@@ -321,6 +340,25 @@ def carteiraCliente():
                            pagamentos=pagamentos)
 
 
+@app.route('/carteira-dev', methods=['GET'])
+@login_required
+def carteiraDev():
+    if session.get("tipo_usuario") != "dev":
+        abort(403)
+
+    id_dev = session["id_usuario"]
+    usuario = Desenvolvedor.query.get(id_dev)
+    pagamentos = ler_pagamentos_dev(id_dev)
+
+    return render_template(
+        'carteiraDev.html',
+        usuario=usuario,
+        foto_perfil=usuario.foto_perfil if usuario else None,
+        pagamentos=pagamentos,
+        saldo=exibirSaldo(id_dev),
+    )
+
+
 @app.route('/demanda/<string:demanda_uuid>/pagar', methods=['POST'])
 @login_required
 def pagar_demanda(demanda_uuid):
@@ -343,6 +381,24 @@ def pagar_demanda(demanda_uuid):
     if not demanda:
         abort(404)
 
+    if demanda.get("status") != "Concluída":
+        flash("Esta demanda ainda não foi aprovada. Aprove a entrega antes de efetuar o pagamento.", "error")
+        return redirect(request.referrer or url_for('dashboardCliente'))
+
+    candidatura = buscar_candidatura_aceita(demanda_uuid)
+    if not candidatura:
+        flash("Não foi possível localizar o desenvolvedor responsável por esta demanda.", "error")
+        return redirect(url_for('dashboardCliente'))
+
+    if candidatura.id_cliente != id_cliente:
+        flash("Não foi possível localizar o desenvolvedor responsável por esta demanda.", "error")
+        return redirect(url_for('dashboardCliente'))
+
+    dev = Desenvolvedor.query.get(candidatura.dev_id)
+    if not dev:
+        flash("Não foi possível localizar o desenvolvedor responsável por esta demanda.", "error")
+        return redirect(url_for('dashboardCliente'))
+
     try:
         valor_demanda = float(str(demanda.get("orcamento", "0")).replace(',', '.'))
     except (TypeError, ValueError):
@@ -358,6 +414,7 @@ def pagar_demanda(demanda_uuid):
     pagamento_confirmado = False
     try:
         usuario.saldo -= valor_demanda
+        dev.saldo += valor_demanda
         registrar_pagamento(id_cliente, demanda["titulo"], valor_demanda, commit=False)
         db.session.commit()
         pagamento_confirmado = True
@@ -365,13 +422,16 @@ def pagar_demanda(demanda_uuid):
         if not atualizar_status_por_titulo(demanda["titulo"], id_cliente, "Fechada"):
             raise RuntimeError("Não foi possível atualizar o status da demanda para Fechada.")
 
-        flash("Pagamento realizado com sucesso!", "success")
+        flash(f"Pagamento realizado com sucesso! R$ {valor_demanda:.2f} transferido para o desenvolvedor.", "success")
     except Exception as e:
         if pagamento_confirmado:
             try:
                 cliente = Cliente.query.get(id_cliente)
                 if cliente:
                     cliente.saldo += valor_demanda
+                dev_compensado = Desenvolvedor.query.get(candidatura.dev_id)
+                if dev_compensado:
+                    dev_compensado.saldo -= valor_demanda
                 pagamento = Pagamento.query.filter_by(
                     id_cliente=id_cliente,
                     titulo_demanda=demanda["titulo"],
@@ -438,10 +498,34 @@ def meusProjetosDev():
     id_dev = session["id_usuario"]
     usuario = Desenvolvedor.query.get(id_dev)
     projetos = ler_projetos_dev(id_dev)
+    form_entrega = FormularioEntregaForm()
+    entregas_por_demanda = {}
+    for entrega in Entrega.query.filter_by(dev_id=id_dev).order_by(Entrega.data_envio.desc()).all():
+        chave = (entrega.demanda_titulo, entrega.id_cliente)
+        if chave not in entregas_por_demanda:
+            entregas_por_demanda[chave] = entrega
     return render_template('meusProjetosDev.html',
                            projetos=projetos,
                            usuario=usuario,
-                           foto_perfil=usuario.foto_perfil if usuario else None)
+                           foto_perfil=usuario.foto_perfil if usuario else None,
+                           form_entrega=form_entrega,
+                           entregas_por_demanda=entregas_por_demanda)
+
+
+@app.route('/entrega/<int:entrega_id>/baixar')
+@login_required
+def baixar_entrega(entrega_id):
+    entrega = Entrega.query.get_or_404(entrega_id)
+    if session["id_usuario"] not in (entrega.id_cliente, entrega.dev_id):
+        abort(403)
+
+    diretorio_uploads_entregas = app.config['UPLOADS_PRIVADOS_DIR']
+    return send_from_directory(
+        diretorio_uploads_entregas,
+        entrega.caminho_arquivo,
+        as_attachment=True,
+        download_name=entrega.nome_arquivo,
+    )
 
 
 # ─── Candidatura ──────────────────────────────────────────────────────────────
@@ -584,16 +668,69 @@ def poll_mensagens(candidatura_id):
 def entregar_demanda(titulo, id_cliente):
     if session.get("tipo_usuario") != "dev":
         abort(403)
-        
+
+    demanda = next(
+        (
+            item for item in lerDemandas(tipo_usuario="cliente")
+            if item.get("titulo") == titulo and str(item.get("id")) == str(id_cliente)
+        ),
+        None,
+    )
+
+    if not demanda or demanda.get("status") != "Em Desenvolvimento":
+        flash("Esta demanda não está disponível para entrega no momento.", "error")
+        return redirect('/MeusProjetosDev')
+
+    candidatura = Candidatura.query.filter_by(
+        dev_id=session["id_usuario"],
+        demanda_titulo=titulo,
+        id_cliente=id_cliente,
+        status="aceita",
+    ).first()
+
+    if not candidatura:
+        abort(403)
+
+    form_entrega = FormularioEntregaForm()
+    if not form_entrega.validate_on_submit():
+        for field_errors in form_entrega.errors.values():
+            for error in field_errors:
+                flash(error, "error")
+        return redirect('/MeusProjetosDev')
+
+    arquivo_entrega = form_entrega.arquivo_entrega.data
+    entrega_salva = None
+    caminho_fisico = None
+
     try:
+        entrega_salva = salvar_entrega(
+            titulo=titulo,
+            id_cliente=id_cliente,
+            dev_id=session["id_usuario"],
+            arquivo=arquivo_entrega,
+        )
+        caminho_fisico = os.path.join(app.config['UPLOADS_PRIVADOS_DIR'], entrega_salva.caminho_arquivo)
+        db.session.commit()
+
         sucesso = atualizar_status_por_titulo(titulo, id_cliente, "Aguardando Aprovação")
-        
+
         if sucesso:
             flash("Entrega da demanda enviada com sucesso! Aguarde a aprovação do cliente.", "success")
         else:
-            flash("Erro: Não foi possível localizar a demanda para entrega.", "error")
-            
+            raise RuntimeError("Não foi possível atualizar o status da demanda para Aguardando Aprovação.")
+
     except Exception as e:
+        db.session.rollback()
+        if caminho_fisico and os.path.exists(caminho_fisico):
+            try:
+                if entrega_salva and entrega_salva.id:
+                    entrega_para_remover = Entrega.query.get(entrega_salva.id)
+                    if entrega_para_remover:
+                        db.session.delete(entrega_para_remover)
+                        db.session.commit()
+                os.remove(caminho_fisico)
+            except Exception:
+                db.session.rollback()
         flash(f"Falha ao processar entrega da demanda: {str(e)}", "error")
         
     return redirect('/DashboardDev')
@@ -603,51 +740,29 @@ def entregar_demanda(titulo, id_cliente):
 def aprovar_demanda(titulo, id_cliente):
     if session.get("tipo_usuario") != "cliente":
         abort(403)
-        
+
+    demanda = next(
+        (
+            item for item in lerDemandas(tipo_usuario="cliente")
+            if item.get("titulo") == titulo and str(item.get("id")) == str(id_cliente)
+        ),
+        None,
+    )
+
+    if not demanda or str(session.get("id_usuario")) != str(id_cliente) or demanda.get("status") != "Aguardando Aprovação":
+        flash("Esta demanda não está disponível para aprovação.", "error")
+        return redirect('/dashboard')
+
     try:
         sucesso = atualizar_status_por_titulo(titulo, id_cliente, "Concluída")
-        
+
         if sucesso:
-            candidatura = Candidatura.query.filter_by(
-                demanda_titulo=titulo, 
-                id_cliente=id_cliente, 
-                status="aceita"
-            ).first()
-            
-            if candidatura:
-                dev = Desenvolvedor.query.get(candidatura.dev_id)
-                cliente = Cliente.query.get(id_cliente)
-                
-                todas_demandas = lerDemandas()
-                orcamento = 0.0
-                for d in todas_demandas:
-                    if d['titulo'] == titulo and str(d['id']) == str(id_cliente):
-                        orcamento = float(d['orcamento'])
-                        break
-                
-                if cliente.saldo >= orcamento:
-                    cliente.saldo -= orcamento
-                    dev.saldo += orcamento
-                    
-                    novo_pagamento = Pagamento(
-                        demanda_titulo=titulo,
-                        valor=orcamento,
-                        cliente_id=id_cliente,
-                        dev_id=dev.id
-                    )
-                    db.session.add(novo_pagamento)
-                    db.session.commit()
-                    
-                    flash("Projeto aprovado e pagamento transferido com sucesso ao desenvolvedor!", "success")
-                else:
-                    flash("Demanda aprovada, mas você não tem saldo suficiente. Recarregue a sua carteira.", "warning")
-            else:
-                flash("Demanda aprovada, mas não encontramos o Desenvolvedor para pagar.", "warning")
+            flash("Entrega aprovada! Agora você pode efetuar o pagamento ao desenvolvedor.", "success")
         else:
-            flash("Erro: Não foi possível localizar a demanda indicada no sistema.", "error")
+            flash("Esta demanda não está disponível para aprovação.", "error")
             
     except Exception as e:
-        db.session.rollback() # Em caso de erro, desfaz a transação financeira por segurança
+        db.session.rollback()
         flash(f"Falha ao processar aprovação da demanda: {str(e)}", "error")
         
     return redirect('/dashboard')

@@ -38,6 +38,19 @@
   <!-- ══ Grid de cards ══ -->
   <div class="mpd-grid">
     {% for p in projetos %}
+    {% set status_atual = p.status or p.status_demanda %}
+    {% set progresso_percentual = 30 %}
+    {% set progresso_rotulo = 'Em desenvolvimento' %}
+    {% if status_atual == 'Aguardando Aprovação' %}
+      {% set progresso_percentual = 65 %}
+      {% set progresso_rotulo = 'Aguardando aprovação' %}
+    {% elif status_atual == 'Concluída' %}
+      {% set progresso_percentual = 85 %}
+      {% set progresso_rotulo = 'Concluída' %}
+    {% elif status_atual == 'Fechada' %}
+      {% set progresso_percentual = 100 %}
+      {% set progresso_rotulo = 'Fechada' %}
+    {% endif %}
     <div class="mpd-card">
 
       <!-- Cabeçalho do card -->
@@ -50,7 +63,7 @@
           <span class="mpd-tech-pill">{{ p.tecnologia }}</span>
         </div>
         <span class="mpd-status-badge">
-          <i class="fa-solid fa-circle-dot"></i> Em Desenvolvimento
+          <i class="fa-solid fa-circle-dot"></i> {{ status_atual }}
         </span>
       </div>
 
@@ -101,16 +114,25 @@
       <div class="mpd-progress-area">
         <div class="mpd-progress-label">
           <span>Progresso</span>
-          <span class="mpd-progress-pct">Em andamento</span>
+          <span class="mpd-progress-pct">{{ progresso_rotulo }}</span>
         </div>
         <div class="mpd-progress-bar">
-          <div class="mpd-progress-fill" style="width: 30%"></div>
+          <div class="mpd-progress-fill" style="width: {{ progresso_percentual }}%"></div>
         </div>
         <div class="mpd-progress-steps">
           <span class="mpd-step mpd-step-done"><i class="fa-solid fa-check"></i> Proposta aceita</span>
-          <span class="mpd-step mpd-step-active"><i class="fa-solid fa-circle-dot"></i> Em desenvolvimento</span>
-          <span class="mpd-step"><i class="fa-regular fa-circle"></i> Entrega</span>
-          <span class="mpd-step"><i class="fa-regular fa-circle"></i> Pagamento</span>
+          <span class="mpd-step {% if status_atual == 'Em Desenvolvimento' %}mpd-step-active{% elif status_atual in ['Aguardando Aprovação', 'Concluída', 'Fechada'] %}mpd-step-done{% endif %}">
+            <i class="fa-solid {% if status_atual == 'Em Desenvolvimento' %}fa-circle-dot{% else %}fa-check{% endif %}"></i>
+            Em desenvolvimento
+          </span>
+          <span class="mpd-step {% if status_atual == 'Aguardando Aprovação' %}mpd-step-active{% elif status_atual in ['Concluída', 'Fechada'] %}mpd-step-done{% endif %}">
+            <i class="{% if status_atual == 'Aguardando Aprovação' %}fa-solid fa-circle-dot{% elif status_atual in ['Concluída', 'Fechada'] %}fa-solid fa-check{% else %}fa-regular fa-circle{% endif %}"></i>
+            Entrega
+          </span>
+          <span class="mpd-step {% if status_atual == 'Concluída' %}mpd-step-active{% elif status_atual == 'Fechada' %}mpd-step-done{% endif %}">
+            <i class="{% if status_atual == 'Concluída' %}fa-solid fa-circle-dot{% elif status_atual == 'Fechada' %}fa-solid fa-check{% else %}fa-regular fa-circle{% endif %}"></i>
+            Pagamento
+          </span>
         </div>
       </div>
 
@@ -119,12 +141,52 @@
         <a href="/chat/{{ p.candidatura.id }}" class="mpd-btn-primary">
           <i class="fa-solid fa-comment-dots"></i> Abrir Chat
         </a>
-        <button class="mpd-btn-secondary mpd-btn-disabled" disabled title="Disponível em breve">
+        {% if status_atual == 'Em Desenvolvimento' %}
+        <button type="button" class="mpd-btn-secondary" data-open-upload-modal="upload-modal-{{ p.candidatura.id }}">
           <i class="fa-solid fa-upload"></i> Enviar Entrega
         </button>
-        <button class="mpd-btn-secondary mpd-btn-disabled" disabled title="Disponível após entrega">
+        {% else %}
+          {% set entrega_key = (p.titulo, p.id_cliente) %}
+          {% set entrega_enviada = entregas_por_demanda.get(entrega_key) %}
+          {% if entrega_enviada %}
+          <a href="{{ url_for('static', filename=entrega_enviada.caminho_arquivo) }}" target="_blank" class="mpd-btn-secondary">
+            <i class="fa-solid fa-file-arrow-down"></i> Ver arquivo enviado
+          </a>
+          {% else %}
+          <button class="mpd-btn-secondary mpd-btn-disabled" disabled title="Arquivo ainda não localizado">
+            <i class="fa-solid fa-file-arrow-down"></i> Ver arquivo enviado
+          </button>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <div id="upload-modal-{{ p.candidatura.id }}" class="mpd-upload-modal" hidden>
+        <div class="mpd-upload-modal-backdrop" data-close-upload-modal></div>
+        <div class="mpd-upload-modal-card" role="dialog" aria-modal="true" aria-labelledby="upload-title-{{ p.candidatura.id }}">
+          <button type="button" class="mpd-upload-modal-close" data-close-upload-modal aria-label="Fechar">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <h3 id="upload-title-{{ p.candidatura.id }}">Enviar entrega</h3>
+          <p class="mpd-upload-modal-text">Envie apenas arquivos .zip. O arquivo será validado novamente no backend antes de alterar o status da demanda.</p>
+          <form method="POST" action="{{ url_for('entregar_demanda', titulo=p.titulo, id_cliente=p.id_cliente) }}" enctype="multipart/form-data" class="mpd-upload-form" onsubmit="return confirm('Confirma o envio da entrega para este projeto?');">
+            {{ form_entrega.hidden_tag() }}
+            <label class="mpd-upload-label" for="arquivo_entrega_{{ p.candidatura.id }}">Arquivo .zip</label>
+            {{ form_entrega.arquivo_entrega(id="arquivo_entrega_" ~ p.candidatura.id, class="mpd-upload-input", accept=".zip", required=true) }}
+            <button type="submit" class="mpd-btn-secondary mpd-upload-submit">
+              Confirmar envio
+            </button>
+          </form>
+        </div>
+      </div>
+        {% if status_atual == 'Fechada' %}
+        <a href="{{ url_for('carteiraDev') }}" class="mpd-btn-secondary">
+          <i class="fa-solid fa-receipt"></i> Ver Pagamento
+        </a>
+        {% else %}
+        <button class="mpd-btn-secondary mpd-btn-disabled" disabled title="{% if status_atual == 'Concluída' %}Aguardando pagamento do cliente{% elif status_atual == 'Aguardando Aprovação' %}Aguardando aprovação do cliente{% elif status_atual == 'Em Desenvolvimento' %}Disponível após entrega{% else %}Disponível após pagamento confirmado{% endif %}">
           <i class="fa-solid fa-receipt"></i> Ver Pagamento
         </button>
+        {% endif %}
       </div>
 
     </div>
@@ -134,5 +196,30 @@
   {% endif %}
 
 </div><!-- /mpd-page -->
+
+<script>
+document.querySelectorAll('[data-open-upload-modal]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const modalId = button.getAttribute('data-open-upload-modal');
+    const modal = document.getElementById(modalId);
+    if (modal) modal.hidden = false;
+  });
+});
+
+document.querySelectorAll('[data-close-upload-modal]').forEach((control) => {
+  control.addEventListener('click', () => {
+    const modal = control.closest('.mpd-upload-modal');
+    if (modal) modal.hidden = true;
+  });
+});
+
+document.querySelectorAll('.mpd-upload-modal').forEach((modal) => {
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) {
+      modal.hidden = true;
+    }
+  });
+});
+</script>
 
 {% endblock %}

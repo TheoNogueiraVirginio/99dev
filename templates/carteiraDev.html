@@ -1,0 +1,68 @@
+{% extends "basePerfil.html" %}
+
+{% block title %}Carteira do Dev - 99dev{% endblock %}
+
+{% block head_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/carteiraCliente.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="carteira-container">
+    <header class="carteira-header">
+        <h2>Carteira do Desenvolvedor</h2>
+    </header>
+
+    <div class="wallet-card">
+        <div class="wallet-info">
+            <i class="fa-solid fa-wallet"></i>
+            <div>
+                <span>Seu Saldo:</span>
+                <strong>R$ {{ "%.2f" % saldo if saldo is not none else "0.00" }}</strong>
+            </div>
+        </div>
+        <span class="btn-add-saldo" aria-disabled="true" title="Saldo do dev é atualizado automaticamente após cada pagamento">
+            <i class="fa-solid fa-receipt"></i> Pagamentos recebidos
+        </span>
+    </div>
+
+    <section class="tarefas">
+        <div class="tarefas-header">
+            <h2>Histórico de Pagamentos Recebidos</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Serviço (Demanda)</th>
+                    <th>Cliente</th>
+                    <th>Data do Pagamento</th>
+                    <th style="text-align: right;">Valor Recebido</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pagamento in pagamentos %}
+                <tr>
+                    <td data-label="Serviço">
+                        <div class="task-title">{{ pagamento.titulo_demanda }}</div>
+                    </td>
+                    <td data-label="Cliente">
+                        <span class="tech-pill">{{ pagamento.cliente_nome }}</span>
+                    </td>
+                    <td data-label="Data">
+                        <span class="tech-pill">{{ pagamento.data_formatada }}</span>
+                    </td>
+                    <td data-label="Valor Recebido" style="text-align: right; color: #187a4d; font-weight: 700;">
+                        {{ pagamento.valor_formatado }}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 30px; color: #6d7c92;">
+                        Você ainda não recebeu nenhum pagamento.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</div>
+{% endblock %}

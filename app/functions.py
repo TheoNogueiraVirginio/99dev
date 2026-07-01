@@ -7,8 +7,9 @@ import os
 from flask import session
 from flask_mail import Message
 import bcrypt
+from werkzeug.utils import secure_filename
 from app import mail, serializer
-from app.models import Cliente, Desenvolvedor, Pagamento, db
+from app.models import Cliente, Desenvolvedor, Entrega, Pagamento, db
 
 import secrets
 
@@ -330,6 +331,15 @@ def candidatar_dev(dev_id, demanda_uuid, demanda_titulo, id_cliente, proposta):
     return nova
 
 
+def buscar_candidatura_aceita(demanda_uuid):
+    from app.models import Candidatura
+
+    return Candidatura.query.filter_by(
+        demanda_uuid=demanda_uuid,
+        status='aceita',
+    ).order_by(Candidatura.data.desc()).first()
+
+
 def ler_projetos_dev(dev_id):
     """Retorna candidaturas aceitas do dev, enriquecidas com dados da demanda do CSV."""
     from app.models import Candidatura
@@ -368,7 +378,9 @@ def ler_projetos_dev(dev_id):
             'tecnologia':   info.get('tecnologia', '—'),
             'descricao':    info.get('descricao',  ''),
             'orcamento':    info.get('orcamento',  '—'),
-            'status_demanda': info.get('status',   'Em Desenvolvimento'),
+                    'status_demanda': info.get('status',   'Em Desenvolvimento'),
+                    'status':       info.get('status',     'Em Desenvolvimento'),
+                    'id_cliente':   c.id_cliente,
         })
 
     return projetos
@@ -449,6 +461,32 @@ def registrar_pagamento(id_cliente, titulo_demanda, valor, commit=True):
     return novo_pagamento
 
 
+def salvar_entrega(titulo, id_cliente, dev_id, arquivo):
+    if not arquivo or not arquivo.filename:
+        raise ValueError("Envie um arquivo válido para a entrega.")
+
+    nome_original = arquivo.filename
+    nome_base = secure_filename(os.path.splitext(nome_original)[0]) or "entrega"
+    extensao = os.path.splitext(nome_original)[1].lower() or ".zip"
+    nome_fisico = f"{nome_base}_{id_cliente}_{uuid.uuid4().hex}{extensao}"
+
+    pasta_entregas = BASE_DIR / 'uploads_privados' / 'entregas'
+    pasta_entregas.mkdir(parents=True, exist_ok=True)
+
+    caminho_fisico = pasta_entregas / nome_fisico
+    arquivo.save(caminho_fisico)
+
+    entrega = Entrega(
+        demanda_titulo=titulo,
+        id_cliente=id_cliente,
+        dev_id=dev_id,
+        nome_arquivo=nome_original,
+        caminho_arquivo=nome_fisico,
+    )
+    db.session.add(entrega)
+    return entrega
+
+
 def validar_saldo_suficiente(cliente, valor):
     if cliente is None:
         return False
@@ -471,6 +509,37 @@ def ler_pagamentos_cliente(id_cliente):
         "data_pagamento": pagamento.data_pagamento,
         "data_formatada": pagamento.data_pagamento.strftime('%d/%m/%Y') if pagamento.data_pagamento else '',
     } for pagamento in pagamentos]
+
+
+def ler_pagamentos_dev(id_dev):
+    from app.models import Candidatura
+
+    candidaturas = Candidatura.query.filter_by(dev_id=id_dev, status='aceita').order_by(
+        Candidatura.data.desc()
+    ).all()
+
+    pagamentos = []
+    for candidatura in candidaturas:
+        pagamento = Pagamento.query.filter_by(
+            id_cliente=candidatura.id_cliente,
+            titulo_demanda=candidatura.demanda_titulo,
+        ).order_by(Pagamento.data_pagamento.desc()).first()
+
+        if not pagamento:
+            continue
+
+        cliente = Cliente.query.get(candidatura.id_cliente)
+        pagamentos.append({
+            "titulo_demanda": pagamento.titulo_demanda,
+            "valor": pagamento.valor,
+            "valor_formatado": _formatar_moeda_brasileira(pagamento.valor),
+            "data_pagamento": pagamento.data_pagamento,
+            "data_formatada": pagamento.data_pagamento.strftime('%d/%m/%Y') if pagamento.data_pagamento else '',
+            "cliente_nome": cliente.nome if cliente and cliente.nome else cliente.email if cliente else f"Cliente #{candidatura.id_cliente}",
+            "id_cliente": candidatura.id_cliente,
+        })
+
+    return pagamentos
 
 
 def ler_demandas_realizadas_cliente(id_cliente):
