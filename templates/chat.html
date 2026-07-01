@@ -89,19 +89,24 @@
 
       {% for msg in mensagens %}
         {% set eh_dev     = (msg.tipo_remetente == 'dev') %}
-        {% set eh_meu     = (msg.remetente_id == id_usuario) %}
+        {% set eh_meu     = ((msg.tipo_remetente == tipo_usuario)) %}
         {% set lado       = 'right' if eh_meu else 'left' %}
         {% set cor_bubble = 'blue' if eh_dev else 'red' %}
-      <div class="msg-row msg-{{ lado }}" data-id="{{ msg.id }}" data-tipo="{{ msg.tipo_remetente }}">
+      {{ msg.remetente_id }} | {{ id_usuario }} | {{ msg.tipo_remetente }}
+        <div class="msg-row msg-{{ lado }}" data-id="{{ msg.id }}" data-tipo="{{ msg.tipo_remetente }}">
         {% if not eh_meu %}
-        <div class="msg-avatar avatar-{{ msg.tipo_remetente }}">{{ outro_avatar }}</div>
+        <div class="msg-avatar avatar-{{ 'dev' if eh_dev else 'cliente' }}">
+          {{ meu_avatar if eh_dev == (tipo_usuario == 'dev') else outro_avatar }}
+        </div>
         {% endif %}
         <div class="msg-group">
           <div class="bubble bubble-{{ cor_bubble }}">{{ msg.conteudo }}</div>
           <div class="bubble-time {{ 'time-right' if eh_meu else 'time-left' }}">{{ msg.data.strftime('%H:%M') }}</div>
         </div>
         {% if eh_meu %}
-        <div class="msg-avatar avatar-{{ tipo_usuario }}">{{ meu_avatar }}</div>
+          <div class="msg-avatar avatar-{{ 'dev' if eh_dev else 'cliente' }}">
+            {{ meu_avatar if eh_dev == (tipo_usuario == 'dev') else outro_avatar }}
+          </div>
         {% endif %}
       </div>
       {% endfor %}
