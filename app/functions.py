@@ -244,7 +244,8 @@ def lerDemandas(tipo_usuario="cliente", id_usuario=None, busca=None, filtro_stat
                         'descricao': row[2],
                         'orcamento': row[3],
                         'status': row[4].strip(),
-                        'id': row[5].strip()
+                        'id': row[5].strip(),
+                        'uuid': row[6].strip() if len(row) > 6 else _uuid_legado(row[0], row[5].strip())
                     }
                     
                     # 1. Aplica o Filtro de Busca (barra de pesquisa)
@@ -471,7 +472,7 @@ def ler_demandas_realizadas_cliente(id_cliente):
                         })
     return demandas_realizadas
 
-def atualizar_status_demanda(titulo_demanda, id_cliente, novo_status):
+def atualizar_status_por_titulo(titulo_demanda, id_cliente, novo_status):
     linhas = []
     atualizado = False
     

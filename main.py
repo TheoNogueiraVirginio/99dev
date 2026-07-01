@@ -8,7 +8,7 @@ from wtforms.validators import input_required, Email, Optional, NumberRange
 from app import app, db, google
 from app.models import Cliente, Desenvolvedor, Candidatura, Pagamento
 from app.functions import (
-    atualizar_senha, cadastrar_usuario, autenticar_usuario, exibirSaldo,
+    atualizar_senha, atualizar_status_por_titulo, cadastrar_usuario, autenticar_usuario, exibirSaldo,
     gerenciar_login_google, lerDemandas, salvarDemanda,
     solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev,
     atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente,
@@ -515,7 +515,7 @@ def entregar_demanda(titulo, id_cliente):
         abort(403)
         
     try:
-        sucesso = atualizar_status_demanda(titulo, id_cliente, "Aguardando Aprovação")
+        sucesso = atualizar_status_por_titulo(titulo, id_cliente, "Aguardando Aprovação")
         
         if sucesso:
             flash("Entrega da demanda enviada com sucesso! Aguarde a aprovação do cliente.", "success")
@@ -534,7 +534,7 @@ def aprovar_demanda(titulo, id_cliente):
         abort(403)
         
     try:
-        sucesso = atualizar_status_demanda(titulo, id_cliente, "Concluída")
+        sucesso = atualizar_status_por_titulo(titulo, id_cliente, "Concluída")
         
         if sucesso:
             candidatura = Candidatura.query.filter_by(
@@ -588,7 +588,7 @@ def negar_demanda(titulo, id_cliente):
         abort(403)
         
     try:
-        sucesso = atualizar_status_demanda(titulo, id_cliente, "Em Andamento")
+        sucesso = atualizar_status_por_titulo(titulo, id_cliente, "Em Andamento")
         if sucesso:
             flash("Entrega recusada. O projeto retornou para o status Em Andamento para correções.", "success")
         else:

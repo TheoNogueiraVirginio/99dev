@@ -4,7 +4,7 @@ Refatoração de Interface Mobile	CSS3, Bootstrap, JS	Adaptar o dashboard atual 
 
 Criação de Landing Page para Evento	HTML5, CSS3, Figma	Converter o design aprovado no Figma em uma landing page responsiva de alta conversão.	600	Aberta	2
 
-Script de Web Scraping Imobiliário	Python, BeautifulSoup	Desenvolver robô autônomo para extrair preços e links de anúncios imobiliários de portais concorrentes diariamente.	1200	Aguardando Aprovação	1
+Script de Web Scraping Imobiliário	Python, BeautifulSoup	Desenvolver robô autônomo para extrair preços e links de anúncios imobiliários de portais concorrentes diariamente.	1200	Concluída	1
 
 Sistema de Login e Autenticação JWT	Node.js, Express	Implementar fluxo de registro, login e recuperação de senha com tokens de segurança JWT.	2100	Aberta	2
 
@@ -16,4 +16,5 @@ Bot de Atendimento para WhatsApp	Python, Twilio, IA	Criar um chatbot integrado a
 
 Correção de Bug no Carrinho de Compras	JavaScript, PHP	Identificar e corrigir falha que está limpando o carrinho de compras quando o usuário atualiza a página.	400	Fechada	1
 
-Dashboard Financeiro em Tempo Real	Vue.js, WebSockets	Desenvolver gráficos dinâmicos para exibir o fluxo de caixa da empresa atualizado em tempo real.	3200	Aguardando Aprovação	2
+Dashboard Financeiro em Tempo Real	Vue.js, WebSockets	Desenvolver gráficos dinâmicos para exibir o fluxo de caixa da empresa atualizado em tempo real.	3200	Concluída	2
+aa	aaa	aaa	213	Em Desenvolvimento	2	6f7b8383-622c-41f9-81f2-42a9ef7cc00c

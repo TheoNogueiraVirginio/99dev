@@ -21,7 +21,6 @@
     </span>
 </div>
 
-<!-- ── Demandas disponíveis ── -->
 <section class="tarefas">
     <div class="tarefas-header">
         <h2>Demandas Disponíveis no Mercado</h2>
@@ -56,21 +55,29 @@
                 </td>
                 <td data-label="Ações">
                     {% if demanda.status == "Em Andamento" %}
-                        <form action="{{ url_for('entregar_demanda', titulo=demanda.titulo, id_cliente=demanda.id) }}" method="post" class="form-entrega">
-                            <button type="submit" class="action-link btn-entregar">
-                                <i class="fa-solid fa-paper-plane icon-action"></i> Entregar
-                            </button>
-                        </form>
+                    <form action="{{ url_for('entregar_demanda', titulo=demanda.titulo, id_cliente=demanda.id) }}"
+                        method="post" class="form-entrega">
+                        <button type="submit" class="action-link btn-entregar">
+                            <i class="fa-solid fa-paper-plane icon-action"></i> Entregar
+                        </button>
+                    </form>
                     {% elif demanda.status == "Aguardando Aprovação" %}
-                        <span class="status-acao status-analise">
-                            <i class="fa-solid fa-clock icon-action"></i> Em Análise
-                        </span>
+                    <span class="status-acao status-analise">
+                        <i class="fa-solid fa-clock icon-action"></i> Em Análise
+                    </span>
                     {% elif demanda.status in ["Concluída", "Fechada"] %}
-                        <span class="status-acao status-finalizado">
-                            <i class="fa-solid fa-circle-check icon-action"></i> Finalizado
-                        </span>
+                    <span class="status-acao status-finalizado">
+                        <i class="fa-solid fa-circle-check icon-action"></i> Finalizado
+                    </span>
                     {% else %}
-                        <a class="action-link" href="#">Candidatar-se</a>
+                    <button type="button" class="action-link btn-candidatar"
+                        data-uuid="{{ demanda.uuid }}" 
+                        data-titulo="{{ demanda.titulo }}" 
+                        data-id-cliente="{{ demanda.id }}"
+                        data-orcamento="{{ demanda.orcamento }}"
+                        data-descricao="{{ demanda.descricao }}">
+                        <i class="fa-solid fa-code"></i> Candidatar-se
+                    </button>
                     {% endif %}
                 </td>
             </tr>
@@ -85,7 +92,6 @@
     </table>
 </section>
 
-<!-- ── Minhas Candidaturas (pendentes) ── -->
 {% set candidaturas_pendentes = candidaturas | rejectattr('status', 'equalto', 'aceita') | list %}
 {% if candidaturas_pendentes %}
 <section class="tarefas" style="margin-top: 22px;">
@@ -95,7 +101,8 @@
         {% if aceitas_count > 0 %}
         <a href="/MeusProjetosDev" class="link-ver-projetos">
             <i class="fa-solid fa-laptop-code"></i>
-            Ver {{ aceitas_count }} projeto{{ 's' if aceitas_count != 1 else '' }} ativo{{ 's' if aceitas_count != 1 else '' }} →
+            Ver {{ aceitas_count }} projeto{{ 's' if aceitas_count != 1 else '' }} ativo{{ 's' if aceitas_count != 1
+            else '' }} →
         </a>
         {% endif %}
     </div>
@@ -136,9 +143,6 @@
 {% endif %}
 
 
-<!-- ════════════════════════════════════════════════════════
-     Modal de Candidatura
-════════════════════════════════════════════════════════ -->
 <div id="modalCandidatura" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitulo" hidden>
     <div class="modal-box">
         <button class="modal-close" id="btnFecharModal" aria-label="Fechar">
@@ -156,9 +160,9 @@
         <div class="modal-demanda-info" id="modalInfoDemanda"></div>
 
         <form id="formCandidatura" action="/candidatar" method="POST">
-            <input type="hidden" name="demanda_uuid"   id="inputUuid">
+            <input type="hidden" name="demanda_uuid" id="inputUuid">
             <input type="hidden" name="demanda_titulo" id="inputTitulo">
-            <input type="hidden" name="id_cliente"     id="inputIdCliente">
+            <input type="hidden" name="id_cliente" id="inputIdCliente">
 
             <div class="modal-field">
                 <label for="proposta">
@@ -183,58 +187,58 @@
 
 
 <script>
-(function () {
-    const modal      = document.getElementById('modalCandidatura');
-    const subtitle   = document.getElementById('modalSubtitulo');
-    const infoBadges = document.getElementById('modalInfoDemanda');
-    const inputUuid  = document.getElementById('inputUuid');
-    const inputTit   = document.getElementById('inputTitulo');
-    const inputCli   = document.getElementById('inputIdCliente');
-    const textarea   = document.getElementById('proposta');
-    const charCount  = document.getElementById('charCount');
+    (function () {
+        const modal = document.getElementById('modalCandidatura');
+        const subtitle = document.getElementById('modalSubtitulo');
+        const infoBadges = document.getElementById('modalInfoDemanda');
+        const inputUuid = document.getElementById('inputUuid');
+        const inputTit = document.getElementById('inputTitulo');
+        const inputCli = document.getElementById('inputIdCliente');
+        const textarea = document.getElementById('proposta');
+        const charCount = document.getElementById('charCount');
 
-    function openModal(btn) {
-        inputUuid.value = btn.dataset.uuid;
-        inputTit.value  = btn.dataset.titulo;
-        inputCli.value  = btn.dataset.idCliente;
+        function openModal(btn) {
+            inputUuid.value = btn.dataset.uuid;
+            inputTit.value = btn.dataset.titulo;
+            inputCli.value = btn.dataset.idCliente;
 
-        subtitle.textContent = btn.dataset.titulo;
-        infoBadges.innerHTML = `
+            subtitle.textContent = btn.dataset.titulo;
+            infoBadges.innerHTML = `
             <span class="info-badge"><i class="fa-solid fa-circle-dollar-to-slot"></i> R$ ${btn.dataset.orcamento}</span>
             <span class="info-badge info-desc">${btn.dataset.descricao.substring(0, 120)}${btn.dataset.descricao.length > 120 ? '…' : ''}</span>
         `;
 
-        textarea.value = '';
-        charCount.textContent = '0';
-        modal.removeAttribute('hidden');
-        document.body.style.overflow = 'hidden';
-        setTimeout(() => textarea.focus(), 100);
-    }
+            textarea.value = '';
+            charCount.textContent = '0';
+            modal.removeAttribute('hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => textarea.focus(), 100);
+        }
 
-    function closeModal() {
-        modal.setAttribute('hidden', '');
-        document.body.style.overflow = '';
-    }
+        function closeModal() {
+            modal.setAttribute('hidden', '');
+            document.body.style.overflow = '';
+        }
 
-    // Botões de candidatar
-    document.querySelectorAll('.btn-candidatar').forEach(btn => {
-        btn.addEventListener('click', () => openModal(btn));
-    });
+        // Botões de candidatar
+        document.querySelectorAll('.btn-candidatar').forEach(btn => {
+            btn.addEventListener('click', () => openModal(btn));
+        });
 
-    document.getElementById('btnFecharModal').addEventListener('click', closeModal);
-    document.getElementById('btnCancelar').addEventListener('click', closeModal);
+        document.getElementById('btnFecharModal').addEventListener('click', closeModal);
+        document.getElementById('btnCancelar').addEventListener('click', closeModal);
 
-    // Fechar clicando fora
-    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+        // Fechar clicando fora
+        modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 
-    // Fechar com Esc
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hasAttribute('hidden')) closeModal(); });
+        // Fechar com Esc
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hasAttribute('hidden')) closeModal(); });
 
-    // Contador de caracteres
-    textarea.addEventListener('input', () => {
-        charCount.textContent = textarea.value.length;
-    });
-})();
+        // Contador de caracteres
+        textarea.addEventListener('input', () => {
+            charCount.textContent = textarea.value.length;
+        });
+    })();
 </script>
 
 {% endblock %}
