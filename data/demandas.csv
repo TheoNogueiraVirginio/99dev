@@ -1,6 +1,6 @@
 Integração de API de Pagamentos	Python, Flask, Stripe	Criar endpoint seguro no backend para processamento de pagamentos via cartão de crédito e webhooks.	1500	Aberta	1
 
-Refatoração de Interface Mobile	CSS3, Bootstrap, JS	Adaptar o dashboard atual para funcionar perfeitamente em dispositivos móveis, corrigindo quebras de layout.	850	Em Andamento	1
+Refatoração de Interface Mobile	CSS3, Bootstrap, JS	Adaptar o dashboard atual para funcionar perfeitamente em dispositivos móveis, corrigindo quebras de layout.	850	Aguardando Aprovação	1
 
 Criação de Landing Page para Evento	HTML5, CSS3, Figma	Converter o design aprovado no Figma em uma landing page responsiva de alta conversão.	600	Aberta	2
 
@@ -10,7 +10,7 @@ Sistema de Login e Autenticação JWT	Node.js, Express	Implementar fluxo de regi
 
 Otimização de Banco de Dados	SQL, MySQL	Analisar e otimizar queries lentas, criando índices estruturados para o sistema de gestão de estoque.	3000	Concluída	1
 
-Painel Administrativo em React	React, Tailwind CSS	Criar interface administrativa para gerenciar usuários, suspender contas e visualizar métricas da plataforma.	4500	Em Andamento	2
+Painel Administrativo em React	React, Tailwind CSS	Criar interface administrativa para gerenciar usuários, suspender contas e visualizar métricas da plataforma.	4500	Aguardando Aprovação	2
 
 Bot de Atendimento para WhatsApp	Python, Twilio, IA	Criar um chatbot integrado ao WhatsApp para responder dúvidas frequentes dos clientes automaticamente.	2800	Aberta	1
 
