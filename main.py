@@ -489,11 +489,17 @@ def meusProjetosDev():
     usuario = Desenvolvedor.query.get(id_dev)
     projetos = ler_projetos_dev(id_dev)
     form_entrega = FormularioEntregaForm()
+    entregas_por_demanda = {}
+    for entrega in Entrega.query.filter_by(dev_id=id_dev).order_by(Entrega.data_envio.desc()).all():
+        chave = (entrega.demanda_titulo, entrega.id_cliente)
+        if chave not in entregas_por_demanda:
+            entregas_por_demanda[chave] = entrega
     return render_template('meusProjetosDev.html',
                            projetos=projetos,
                            usuario=usuario,
                            foto_perfil=usuario.foto_perfil if usuario else None,
-                           form_entrega=form_entrega)
+                           form_entrega=form_entrega,
+                           entregas_por_demanda=entregas_por_demanda)
 
 
 # ─── Candidatura ──────────────────────────────────────────────────────────────

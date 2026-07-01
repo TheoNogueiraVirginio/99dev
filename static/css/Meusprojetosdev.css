@@ -316,6 +316,56 @@
   font-size: .84rem;
   color: var(--text);
 }
+.mpd-upload-submit {
+  justify-content: center;
+}
+.mpd-upload-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+}
+.mpd-upload-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.58);
+}
+.mpd-upload-modal-card {
+  position: relative;
+  z-index: 1;
+  width: min(92vw, 460px);
+  margin: 10vh auto 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 50px rgba(15, 23, 42, .18);
+  padding: 22px;
+}
+.mpd-upload-modal-card h3 {
+  font-size: 1.1rem;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+.mpd-upload-modal-text {
+  font-size: .88rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.mpd-upload-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
 .mpd-btn-primary {
   display: inline-flex;
   align-items: center;

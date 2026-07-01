@@ -142,19 +142,42 @@
           <i class="fa-solid fa-comment-dots"></i> Abrir Chat
         </a>
         {% if status_atual == 'Em Desenvolvimento' %}
-        <form method="POST" enctype="multipart/form-data" action="{{ url_for('entregar_demanda', titulo=p.titulo, id_cliente=p.id_cliente) }}" class="mpd-inline-form mpd-upload-form" onsubmit="return confirm('Confirma o envio da entrega para este projeto?');">
-          {{ form_entrega.hidden_tag() }}
-          <label class="mpd-upload-label" for="arquivo_entrega_{{ p.candidatura.id }}">Arquivo .zip</label>
-          {{ form_entrega.arquivo_entrega(id="arquivo_entrega_" ~ p.candidatura.id, class="mpd-upload-input", accept=".zip", required=true) }}
-          <button type="submit" class="mpd-btn-secondary">
-            <i class="fa-solid fa-upload"></i> Enviar Entrega
-          </button>
-        </form>
-        {% else %}
-        <button class="mpd-btn-secondary mpd-btn-disabled" disabled title="{% if status_atual == 'Aguardando Aprovação' %}Entrega já enviada, aguardando aprovação do cliente{% elif status_atual == 'Concluída' %}Entrega aprovada, aguardando pagamento{% elif status_atual == 'Fechada' %}Projeto já finalizado{% else %}Disponível somente quando o projeto estiver em desenvolvimento{% endif %}">
+        <button type="button" class="mpd-btn-secondary" data-open-upload-modal="upload-modal-{{ p.candidatura.id }}">
           <i class="fa-solid fa-upload"></i> Enviar Entrega
         </button>
+        {% else %}
+          {% set entrega_key = (p.titulo, p.id_cliente) %}
+          {% set entrega_enviada = entregas_por_demanda.get(entrega_key) %}
+          {% if entrega_enviada %}
+          <a href="{{ url_for('static', filename=entrega_enviada.caminho_arquivo) }}" target="_blank" class="mpd-btn-secondary">
+            <i class="fa-solid fa-file-arrow-down"></i> Ver arquivo enviado
+          </a>
+          {% else %}
+          <button class="mpd-btn-secondary mpd-btn-disabled" disabled title="Arquivo ainda não localizado">
+            <i class="fa-solid fa-file-arrow-down"></i> Ver arquivo enviado
+          </button>
+          {% endif %}
         {% endif %}
+      </div>
+
+      <div id="upload-modal-{{ p.candidatura.id }}" class="mpd-upload-modal" hidden>
+        <div class="mpd-upload-modal-backdrop" data-close-upload-modal></div>
+        <div class="mpd-upload-modal-card" role="dialog" aria-modal="true" aria-labelledby="upload-title-{{ p.candidatura.id }}">
+          <button type="button" class="mpd-upload-modal-close" data-close-upload-modal aria-label="Fechar">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <h3 id="upload-title-{{ p.candidatura.id }}">Enviar entrega</h3>
+          <p class="mpd-upload-modal-text">Envie apenas arquivos .zip. O arquivo será validado novamente no backend antes de alterar o status da demanda.</p>
+          <form method="POST" action="{{ url_for('entregar_demanda', titulo=p.titulo, id_cliente=p.id_cliente) }}" enctype="multipart/form-data" class="mpd-upload-form" onsubmit="return confirm('Confirma o envio da entrega para este projeto?');">
+            {{ form_entrega.hidden_tag() }}
+            <label class="mpd-upload-label" for="arquivo_entrega_{{ p.candidatura.id }}">Arquivo .zip</label>
+            {{ form_entrega.arquivo_entrega(id="arquivo_entrega_" ~ p.candidatura.id, class="mpd-upload-input", accept=".zip", required=true) }}
+            <button type="submit" class="mpd-btn-secondary mpd-upload-submit">
+              Confirmar envio
+            </button>
+          </form>
+        </div>
+      </div>
         {% if status_atual == 'Fechada' %}
         <a href="{{ url_for('carteiraDev') }}" class="mpd-btn-secondary">
           <i class="fa-solid fa-receipt"></i> Ver Pagamento
@@ -173,5 +196,30 @@
   {% endif %}
 
 </div><!-- /mpd-page -->
+
+<script>
+document.querySelectorAll('[data-open-upload-modal]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const modalId = button.getAttribute('data-open-upload-modal');
+    const modal = document.getElementById(modalId);
+    if (modal) modal.hidden = false;
+  });
+});
+
+document.querySelectorAll('[data-close-upload-modal]').forEach((control) => {
+  control.addEventListener('click', () => {
+    const modal = control.closest('.mpd-upload-modal');
+    if (modal) modal.hidden = true;
+  });
+});
+
+document.querySelectorAll('.mpd-upload-modal').forEach((modal) => {
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) {
+      modal.hidden = true;
+    }
+  });
+});
+</script>
 
 {% endblock %}
