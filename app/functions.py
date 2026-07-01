@@ -468,13 +468,23 @@ def ler_demandas_realizadas_cliente(id_cliente):
                     continue
                 if row[5].strip().isdigit() and int(row[5]) == id_cliente:
                     if row[4].strip() in ["Fechada", "Concluída"]:
+                        row_uuid = (
+                            row[6].strip()
+                            if len(row) > 6 and row[6].strip()
+                            else _uuid_legado(row[0], row[5].strip())
+                        )
+                        try:
+                            valor_orcamento = float(str(row[3]).replace(',', '.'))
+                        except (TypeError, ValueError):
+                            valor_orcamento = row[3]
                         demandas_realizadas.append({
                             'titulo': row[0],
                             'tecnologia': row[1],
                             'descricao': row[2],
-                            'orcamento': row[3],
+                            'orcamento': valor_orcamento,
                             'status': row[4],
                             'id': row[5],
+                            'uuid': row_uuid,
                         })
     return demandas_realizadas
 
