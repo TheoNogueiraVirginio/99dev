@@ -446,6 +446,12 @@ def registrar_pagamento(id_cliente, titulo_demanda, valor):
         raise
 
 
+def validar_saldo_suficiente(cliente, valor):
+    if cliente is None:
+        return False
+    return cliente.saldo >= valor
+
+
 def ler_pagamentos_cliente(id_cliente):
     return Pagamento.query.filter_by(id_cliente=id_cliente).order_by(
         Pagamento.data_pagamento.desc()

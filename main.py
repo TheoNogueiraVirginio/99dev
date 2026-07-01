@@ -15,7 +15,7 @@ from app.functions import (
     ler_demandas_realizadas_cliente, salvar_mensagem_suporte,
     salvar_mensagem_suporte_dev, candidatar_dev, ler_candidaturas_dev, ler_candidaturas_cliente,
     enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda, salvar_avaliacao,
-    registrar_pagamento
+    registrar_pagamento, validar_saldo_suficiente
 )
 
 from app.decorators import login_required
@@ -347,8 +347,8 @@ def pagar_demanda(demanda_uuid):
         flash("Não foi possível processar o valor desta demanda.", "error")
         return redirect(request.referrer or url_for('dashboardCliente'))
 
-    if usuario.saldo < valor_demanda:
-        flash("Saldo insuficiente para pagar esta demanda.", "error")
+    if not validar_saldo_suficiente(usuario, valor_demanda):
+        flash("Saldo insuficiente para realizar este pagamento. Adicione saldo à sua carteira.", "saldo_insuficiente")
         return redirect(request.referrer or url_for('carteiraCliente'))
 
     # Placeholder para validações adicionais antes de concluir o pagamento.
