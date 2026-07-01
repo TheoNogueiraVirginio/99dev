@@ -149,7 +149,7 @@
           {% set entrega_key = (p.titulo, p.id_cliente) %}
           {% set entrega_enviada = entregas_por_demanda.get(entrega_key) %}
           {% if entrega_enviada %}
-          <a href="{{ url_for('static', filename=entrega_enviada.caminho_arquivo) }}" target="_blank" class="mpd-btn-secondary">
+          <a href="{{ url_for('baixar_entrega', entrega_id=entrega_enviada.id) }}" class="mpd-btn-secondary">
             <i class="fa-solid fa-file-arrow-down"></i> Ver arquivo enviado
           </a>
           {% else %}
