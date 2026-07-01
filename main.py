@@ -315,8 +315,10 @@ def carteiraCliente():
     id = session["id_usuario"]
     usuario = Cliente.query.get(id)
     form = AdicionarSaldoForm()
+    pagamentos = ler_pagamentos_cliente(id)
     return render_template('carteiraCliente.html', usuario=usuario, form=form,
-                           foto_perfil=usuario.foto_perfil if usuario else None)
+                           foto_perfil=usuario.foto_perfil if usuario else None,
+                           pagamentos=pagamentos)
 
 
 @app.route('/demanda/<string:demanda_uuid>/pagar', methods=['POST'])
@@ -351,16 +353,37 @@ def pagar_demanda(demanda_uuid):
         flash("Saldo insuficiente para realizar este pagamento. Adicione saldo à sua carteira.", "saldo_insuficiente")
         return redirect(request.referrer or url_for('carteiraCliente'))
 
-    # Placeholder para validações adicionais antes de concluir o pagamento.
-    usuario.saldo -= valor_demanda
-
+    # Pagamento concluído deve reutilizar o status já existente "Fechada".
+    # Assim evitamos criar um novo estado e preservamos os filtros e badges atuais do sistema.
+    pagamento_confirmado = False
     try:
+        usuario.saldo -= valor_demanda
+        registrar_pagamento(id_cliente, demanda["titulo"], valor_demanda, commit=False)
         db.session.commit()
-        registrar_pagamento(id_cliente, demanda["titulo"], valor_demanda)
-        atualizar_status_por_titulo(demanda["titulo"], id_cliente, "Paga")
+        pagamento_confirmado = True
+
+        if not atualizar_status_por_titulo(demanda["titulo"], id_cliente, "Fechada"):
+            raise RuntimeError("Não foi possível atualizar o status da demanda para Fechada.")
+
         flash("Pagamento realizado com sucesso!", "success")
     except Exception as e:
-        db.session.rollback()
+        if pagamento_confirmado:
+            try:
+                cliente = Cliente.query.get(id_cliente)
+                if cliente:
+                    cliente.saldo += valor_demanda
+                pagamento = Pagamento.query.filter_by(
+                    id_cliente=id_cliente,
+                    titulo_demanda=demanda["titulo"],
+                    valor=valor_demanda,
+                ).order_by(Pagamento.id.desc()).first()
+                if pagamento:
+                    db.session.delete(pagamento)
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+        else:
+            db.session.rollback()
         flash(f"Erro ao processar o pagamento: {str(e)}", "error")
 
     return redirect(request.referrer or url_for('dashboardCliente'))

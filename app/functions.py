@@ -432,18 +432,21 @@ def adicionar_saldo_cliente(id_cliente, saldo):
         raise
 
 
-def registrar_pagamento(id_cliente, titulo_demanda, valor):
+def registrar_pagamento(id_cliente, titulo_demanda, valor, commit=True):
     novo_pagamento = Pagamento(
         id_cliente=id_cliente,
         titulo_demanda=titulo_demanda,
         valor=valor,
     )
     db.session.add(novo_pagamento)
-    try:
-        db.session.commit()
-    except Exception:
-        db.session.rollback()
-        raise
+    if commit:
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            raise
+
+    return novo_pagamento
 
 
 def validar_saldo_suficiente(cliente, valor):
@@ -452,10 +455,22 @@ def validar_saldo_suficiente(cliente, valor):
     return cliente.saldo >= valor
 
 
+def _formatar_moeda_brasileira(valor):
+    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
 def ler_pagamentos_cliente(id_cliente):
-    return Pagamento.query.filter_by(id_cliente=id_cliente).order_by(
+    pagamentos = Pagamento.query.filter_by(id_cliente=id_cliente).order_by(
         Pagamento.data_pagamento.desc()
     ).all()
+
+    return [{
+        "titulo_demanda": pagamento.titulo_demanda,
+        "valor": pagamento.valor,
+        "valor_formatado": _formatar_moeda_brasileira(pagamento.valor),
+        "data_pagamento": pagamento.data_pagamento,
+        "data_formatada": pagamento.data_pagamento.strftime('%d/%m/%Y') if pagamento.data_pagamento else '',
+    } for pagamento in pagamentos]
 
 
 def ler_demandas_realizadas_cliente(id_cliente):

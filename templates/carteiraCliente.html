@@ -49,16 +49,16 @@
                     <div class="task-title">{{ pagamento.titulo_demanda }}</div>
                 </td>
                 <td data-label="Data">
-                    <span class="tech-pill">{{ pagamento.data_pagamento.strftime('%d/%m/%Y às %H:%M') }}</span>
+                    <span class="tech-pill">{{ pagamento.data_formatada }}</span>
                 </td>
                 <td data-label="Valor Pago" style="text-align: right; color: #187a4d; font-weight: 700;">
-                    R$ {{ "%.2f" % pagamento.valor }}
+                    {{ pagamento.valor_formatado }}
                 </td>
             </tr>
             {% else %}
             <tr>
                 <td colspan="3" style="text-align: center; padding: 30px; color: #6d7c92;">
-                    Nenhum pagamento registrado ainda.
+                    Você ainda não realizou nenhum pagamento.
                 </td>
             </tr>
             {% endfor %}
