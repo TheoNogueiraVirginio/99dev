@@ -53,3 +53,34 @@ app.config['MAIL_DEFAULT_SENDER'] = '99desenvolvedores@gmail.com'
 db.init_app(app)
 
 mail = Mail(app)
+
+with app.app_context():
+    db.create_all()
+
+# ─── Blueprints ─────────────────────────────────────────────────────────────
+# Importados só agora (depois de app/db/mail/google já existirem no módulo),
+# porque cada blueprint faz "from app import app, db, ..." e isso criaria um
+# import circular se fosse feito lá em cima.
+from app.blueprints.auth.routes import auth_bp
+from app.blueprints.perfil.routes import perfil_bp
+from app.blueprints.cliente.routes import cliente_bp
+from app.blueprints.dev.routes import dev_bp
+from app.blueprints.entregas.routes import entregas_bp
+from app.blueprints.candidatura.routes import candidatura_bp
+from app.blueprints.chat.routes import chat_bp
+from app.blueprints.suporte.routes import suporte_bp
+
+app.register_blueprint(auth_bp)
+app.register_blueprint(perfil_bp)
+app.register_blueprint(cliente_bp)
+app.register_blueprint(dev_bp)
+app.register_blueprint(entregas_bp)
+app.register_blueprint(candidatura_bp)
+app.register_blueprint(chat_bp)
+app.register_blueprint(suporte_bp)
+
+
+@app.errorhandler(403)
+def acesso_proibido(error):
+    from flask import render_template
+    return render_template('403.html'), 403

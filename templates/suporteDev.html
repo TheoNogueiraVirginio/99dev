@@ -23,7 +23,7 @@
         Está com problemas em alguma entrega, dúvidas sobre repasses financeiros ou bugs na plataforma? Abra um chamado abaixo.
     </p>
     
-    <form action="{{ url_for('suporteDev') }}" method="post">
+    <form action="{{ url_for('suporte.suporteDev') }}" method="post">
         {{ form.hidden_tag() }}
         
         <label for="assunto">Assunto da solicitação:</label>

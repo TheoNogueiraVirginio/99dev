@@ -15,9 +15,9 @@
         {% endif %}
 
         {#Definir link tanto para dev quanto para cliente #}
-        {% set link_perfil = url_for('perfil')
+        {% set link_perfil = url_for('perfil.perfil')
         if session.get('tipo_usuario') == 'cliente'
-        else url_for('perfildev') %}
+        else url_for('perfil.perfildev') %}
 
         {# Avatar com link para edição de perfil #}
             <a href="{{ link_perfil }}" class="link-perfil" aria-label="Editar perfil">

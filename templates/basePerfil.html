@@ -126,7 +126,7 @@
                             <i class="fa-solid {{ 'fa-circle-check' if category == 'success' else 'fa-circle-exclamation' }}" aria-hidden="true"></i>
                             {{ msg }}
                             {% if category == 'saldo_insuficiente' %}
-                                <a href="{{ url_for('carteiraCliente') }}" class="flash-cta">Adicionar saldo</a>
+                                <a href="{{ url_for('cliente.carteiraCliente') }}" class="flash-cta">Adicionar saldo</a>
                             {% endif %}
                         </div>
                     {% endfor %}
