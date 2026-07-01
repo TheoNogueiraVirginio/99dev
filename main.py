@@ -14,7 +14,8 @@ from app.functions import (
     atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente,
     ler_demandas_realizadas_cliente, salvar_mensagem_suporte,
     salvar_mensagem_suporte_dev, candidatar_dev, ler_candidaturas_dev, ler_candidaturas_cliente,
-    enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda, salvar_avaliacao
+    enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda, salvar_avaliacao,
+    registrar_pagamento, validar_saldo_suficiente
 )
 
 from app.decorators import login_required
@@ -314,8 +315,78 @@ def carteiraCliente():
     id = session["id_usuario"]
     usuario = Cliente.query.get(id)
     form = AdicionarSaldoForm()
+    pagamentos = ler_pagamentos_cliente(id)
     return render_template('carteiraCliente.html', usuario=usuario, form=form,
-                           foto_perfil=usuario.foto_perfil if usuario else None)
+                           foto_perfil=usuario.foto_perfil if usuario else None,
+                           pagamentos=pagamentos)
+
+
+@app.route('/demanda/<string:demanda_uuid>/pagar', methods=['POST'])
+@login_required
+def pagar_demanda(demanda_uuid):
+    if session.get("tipo_usuario") != "cliente":
+        abort(403)
+
+    id_cliente = session["id_usuario"]
+    usuario = Cliente.query.get(id_cliente)
+    if not usuario:
+        flash("Cliente não encontrado.", "error")
+        return redirect('/login')
+
+    demandas = lerDemandas(tipo_usuario="cliente")
+    demanda = next(
+        (item for item in demandas
+         if item.get("uuid") == demanda_uuid and str(item.get("id")) == str(id_cliente)),
+        None,
+    )
+
+    if not demanda:
+        abort(404)
+
+    try:
+        valor_demanda = float(str(demanda.get("orcamento", "0")).replace(',', '.'))
+    except (TypeError, ValueError):
+        flash("Não foi possível processar o valor desta demanda.", "error")
+        return redirect(request.referrer or url_for('dashboardCliente'))
+
+    if not validar_saldo_suficiente(usuario, valor_demanda):
+        flash("Saldo insuficiente para realizar este pagamento. Adicione saldo à sua carteira.", "saldo_insuficiente")
+        return redirect(request.referrer or url_for('carteiraCliente'))
+
+    # Pagamento concluído deve reutilizar o status já existente "Fechada".
+    # Assim evitamos criar um novo estado e preservamos os filtros e badges atuais do sistema.
+    pagamento_confirmado = False
+    try:
+        usuario.saldo -= valor_demanda
+        registrar_pagamento(id_cliente, demanda["titulo"], valor_demanda, commit=False)
+        db.session.commit()
+        pagamento_confirmado = True
+
+        if not atualizar_status_por_titulo(demanda["titulo"], id_cliente, "Fechada"):
+            raise RuntimeError("Não foi possível atualizar o status da demanda para Fechada.")
+
+        flash("Pagamento realizado com sucesso!", "success")
+    except Exception as e:
+        if pagamento_confirmado:
+            try:
+                cliente = Cliente.query.get(id_cliente)
+                if cliente:
+                    cliente.saldo += valor_demanda
+                pagamento = Pagamento.query.filter_by(
+                    id_cliente=id_cliente,
+                    titulo_demanda=demanda["titulo"],
+                    valor=valor_demanda,
+                ).order_by(Pagamento.id.desc()).first()
+                if pagamento:
+                    db.session.delete(pagamento)
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+        else:
+            db.session.rollback()
+        flash(f"Erro ao processar o pagamento: {str(e)}", "error")
+
+    return redirect(request.referrer or url_for('dashboardCliente'))
 
 @app.errorhandler(403)
 def acesso_proibido(error):

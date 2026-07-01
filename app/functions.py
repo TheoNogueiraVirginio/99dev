@@ -432,24 +432,45 @@ def adicionar_saldo_cliente(id_cliente, saldo):
         raise
 
 
-def registrar_pagamento(id_cliente, titulo_demanda, valor):
+def registrar_pagamento(id_cliente, titulo_demanda, valor, commit=True):
     novo_pagamento = Pagamento(
         id_cliente=id_cliente,
         titulo_demanda=titulo_demanda,
         valor=valor,
     )
     db.session.add(novo_pagamento)
-    try:
-        db.session.commit()
-    except Exception:
-        db.session.rollback()
-        raise
+    if commit:
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            raise
+
+    return novo_pagamento
+
+
+def validar_saldo_suficiente(cliente, valor):
+    if cliente is None:
+        return False
+    return cliente.saldo >= valor
+
+
+def _formatar_moeda_brasileira(valor):
+    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
 def ler_pagamentos_cliente(id_cliente):
-    return Pagamento.query.filter_by(id_cliente=id_cliente).order_by(
+    pagamentos = Pagamento.query.filter_by(id_cliente=id_cliente).order_by(
         Pagamento.data_pagamento.desc()
     ).all()
+
+    return [{
+        "titulo_demanda": pagamento.titulo_demanda,
+        "valor": pagamento.valor,
+        "valor_formatado": _formatar_moeda_brasileira(pagamento.valor),
+        "data_pagamento": pagamento.data_pagamento,
+        "data_formatada": pagamento.data_pagamento.strftime('%d/%m/%Y') if pagamento.data_pagamento else '',
+    } for pagamento in pagamentos]
 
 
 def ler_demandas_realizadas_cliente(id_cliente):
@@ -462,13 +483,23 @@ def ler_demandas_realizadas_cliente(id_cliente):
                     continue
                 if row[5].strip().isdigit() and int(row[5]) == id_cliente:
                     if row[4].strip() in ["Fechada", "Concluída"]:
+                        row_uuid = (
+                            row[6].strip()
+                            if len(row) > 6 and row[6].strip()
+                            else _uuid_legado(row[0], row[5].strip())
+                        )
+                        try:
+                            valor_orcamento = float(str(row[3]).replace(',', '.'))
+                        except (TypeError, ValueError):
+                            valor_orcamento = row[3]
                         demandas_realizadas.append({
                             'titulo': row[0],
                             'tecnologia': row[1],
                             'descricao': row[2],
-                            'orcamento': row[3],
+                            'orcamento': valor_orcamento,
                             'status': row[4],
                             'id': row[5],
+                            'uuid': row_uuid,
                         })
     return demandas_realizadas
 
