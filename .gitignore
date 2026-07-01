@@ -10,3 +10,4 @@ venv/
 .env
 .db
 static/uploads/
+uploads_privados/

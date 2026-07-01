@@ -1,6 +1,6 @@
 import os
 
-from flask import flash, jsonify, render_template, redirect, request, session, abort, url_for
+from flask import flash, jsonify, render_template, redirect, request, session, abort, url_for, send_from_directory
 
 from flask_wtf.file import FileField, FileAllowed
 from flask_wtf import FlaskForm
@@ -250,6 +250,15 @@ def dashboardCliente():
     pagamentos = ler_pagamentos_cliente(id)
     demandas_realizadas = ler_demandas_realizadas_cliente(id)
     candidaturas = ler_candidaturas_cliente(id)
+    entregas_por_demanda = {}
+    for demanda in demandas:
+        if demanda.get("status") == "Aguardando Aprovação":
+            entrega = Entrega.query.filter_by(
+                demanda_titulo=demanda.get("titulo"),
+                id_cliente=id,
+            ).order_by(Entrega.id.desc()).first()
+            if entrega:
+                entregas_por_demanda[(demanda.get("titulo"), id)] = entrega
 
     if form.validate_on_submit():
         try:
@@ -267,7 +276,8 @@ def dashboardCliente():
                            foto_perfil=usuario.foto_perfil if usuario else None,
                            usuario=usuario, pagamentos=pagamentos,
                            demandas_realizadas=demandas_realizadas,
-                           candidaturas=candidaturas)
+                           candidaturas=candidaturas,
+                           entregas_por_demanda=entregas_por_demanda)
 
 @app.route("/MeusProjetos", methods=['GET', 'POST'])
 @login_required
@@ -502,6 +512,22 @@ def meusProjetosDev():
                            entregas_por_demanda=entregas_por_demanda)
 
 
+@app.route('/entrega/<int:entrega_id>/baixar')
+@login_required
+def baixar_entrega(entrega_id):
+    entrega = Entrega.query.get_or_404(entrega_id)
+    if session["id_usuario"] not in (entrega.id_cliente, entrega.dev_id):
+        abort(403)
+
+    diretorio_uploads_entregas = app.config['UPLOADS_PRIVADOS_DIR']
+    return send_from_directory(
+        diretorio_uploads_entregas,
+        entrega.caminho_arquivo,
+        as_attachment=True,
+        download_name=entrega.nome_arquivo,
+    )
+
+
 # ─── Candidatura ──────────────────────────────────────────────────────────────
 
 @app.route('/candidatar', methods=['POST'])
@@ -683,7 +709,7 @@ def entregar_demanda(titulo, id_cliente):
             dev_id=session["id_usuario"],
             arquivo=arquivo_entrega,
         )
-        caminho_fisico = os.path.join(app.static_folder, entrega_salva.caminho_arquivo)
+        caminho_fisico = os.path.join(app.config['UPLOADS_PRIVADOS_DIR'], entrega_salva.caminho_arquivo)
         db.session.commit()
 
         sucesso = atualizar_status_por_titulo(titulo, id_cliente, "Aguardando Aprovação")

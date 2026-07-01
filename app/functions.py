@@ -470,7 +470,7 @@ def salvar_entrega(titulo, id_cliente, dev_id, arquivo):
     extensao = os.path.splitext(nome_original)[1].lower() or ".zip"
     nome_fisico = f"{nome_base}_{id_cliente}_{uuid.uuid4().hex}{extensao}"
 
-    pasta_entregas = BASE_DIR / 'static' / 'uploads' / 'entregas'
+    pasta_entregas = BASE_DIR / 'uploads_privados' / 'entregas'
     pasta_entregas.mkdir(parents=True, exist_ok=True)
 
     caminho_fisico = pasta_entregas / nome_fisico
@@ -481,7 +481,7 @@ def salvar_entrega(titulo, id_cliente, dev_id, arquivo):
         id_cliente=id_cliente,
         dev_id=dev_id,
         nome_arquivo=nome_original,
-        caminho_arquivo=os.path.join('uploads', 'entregas', nome_fisico),
+        caminho_arquivo=nome_fisico,
     )
     db.session.add(entrega)
     return entrega
