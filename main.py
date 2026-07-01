@@ -14,7 +14,8 @@ from app.functions import (
     atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente,
     ler_demandas_realizadas_cliente, salvar_mensagem_suporte,
     salvar_mensagem_suporte_dev, candidatar_dev, ler_candidaturas_dev, ler_candidaturas_cliente,
-    enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda, salvar_avaliacao
+    enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda, salvar_avaliacao,
+    registrar_pagamento
 )
 
 from app.decorators import login_required
@@ -316,6 +317,53 @@ def carteiraCliente():
     form = AdicionarSaldoForm()
     return render_template('carteiraCliente.html', usuario=usuario, form=form,
                            foto_perfil=usuario.foto_perfil if usuario else None)
+
+
+@app.route('/demanda/<string:demanda_uuid>/pagar', methods=['POST'])
+@login_required
+def pagar_demanda(demanda_uuid):
+    if session.get("tipo_usuario") != "cliente":
+        abort(403)
+
+    id_cliente = session["id_usuario"]
+    usuario = Cliente.query.get(id_cliente)
+    if not usuario:
+        flash("Cliente não encontrado.", "error")
+        return redirect('/login')
+
+    demandas = lerDemandas(tipo_usuario="cliente")
+    demanda = next(
+        (item for item in demandas
+         if item.get("uuid") == demanda_uuid and str(item.get("id")) == str(id_cliente)),
+        None,
+    )
+
+    if not demanda:
+        abort(404)
+
+    try:
+        valor_demanda = float(str(demanda.get("orcamento", "0")).replace(',', '.'))
+    except (TypeError, ValueError):
+        flash("Não foi possível processar o valor desta demanda.", "error")
+        return redirect(request.referrer or url_for('dashboardCliente'))
+
+    if usuario.saldo < valor_demanda:
+        flash("Saldo insuficiente para pagar esta demanda.", "error")
+        return redirect(request.referrer or url_for('carteiraCliente'))
+
+    # Placeholder para validações adicionais antes de concluir o pagamento.
+    usuario.saldo -= valor_demanda
+
+    try:
+        db.session.commit()
+        registrar_pagamento(id_cliente, demanda["titulo"], valor_demanda)
+        atualizar_status_por_titulo(demanda["titulo"], id_cliente, "Paga")
+        flash("Pagamento realizado com sucesso!", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erro ao processar o pagamento: {str(e)}", "error")
+
+    return redirect(request.referrer or url_for('dashboardCliente'))
 
 @app.errorhandler(403)
 def acesso_proibido(error):
