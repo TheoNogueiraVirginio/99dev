@@ -38,6 +38,18 @@ class Pagamento(db.Model):
     data_pagamento = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 
+class Entrega(db.Model):
+    __tablename__ = 'entregas'
+
+    id = db.Column(db.Integer, primary_key=True)
+    demanda_titulo = db.Column(db.String(255), nullable=False)
+    id_cliente = db.Column(db.Integer, nullable=False)
+    dev_id = db.Column(db.Integer, db.ForeignKey('perfis_dev.id'), nullable=False)
+    nome_arquivo = db.Column(db.String(255), nullable=False)
+    caminho_arquivo = db.Column(db.String(500), nullable=False)
+    data_envio = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+
 class Candidatura(db.Model):
     __tablename__ = 'candidaturas'
 

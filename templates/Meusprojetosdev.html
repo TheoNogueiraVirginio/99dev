@@ -142,7 +142,10 @@
           <i class="fa-solid fa-comment-dots"></i> Abrir Chat
         </a>
         {% if status_atual == 'Em Desenvolvimento' %}
-        <form method="POST" action="{{ url_for('entregar_demanda', titulo=p.titulo, id_cliente=p.id_cliente) }}" class="mpd-inline-form" onsubmit="return confirm('Confirma o envio da entrega para este projeto?');">
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('entregar_demanda', titulo=p.titulo, id_cliente=p.id_cliente) }}" class="mpd-inline-form mpd-upload-form" onsubmit="return confirm('Confirma o envio da entrega para este projeto?');">
+          {{ form_entrega.hidden_tag() }}
+          <label class="mpd-upload-label" for="arquivo_entrega_{{ p.candidatura.id }}">Arquivo .zip</label>
+          {{ form_entrega.arquivo_entrega(id="arquivo_entrega_" ~ p.candidatura.id, class="mpd-upload-input", accept=".zip", required=true) }}
           <button type="submit" class="mpd-btn-secondary">
             <i class="fa-solid fa-upload"></i> Enviar Entrega
           </button>
@@ -152,9 +155,15 @@
           <i class="fa-solid fa-upload"></i> Enviar Entrega
         </button>
         {% endif %}
-        <button class="mpd-btn-secondary mpd-btn-disabled" disabled title="Disponível após entrega">
+        {% if status_atual == 'Fechada' %}
+        <a href="{{ url_for('carteiraDev') }}" class="mpd-btn-secondary">
+          <i class="fa-solid fa-receipt"></i> Ver Pagamento
+        </a>
+        {% else %}
+        <button class="mpd-btn-secondary mpd-btn-disabled" disabled title="{% if status_atual == 'Concluída' %}Aguardando pagamento do cliente{% elif status_atual == 'Aguardando Aprovação' %}Aguardando aprovação do cliente{% elif status_atual == 'Em Desenvolvimento' %}Disponível após entrega{% else %}Disponível após pagamento confirmado{% endif %}">
           <i class="fa-solid fa-receipt"></i> Ver Pagamento
         </button>
+        {% endif %}
       </div>
 
     </div>

@@ -299,6 +299,23 @@
 .mpd-card-actions form {
   margin: 0;
 }
+.mpd-upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mpd-upload-label {
+  font-size: .76rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.mpd-upload-input {
+  width: 100%;
+  font-size: .84rem;
+  color: var(--text);
+}
 .mpd-btn-primary {
   display: inline-flex;
   align-items: center;

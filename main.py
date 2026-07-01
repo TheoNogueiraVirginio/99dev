@@ -1,3 +1,5 @@
+import os
+
 from flask import flash, jsonify, render_template, redirect, request, session, abort, url_for
 
 from flask_wtf.file import FileField, FileAllowed
@@ -6,16 +8,17 @@ from wtforms import StringField, PasswordField, BooleanField, TextAreaField, Int
 from wtforms.validators import input_required, Email, Optional, NumberRange
 
 from app import app, db, google
-from app.models import Cliente, Desenvolvedor, Candidatura, Pagamento
+from app.models import Cliente, Desenvolvedor, Candidatura, Pagamento, Entrega
 from app.functions import (
     atualizar_senha, atualizar_status_por_titulo, cadastrar_usuario, autenticar_usuario, exibirSaldo,
     gerenciar_login_google, lerDemandas, salvarDemanda,
     solicitar_recuperacao_senha, validar_token, atualizar_perfil_dev,
     atualizar_perfil_cliente, adicionar_saldo_cliente, ler_pagamentos_cliente,
+    ler_pagamentos_dev,
     ler_demandas_realizadas_cliente, salvar_mensagem_suporte,
     salvar_mensagem_suporte_dev, candidatar_dev, ler_candidaturas_dev, ler_candidaturas_cliente,
     enviar_mensagem_chat, ler_mensagens_chat, ler_projetos_dev, atualizar_status_demanda, salvar_avaliacao,
-    registrar_pagamento, validar_saldo_suficiente, buscar_candidatura_aceita
+    registrar_pagamento, validar_saldo_suficiente, buscar_candidatura_aceita, salvar_entrega
 )
 
 from app.decorators import login_required
@@ -78,6 +81,12 @@ class SuporteDevForm(FlaskForm):
 class AdicionarSaldoForm(FlaskForm):
     valor = FloatField('Valor do Depósito (R$)', validators=[input_required(message="Digite um valor para depositar."), NumberRange(min=0.01, message="O valor tem que ser maior que 0")])
     
+class FormularioEntregaForm(FlaskForm):
+    arquivo_entrega = FileField('Arquivo da entrega', validators=[
+        input_required(message="Envie o arquivo .zip da entrega."),
+        FileAllowed(['zip'], 'Apenas arquivos .zip são permitidos.')
+    ])
+
 class AvaliacaoForm(FlaskForm):
     nota = IntegerField('Nota', validators=[input_required(message="Escolha uma nota de 1 a 5.")])
     comentario = TextAreaField('Comentário', validators=[input_required(message="Deixe uma descrição.")])
@@ -321,6 +330,25 @@ def carteiraCliente():
                            pagamentos=pagamentos)
 
 
+@app.route('/carteira-dev', methods=['GET'])
+@login_required
+def carteiraDev():
+    if session.get("tipo_usuario") != "dev":
+        abort(403)
+
+    id_dev = session["id_usuario"]
+    usuario = Desenvolvedor.query.get(id_dev)
+    pagamentos = ler_pagamentos_dev(id_dev)
+
+    return render_template(
+        'carteiraDev.html',
+        usuario=usuario,
+        foto_perfil=usuario.foto_perfil if usuario else None,
+        pagamentos=pagamentos,
+        saldo=exibirSaldo(id_dev),
+    )
+
+
 @app.route('/demanda/<string:demanda_uuid>/pagar', methods=['POST'])
 @login_required
 def pagar_demanda(demanda_uuid):
@@ -460,10 +488,12 @@ def meusProjetosDev():
     id_dev = session["id_usuario"]
     usuario = Desenvolvedor.query.get(id_dev)
     projetos = ler_projetos_dev(id_dev)
+    form_entrega = FormularioEntregaForm()
     return render_template('meusProjetosDev.html',
                            projetos=projetos,
                            usuario=usuario,
-                           foto_perfil=usuario.foto_perfil if usuario else None)
+                           foto_perfil=usuario.foto_perfil if usuario else None,
+                           form_entrega=form_entrega)
 
 
 # ─── Candidatura ──────────────────────────────────────────────────────────────
@@ -629,15 +659,46 @@ def entregar_demanda(titulo, id_cliente):
     if not candidatura:
         abort(403)
 
+    form_entrega = FormularioEntregaForm()
+    if not form_entrega.validate_on_submit():
+        for field_errors in form_entrega.errors.values():
+            for error in field_errors:
+                flash(error, "error")
+        return redirect('/MeusProjetosDev')
+
+    arquivo_entrega = form_entrega.arquivo_entrega.data
+    entrega_salva = None
+    caminho_fisico = None
+
     try:
+        entrega_salva = salvar_entrega(
+            titulo=titulo,
+            id_cliente=id_cliente,
+            dev_id=session["id_usuario"],
+            arquivo=arquivo_entrega,
+        )
+        caminho_fisico = os.path.join(app.static_folder, entrega_salva.caminho_arquivo)
+        db.session.commit()
+
         sucesso = atualizar_status_por_titulo(titulo, id_cliente, "Aguardando Aprovação")
-        
+
         if sucesso:
             flash("Entrega da demanda enviada com sucesso! Aguarde a aprovação do cliente.", "success")
         else:
-            flash("Erro: Não foi possível localizar a demanda para entrega.", "error")
-            
+            raise RuntimeError("Não foi possível atualizar o status da demanda para Aguardando Aprovação.")
+
     except Exception as e:
+        db.session.rollback()
+        if caminho_fisico and os.path.exists(caminho_fisico):
+            try:
+                if entrega_salva and entrega_salva.id:
+                    entrega_para_remover = Entrega.query.get(entrega_salva.id)
+                    if entrega_para_remover:
+                        db.session.delete(entrega_para_remover)
+                        db.session.commit()
+                os.remove(caminho_fisico)
+            except Exception:
+                db.session.rollback()
         flash(f"Falha ao processar entrega da demanda: {str(e)}", "error")
         
     return redirect('/DashboardDev')
