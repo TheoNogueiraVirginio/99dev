@@ -258,7 +258,10 @@ def dashboardCliente():
                 id_cliente=id,
             ).order_by(Entrega.id.desc()).first()
             if entrega:
-                entregas_por_demanda[(demanda.get("titulo"), id)] = entrega
+                # OBS: demanda.get("id") vem do CSV como string, então a chave
+                # precisa usar str(id) para bater com o "demanda.id" usado no
+                # template (senão o .get() no Jinja nunca encontra a entrega).
+                entregas_por_demanda[(demanda.get("titulo"), str(id))] = entrega
 
     if form.validate_on_submit():
         try:
@@ -757,7 +760,10 @@ def aprovar_demanda(titulo, id_cliente):
         sucesso = atualizar_status_por_titulo(titulo, id_cliente, "Concluída")
 
         if sucesso:
-            flash("Entrega aprovada! Agora você pode efetuar o pagamento ao desenvolvedor.", "success")
+            flash("Entrega aprovada! Finalize o pagamento ao desenvolvedor abaixo.", "success")
+            # Leva o cliente direto para o modal de pagamento dessa demanda,
+            # em vez de simplesmente cair no dashboard sem nenhuma ação seguinte.
+            return redirect(f"/dashboard#pagamento-{demanda.get('uuid')}")
         else:
             flash("Esta demanda não está disponível para aprovação.", "error")
             
