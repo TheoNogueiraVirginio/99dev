@@ -368,7 +368,9 @@ def ler_projetos_dev(dev_id):
             'tecnologia':   info.get('tecnologia', '—'),
             'descricao':    info.get('descricao',  ''),
             'orcamento':    info.get('orcamento',  '—'),
-            'status_demanda': info.get('status',   'Em Desenvolvimento'),
+                    'status_demanda': info.get('status',   'Em Desenvolvimento'),
+                    'status':       info.get('status',     'Em Desenvolvimento'),
+                    'id_cliente':   c.id_cliente,
         })
 
     return projetos
