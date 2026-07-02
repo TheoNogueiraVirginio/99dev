@@ -204,10 +204,10 @@ http://127.0.0.1:3001
 
 ## Arquitetura do sistema
 
-![Diagrama de Arquitetura](https://docs.google.com/uc?export=view&id=1XFoq7EcP9YiZdQ1O8kK-SscItWtWL2eH)
+![Diagrama de Arquitetura](https://docs.google.com/uc?export=view&id=1nugxd1U1P3jEk9QzrtG9JM6WPJAqSyoK)
 
 ---
 
 ## Diagrama de Casos de Uso
 
-![Diagrama de Casos de Uso](https://docs.google.com/uc?export=view&id=1L_T9k_HK8a0hrnt16eX9-132T97NPO7T)
+![Diagrama de Casos de Uso](https://docs.google.com/uc?export=view&id=1QvalDWfEoOhiOklEoJJBfu1PfX3C28_H)
