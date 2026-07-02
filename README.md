@@ -6,7 +6,7 @@ Plataforma web que conecta clientes a desenvolvedores freelancers. O cliente pub
 
 ## Integrantes
 
-| Nome |
+| Nomes |
 |------|
 | Lucas Francelino de Pontes |
 | Theo Nogueira Virginio |
