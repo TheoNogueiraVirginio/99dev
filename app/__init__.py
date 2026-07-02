@@ -39,6 +39,8 @@ google = oauth.register(
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, '..', 'data', '99dev.db')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
+app.config['UPLOADS_PRIVADOS_DIR'] = os.path.join(BASE_DIR, '..', 'uploads_privados', 'entregas')
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
@@ -51,3 +53,34 @@ app.config['MAIL_DEFAULT_SENDER'] = '99desenvolvedores@gmail.com'
 db.init_app(app)
 
 mail = Mail(app)
+
+with app.app_context():
+    db.create_all()
+
+# ─── Blueprints ─────────────────────────────────────────────────────────────
+# Importados só agora (depois de app/db/mail/google já existirem no módulo),
+# porque cada blueprint faz "from app import app, db, ..." e isso criaria um
+# import circular se fosse feito lá em cima.
+from app.blueprints.auth.routes import auth_bp
+from app.blueprints.perfil.routes import perfil_bp
+from app.blueprints.cliente.routes import cliente_bp
+from app.blueprints.dev.routes import dev_bp
+from app.blueprints.entregas.routes import entregas_bp
+from app.blueprints.candidatura.routes import candidatura_bp
+from app.blueprints.chat.routes import chat_bp
+from app.blueprints.suporte.routes import suporte_bp
+
+app.register_blueprint(auth_bp)
+app.register_blueprint(perfil_bp)
+app.register_blueprint(cliente_bp)
+app.register_blueprint(dev_bp)
+app.register_blueprint(entregas_bp)
+app.register_blueprint(candidatura_bp)
+app.register_blueprint(chat_bp)
+app.register_blueprint(suporte_bp)
+
+
+@app.errorhandler(403)
+def acesso_proibido(error):
+    from flask import render_template
+    return render_template('403.html'), 403

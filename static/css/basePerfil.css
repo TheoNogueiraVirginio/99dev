@@ -1,3 +1,7 @@
+/* ============================================================
+   basePerfil.css  —  Layout base herdado por todas as páginas
+   ============================================================ */
+
 * {
     margin: 0;
     padding: 0;
@@ -6,24 +10,165 @@
 }
 
 :root {
-    /* Cores mescladas do projeto */
-    --sidebar: #1E2636;
-    --sidebar-2: #172136;
-    --sidebar-active: #2664EB;
-    --page-bg: #F8FAFC;
-    --text: #13213a;
-    --muted: #6B7280;
+    --sidebar:        #1f2a44;
+    --sidebar-2:      #172136;
+    --sidebar-active: #2f6bf2;
+    --page-bg:        #f3f6fb;
+    --text:           #13213a;
+    --muted:          #66758f;
+    --line:           #dbe4f0;
+    --shadow:         0 4px 24px rgba(13, 28, 58, 0.08);
 }
 
-html, 
-body {
+html, body {
     min-height: 100%;
+}
+
+body {
+    display: flex;
     background: var(--page-bg);
     color: var(--text);
-    display: flex;
 }
 
-/* Controles mobile (ocultos no desktop) */
+/* ============================================================
+   Header de pesquisa
+   ============================================================ */
+header {
+    height: 68px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(219, 228, 240, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 28px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+/* Campo de busca */
+header input[type="text"] {
+    flex: 1;
+    max-width: 520px;
+    height: 44px;
+    border: 1px solid #d7deea;
+    border-radius: 12px;
+    padding: 0 18px 0 44px;
+    outline: none;
+    background: #f8fafd url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa8bb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 14px center;
+    color: var(--text);
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+header input[type="text"]::placeholder {
+    color: #9aa8bb;
+}
+
+header input[type="text"]:focus {
+    border-color: #9db8ff;
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(47, 107, 242, 0.1);
+}
+
+/* Atalho de teclado no campo de busca */
+header input[type="text"]:not(:focus)::after {
+    content: "Ctrl K";
+}
+
+/* Área direita do header (notificações + avatar) */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* Botão de notificações */
+.btn-notificacoes {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn-notificacoes:hover {
+    background: var(--page-bg);
+    color: var(--text);
+    border-color: #c5d0e0;
+}
+
+/* Badge de notificação não lida */
+.notif-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+    border: 2px solid #fff;
+}
+
+/* Avatar do usuário */
+.fotoUsuario {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid var(--line);
+    background: #fff;
+    flex-shrink: 0;
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.fotoUsuario:hover {
+    transform: scale(1.05);
+    border-color: #9db8ff;
+}
+
+.moldura-perfil {
+    width: 100%;
+    height: 100%;
+}
+
+.moldura-perfil img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.link-perfil {
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* Nome do usuário no header (visível em telas médias+) */
+.header-user-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+}
+
+/* ============================================================
+   Controles mobile (hambúrguer)
+   ============================================================ */
 .menu-toggle {
     position: absolute;
     top: 0;
@@ -37,20 +182,25 @@ body {
 .menu-button {
     display: none;
     position: fixed;
-    top: 16px;
+    top: 13px;    /* alinhado ao centro do header (68px / 2 - 24px) */
     left: 16px;
     z-index: 40;
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
     background: #ffffff;
-    border: 1px solid #dbe4f0;
-    box-shadow: 0 10px 24px rgba(13, 28, 58, 0.12);
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 16px rgba(13, 28, 58, 0.12);
     align-items: center;
     justify-content: center;
     gap: 5px;
     flex-direction: column;
     cursor: pointer;
+    transition: left 0.28s ease, background 0.2s;
+}
+
+.menu-button:hover {
+    background: var(--page-bg);
 }
 
 .menu-button span {
@@ -59,7 +209,7 @@ body {
     height: 2px;
     border-radius: 999px;
     background: var(--sidebar);
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition: transform 0.25s ease, opacity 0.2s ease;
 }
 
 .menu-overlay {
@@ -73,22 +223,14 @@ body {
     transition: opacity 0.25s ease;
 }
 
-.menu-close {
-    display: none;
-    align-self: flex-end;
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
-    font-size: 1.9rem;
-    line-height: 1;
-    text-align: center;
-    cursor: pointer;
+/* Hambúrguer desliza junto com o menu aberto */
+.menu-toggle:checked + .menu-button {
+    left: calc(min(84vw, 320px) - 58px);
 }
 
-/* Barra lateral (sidebar) */
+/* ============================================================
+   Sidebar
+   ============================================================ */
 aside {
     width: 254px;
     min-height: 100vh;
@@ -104,26 +246,19 @@ aside {
 }
 
 .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
     padding: 10px 8px 6px;
-}
-
-.logo i {
-    font-size: 1.8rem;
-    color: #fff;
 }
 
 .logo h1 {
     font-size: 1.7rem;
     line-height: 1;
-    margin-bottom: 4px;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
 }
 
 .logo p {
-    color: #9CA3AF;
-    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.88rem;
 }
 
 aside hr {
@@ -136,92 +271,210 @@ aside nav ul {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 4px;
 }
 
-aside nav a, 
+aside nav a,
 .user-info a {
     display: flex;
     align-items: center;
     gap: 12px;
     width: 100%;
-    min-height: 48px;
+    min-height: 46px;
     padding: 0 16px;
-    border-radius: 14px;
-    color: #9CA3AF;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.82);
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 0.97rem;
     font-weight: 600;
-    transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+    transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
 
-aside nav a:hover, 
+aside nav a:hover,
 .user-info a:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: white;
+    background: rgba(255, 255, 255, 0.10);
+    color: #fff;
     transform: translateX(2px);
 }
 
-/* Conteúdo principal (main) */
+/* Link ativo — adicione class="active" no link da página atual via Jinja */
+aside nav a.active {
+    background: var(--sidebar-active);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(47, 107, 242, 0.35);
+}
+
+aside nav a.active:hover {
+    transform: none;
+}
+
+/* Ícones da nav (Font Awesome) */
+aside nav a i,
+.user-info a i {
+    width: 18px;
+    text-align: center;
+    font-size: 0.95rem;
+    opacity: 0.85;
+}
+
+.user-info {
+    margin-top: auto;
+}
+
+/* Botão de sair com destaque visual */
+.user-info a {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.user-info a:hover {
+    color: #ff8a8a;
+    background: rgba(255, 80, 80, 0.10);
+}
+
+/* ============================================================
+   Main content
+   ============================================================ */
 main {
     width: calc(100% - 254px);
     margin-left: 254px;
-    padding: 0 0 32px;
+    padding: 0 0 40px;
+    min-height: 100vh;
 }
 
-/* Responsividade do menu */
+/* ============================================================
+   Flash messages globais
+   ============================================================ */
+.flash-messages {
+    margin: 16px 28px 0;
+}
+
+.flash-msg {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.93rem;
+    border: 1px solid transparent;
+    margin-bottom: 8px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.flash-msg.success {
+    background: #f3fbf5;
+    border-color: #cfe8d3;
+    color: #25653a;
+}
+
+.flash-msg.error {
+    background: #fff6f7;
+    border-color: #f2c2c8;
+    color: #9f2436;
+}
+
+/* ============================================================
+   Responsividade
+   ============================================================ */
 @media (max-width: 980px) {
     body {
         flex-direction: column;
     }
 
+    /* Mostra o botão hambúrguer */
     .menu-button {
         display: inline-flex;
     }
 
+    /* Mostra o overlay escuro */
     .menu-overlay {
         display: block;
     }
 
+    /* Sidebar vira drawer off-canvas */
     aside {
         position: fixed;
         z-index: 30;
         width: min(84vw, 320px);
         min-height: 100vh;
-        transform: translateX(-102%);
+        transform: translateX(-110%);
         transition: transform 0.28s ease;
         box-shadow: 18px 0 40px rgba(13, 28, 58, 0.24);
     }
 
+    /* Main ocupa toda a largura */
     main {
         width: 100%;
         margin-left: 0;
     }
 
-    .menu-close {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
+    /* Header precisa de espaço para o botão hambúrguer */
+    header {
+        padding-left: 70px;
+        padding-right: 16px;
     }
 
+    /* Abre o drawer */
     .menu-toggle:checked ~ aside {
         transform: translateX(0);
     }
 
+    /* Ativa overlay */
     .menu-toggle:checked ~ .menu-overlay {
         opacity: 1;
         pointer-events: auto;
     }
 
+    /* Anima hambúrguer → X */
     .menu-toggle:checked + .menu-button span:nth-child(1) {
         transform: translateY(7px) rotate(45deg);
     }
 
     .menu-toggle:checked + .menu-button span:nth-child(2) {
         opacity: 0;
+        transform: scaleX(0);
     }
 
     .menu-toggle:checked + .menu-button span:nth-child(3) {
         transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* Esconde nome do usuário no header em mobile */
+    .header-user-name {
+        display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    header {
+        padding-left: 66px;
+        padding-right: 12px;
+        gap: 10px;
+        height: 60px;
+    }
+
+    header input[type="text"] {
+        min-width: 0;    /* permite encolher */
+        font-size: 0.88rem;
+    }
+
+    .menu-button {
+        top: 9px;
+        left: 12px;
+        width: 38px;
+        height: 38px;
+    }
+
+    /* Esconde notificações em telas muito pequenas para não apertar */
+    .btn-notificacoes {
+        display: none;
+    }
+
+    main {
+        padding-bottom: 24px;
     }
 }

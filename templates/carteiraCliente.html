@@ -1,0 +1,175 @@
+{% extends "basePerfil.html" %}
+
+{% block title %}Carteira - 99dev{% endblock %}
+
+{% block head_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/carteiraCliente.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pagamento.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="carteira-container">
+    
+    <!-- Cabeçalho da Carteira -->
+    <header class="carteira-header">
+        <h2>Carteira e Depósitos</h2>
+    </header>
+
+    <!-- Card da Carteira -->
+    <div class="wallet-card">
+        <div class="wallet-info">
+            <i class="fa-solid fa-wallet"></i>
+            <div>
+                <span>Seu Saldo:</span>
+                <strong>R$ {{ "%.2f" % usuario.saldo if usuario.saldo is not none else "0.00" }}</strong>
+            </div>
+        </div>
+        <a href="#saldo-modal" class="btn-add-saldo">
+            <i class="fa-solid fa-plus"></i> Adicionar Saldo
+        </a>
+    </div>
+    
+    <!-- Section histórico de Pagamentos -->
+    <section class="tarefas">
+    <div class="tarefas-header">
+        <h2>Histórico de Pagamentos</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Serviço (Demanda)</th>
+                <th>Data do Pagamento</th>
+                <th style="text-align: right;">Valor Pago</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pagamento in pagamentos %}
+            <tr>
+                <td data-label="Serviço">
+                    <div class="task-title">{{ pagamento.titulo_demanda }}</div>
+                </td>
+                <td data-label="Data">
+                    <span class="tech-pill">{{ pagamento.data_formatada }}</span>
+                </td>
+                <td data-label="Valor Pago" style="text-align: right; color: #187a4d; font-weight: 700;">
+                    {{ pagamento.valor_formatado }}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3" style="text-align: center; padding: 30px; color: #6d7c92;">
+                    Você ainda não realizou nenhum pagamento.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </section>
+
+    <!-- Section histórico de transações -->
+    <section class="tarefas">
+        <div class="tarefas-header">
+            <h2>Histórico de Demandas Realizadas</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Projeto Concluído</th>
+                    <th>Tecnologia</th>
+                    <th>Orçamento</th>
+                    <th>Status Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for realizada in demandas_realizadas %}
+                <tr>
+                    <td data-label="Projeto">
+                        <div class="task-title">{{ realizada.titulo }}</div>
+                        <div class="task-subtitle">{{ realizada.descricao }}</div>
+                    </td>
+                    <td data-label="Tech Stack">
+                        <span class="tech-pill">{{ realizada.tecnologia }}</span>
+                    </td>
+                    <td data-label="Cost">R$ {{ "%.2f" % realizada.orcamento }}</td>
+                    <td data-label="Status">
+                        <span class="status-pill">
+                            {{ realizada.status }}
+                        </span>
+                            {% if realizada.status.strip() == 'Concluída' %}
+                            <a class="btn-confirmar-pagamento" href="#pagamento-{{ realizada.uuid }}">
+                                <i class="fa-solid fa-credit-card"></i>
+                                Confirmar pagamento
+                            </a>
+                            {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4">
+                        Nenhuma demanda finalizada ou realizada encontrada no histórico.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</div>
+
+{% for realizada in demandas_realizadas if realizada.status.strip() == 'Concluída' %}
+<div id="pagamento-{{ realizada.uuid }}" class="payment-modal-overlay">
+    <div class="payment-modal-card">
+        <a href="#" class="payment-modal-close" aria-label="Fechar confirmação de pagamento">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+
+        <span class="payment-modal-eyebrow">Confirmar pagamento</span>
+        <h2>{{ realizada.titulo }}</h2>
+        <p class="payment-modal-description">
+            Revise os dados antes de concluir o pagamento desta demanda.
+        </p>
+
+        <div class="payment-summary">
+            <div class="payment-summary-item">
+                <span>Título</span>
+                <strong>{{ realizada.titulo }}</strong>
+            </div>
+            <div class="payment-summary-item">
+                <span>Valor a pagar</span>
+                <strong>R$ {{ "%.2f" % realizada.orcamento }}</strong>
+            </div>
+            <div class="payment-summary-item">
+                <span>Seu saldo atual</span>
+                <strong>R$ {{ "%.2f" % usuario.saldo }}</strong>
+            </div>
+        </div>
+
+        <form class="payment-form" action="{{ url_for('cliente.pagar_demanda', demanda_uuid=realizada.uuid) }}" method="POST">
+            <button type="submit" class="btn-confirm-payment">Confirmar e pagar</button>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Modal -->
+<div id="saldo-modal" class="modal-overlay">
+    <div class="modal-content">
+        <a href="#" class="close-btn" aria-label="Close Modal">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+
+        <h2>Adicionar Saldo na Carteira</h2>
+        <p>Insira o valor que deseja depositar na sua conta do 99Dev.</p>
+
+        <form action="{{ url_for('cliente.adicionar_saldo') }}" method="POST">
+            {{ form.hidden_tag() }}
+
+            <div class="input-group">
+                <label for="valor">Valor do Depósito (R$)</label>
+                <input type="number" id="valor" name="valor" step="0.01" min="0.01" placeholder="Ex: 50.00" required>
+            </div>
+
+            <button type="submit" class="btn-save">Confirmar Depósito</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,548 @@
+:root {
+    --sidebar-active: #2f6bf2;
+    --card-bg: #ffffff;
+    --line: #dbe4f0;
+    --shadow: 0 18px 45px rgba(13, 28, 58, 0.08);
+}
+
+.fotoUsuario {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #dbe4f0;
+    background: #ffffff;
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+}
+
+.fotoUsuario:hover {
+    transform: scale(1.05);
+}
+
+.moldura-perfil {
+    width: 100%;
+    height: 100%;
+}
+
+.moldura-perfil img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+}
+
+.link-perfil {
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* --- Alertas de Feedback --- */
+.error-message {
+    margin: 18px 28px 0;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    font-size: 0.95rem;
+}
+
+.error-message.success {
+    border-color: #cfe8d3;
+    background: #f3fbf5;
+    color: #25653a;
+}
+
+/* --- Card da Carteira do Dev --- */
+.wallet-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-bg);
+    margin: 30px 28px 0;
+    padding: 24px 28px;
+    border-radius: 22px;
+    border: 1px solid rgba(219, 228, 240, 0.95);
+    box-shadow: var(--shadow);
+    max-width: 1280px;
+}
+
+.wallet-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.wallet-info i {
+    font-size: 2.2rem;
+    color: var(--sidebar-active);
+}
+
+.wallet-info span {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #61718a;
+    margin-bottom: 2px;
+}
+
+.wallet-info strong {
+    font-size: 1.6rem;
+    color: #20304a;
+}
+
+.badge-dev-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #eaf8f1;
+    color: #187a4d;
+    border: 1px solid #cdeedc;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* --- Tabela de Projetos --- */
+.tarefas {
+    margin: 22px 28px 0;
+    padding: 22px 24px 18px;
+    background: #ffffff;
+    border: 1px solid rgba(219, 228, 240, 0.95);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    max-width: 1280px;
+    overflow: hidden;
+}
+
+.tarefas-header {
+    margin-bottom: 14px;
+}
+
+.tarefas-header h2 {
+    font-size: 1.45rem;
+    line-height: 1.2;
+    color: #20304a;
+    letter-spacing: -0.02em;
+}
+
+.tarefas table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    background: #fff;
+}
+
+.tarefas thead th {
+    text-align: left;
+    font-weight: 600;
+    color: #61718a;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+}
+
+.tarefas tbody td {
+    padding: 18px;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: middle;
+}
+
+.tarefas tbody tr {
+    transition: background 0.2s ease;
+}
+
+.tarefas tbody tr:hover {
+    background: #fafcff;
+}
+
+.task-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #20304a;
+}
+
+.task-subtitle {
+    font-size: 0.88rem;
+    color: #6d7c92;
+}
+
+.tech-pill,
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.tech-pill {
+    background: #f2f4f8;
+    color: #344969;
+    border: 1px solid #ebeff5;
+}
+
+.status-pill {
+    background: #eaf8f1;
+    color: #187a4d;
+    border: 1px solid #cdeedc;
+}
+
+.valor-orcamento {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #20304a;
+}
+
+.action-link {
+    color: #2f6bf2;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.action-link:hover {
+    text-decoration: underline;
+}
+
+.tarefas tbody td:last-child,
+.tarefas thead th:last-child {
+    text-align: right;
+}
+
+/* --- Responsividade Mobile (Padrão Unificado) --- */
+@media (max-width: 980px) {
+    header {
+        position: relative;
+        padding-left: 76px;
+    }
+}
+
+@media (max-width: 640px) {
+    header {
+        padding: 0 16px 0 76px;
+    }
+
+    .wallet-card {
+        margin-left: 16px;
+        margin-right: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        padding: 20px;
+    }
+
+    .badge-dev-status {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .tarefas {
+        margin: 18px 16px 0;
+        padding: 18px 16px 14px;
+    }
+
+    .tarefas table, .tarefas thead, .tarefas tbody, .tarefas th, .tarefas td, .tarefas tr {
+        display: block;
+    }
+
+    .tarefas thead {
+        display: none;
+    }
+
+    .tarefas tbody tr {
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .tarefas tbody td {
+        padding: 8px 0;
+        border: 0;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .tarefas tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #61718a;
+        flex-shrink: 0;
+    }
+
+    .tarefas tbody td:last-child {
+        text-align: left;
+    }
+}
+
+/* ── Botão Candidatar-se ─────────────────────────────────── */
+.btn-candidatar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+    color: #2f6bf2;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.btn-candidatar:hover { text-decoration: underline; }
+
+.action-chat {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.action-chat i { font-size: .85rem; }
+
+.action-link-disabled {
+    color: #aab4c4;
+    font-size: .9rem;
+}
+
+/* Status pills extras */
+.status-pendente { background: #fef9c3; color: #854d0e; border-color: #fde68a; }
+.status-aberta   { background: #eaf8f1; color: #187a4d; border-color: #cdeedc; }
+.status-fechada,
+.status-concluída { background: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
+
+/* ── Modal backdrop ──────────────────────────────────────── */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 28, 58, 0.45);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn .15s ease;
+}
+.modal-backdrop[hidden] { display: none; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Modal box ───────────────────────────────────────────── */
+.modal-box {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(13, 28, 58, 0.18);
+    width: 100%;
+    max-width: 560px;
+    padding: 32px 28px 28px;
+    position: relative;
+    animation: slideUp .2s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 1rem;
+    transition: background .15s;
+}
+.modal-close:hover { background: #e2e8f0; color: #20304a; }
+
+.modal-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+.modal-icon {
+    width: 44px;
+    height: 44px;
+    background: #eff4ff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2f6bf2;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+.modal-header h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #20304a;
+    margin: 0 0 2px;
+}
+.modal-subtitle {
+    font-size: .9rem;
+    color: #61718a;
+    margin: 0;
+    font-weight: 500;
+}
+
+.modal-demanda-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.info-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: .88rem;
+    color: #344969;
+    font-weight: 500;
+}
+.info-desc {
+    font-weight: 400;
+    color: #61718a;
+    flex: 1;
+    min-width: 100%;
+}
+
+.modal-field label {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-weight: 600;
+    color: #20304a;
+    font-size: .95rem;
+    margin-bottom: 10px;
+}
+.label-hint {
+    font-weight: 400;
+    font-size: .82rem;
+    color: #6d7c92;
+}
+.modal-field textarea {
+    width: 100%;
+    border: 1.5px solid #dbe4f0;
+    border-radius: 12px;
+    padding: 14px;
+    font-family: inherit;
+    font-size: .95rem;
+    color: #20304a;
+    resize: vertical;
+    transition: border-color .2s;
+    box-sizing: border-box;
+    line-height: 1.6;
+}
+.modal-field textarea:focus {
+    outline: none;
+    border-color: #2f6bf2;
+    box-shadow: 0 0 0 3px rgba(47,107,242,.1);
+}
+.char-counter {
+    text-align: right;
+    font-size: .8rem;
+    color: #aab4c4;
+    margin-top: 6px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 22px;
+}
+.btn-primary, .btn-secondary {
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: .95rem;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: background .15s, transform .1s;
+}
+.btn-primary {
+    background: #2f6bf2;
+    color: #fff;
+}
+.btn-primary:hover { background: #1d56d8; transform: translateY(-1px); }
+.btn-secondary {
+    background: #f1f5f9;
+    color: #344969;
+}
+.btn-secondary:hover { background: #e2e8f0; }
+
+@media (max-width: 480px) {
+    .modal-box { padding: 24px 18px 20px; }
+    .modal-actions { flex-direction: column-reverse; }
+    .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+}
+
+/* ── Link "Ver projetos ativos" no header da seção ── */
+.link-ver-projetos {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--sidebar-active);
+    text-decoration: none;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 5px 12px;
+    transition: background .15s;
+}
+.link-ver-projetos:hover { background: #dbeafe; }
+
+/* --- Estilos de Ações da Tabela (Entregas e Status) --- */
+.form-entrega {
+    display: inline;
+}
+
+.btn-entregar {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.status-acao {
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.icon-action {
+    margin-right: 4px;
+}
+
+.status-analise {
+    color: #6d7c92; 
+}
+
+.status-finalizado {
+    color: #187a4d; 
+}

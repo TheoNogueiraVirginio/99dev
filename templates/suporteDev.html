@@ -1,0 +1,38 @@
+{% extends "basePerfil.html" %}
+
+{% block title %}Suporte Dev - 99dev{% endblock %}
+
+{% block head_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboardDev.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboardCliente.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, msg in messages %}
+            <div class="error-message {{ category }}" style="margin-bottom: 20px;">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<section class="novaTarefa">
+    <h2><i class="fa-solid fa-headset" style="margin-right: 8px; color: var(--sidebar-active);"></i> Suporte ao Desenvolvedor</h2>
+    <p style="color: #6d7c92; font-size: 0.95rem; margin-bottom: 20px; line-height: 1.5;">
+        Está com problemas em alguma entrega, dúvidas sobre repasses financeiros ou bugs na plataforma? Abra um chamado abaixo.
+    </p>
+    
+    <form action="{{ url_for('suporte.suporteDev') }}" method="post">
+        {{ form.hidden_tag() }}
+        
+        <label for="assunto">Assunto da solicitação:</label>
+        {{ form.assunto(placeholder="Ex: Dúvida sobre pagamento da Demanda #102", id="assunto") }}
+        
+        <label for="mensagem">Descrição detalhada:</label>
+        {{ form.mensagem(placeholder="Descreva o cenário para que nossa equipe técnica possa ajudar rapidamente...", id="mensagem") }}
+        
+        <button type="submit">Enviar Ticket de Suporte</button>
+    </form>
+</section>
+{% endblock %}

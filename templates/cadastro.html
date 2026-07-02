@@ -18,14 +18,16 @@
 
     <form action="" method="post">
         {{ form.hidden_tag() }}
-
-        <div class="campo-checkbox">
-            {{ form.dev.label }}
-            {{ form.dev() }}
-        </div>
-        <div class="campo-checkbox">
-            {{ form.pessoa.label }}
-            {{ form.pessoa() }}
+        
+        <div class="tipo-usuario">
+            <div class="campo-checkbox">
+                {{ form.dev.label }}
+                {{ form.dev() }}
+            </div>
+            <div class="campo-checkbox">
+                {{ form.pessoa.label }}
+                {{ form.pessoa() }}
+            </div>
         </div>
 
         <div class="campo-texto">

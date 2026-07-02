@@ -1,72 +1,80 @@
 import csv
+import hashlib
+import uuid
 from pathlib import Path
-
 import os
 
 from flask import session
 from flask_mail import Message
 import bcrypt
+from werkzeug.utils import secure_filename
 from app import mail, serializer
-from app.models import Cliente, Desenvolvedor, db
+from app.models import Cliente, Desenvolvedor, Entrega, Pagamento, db
 
 import secrets
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DEMANDAS_CSV_PATH = BASE_DIR / 'data' / 'demandas.csv'
+DATA_DIR = BASE_DIR / 'data'
+DEMANDAS_CSV_PATH = DATA_DIR / 'demandas.csv'
+SUPORTE_CSV_PATH = DATA_DIR / 'suporte.csv'
+SUPORTE_DEV_CSV_PATH = DATA_DIR / 'suporte_dev.csv'
+AVALIACOES_CSV_PATH = DATA_DIR / 'avaliacoes.csv'
 
 
-def cadastrar_usuario(email,senha,cargo):
-    usuario_existente = bool(Cliente.query.filter_by(email=email).first() or Desenvolvedor.query.filter_by(email=email).first())
-
+def cadastrar_usuario(email, senha, cargo):
+    usuario_existente = bool(
+        Cliente.query.filter_by(email=email).first() or
+        Desenvolvedor.query.filter_by(email=email).first()
+    )
     if usuario_existente:
         raise ValueError("Este e-mail já está cadastrado no sistema.")
-    
+
     senha_bytes = senha.encode('utf-8')
     salt = bcrypt.gensalt()
     senha_hash = bcrypt.hashpw(senha_bytes, salt)
 
     if cargo == 'dev':
-        novo_usuario = Desenvolvedor(
-            email=email,
-            senha=senha_hash.decode('utf-8')
-        )
+        novo_usuario = Desenvolvedor(email=email, senha=senha_hash.decode('utf-8'))
     else:
-        novo_usuario = Cliente(
-            email=email,
-            senha=senha_hash.decode('utf-8')
-        )
+        novo_usuario = Cliente(email=email, senha=senha_hash.decode('utf-8'))
+
     db.session.add(novo_usuario)
     db.session.commit()
     return novo_usuario
 
-def autenticar_usuario(email,senha):
-    usuario = Cliente.query.filter_by(email=email).first() or Desenvolvedor.query.filter_by(email=email).first()
 
+def autenticar_usuario(email, senha):
+    usuario = (
+        Cliente.query.filter_by(email=email).first() or
+        Desenvolvedor.query.filter_by(email=email).first()
+    )
     if not usuario:
         raise ValueError("Usuário não encontrado")
-    
-    senha_usuario = senha.encode('utf-8')
-    senha_banco = usuario.senha.encode('utf-8')
-    if not bcrypt.checkpw(senha_usuario, senha_banco):
-        raise ValueError("Senha incorreta")    
+
+    if not bcrypt.checkpw(senha.encode('utf-8'), usuario.senha.encode('utf-8')):
+        raise ValueError("Senha incorreta")
     return usuario
 
+
 def gerenciar_login_google(email, cargo):
-    usuario = Cliente.query.filter_by(email=email).first() or Desenvolvedor.query.filter_by(email=email).first()
-    
+    usuario = (
+        Cliente.query.filter_by(email=email).first() or
+        Desenvolvedor.query.filter_by(email=email).first()
+    )
     if usuario:
         return usuario
-    
+
     senha_aleatoria = secrets.token_urlsafe(32)
     try:
         novo_usuario = cadastrar_usuario(email, senha_aleatoria, cargo)
         return novo_usuario
     except Exception as e:
         raise ValueError(f"Erro ao criar conta automaticamente via Google: {str(e)}")
-        
-def atualizar_perfil_dev(id_dev, nome, titulo, valor_hora, skills, resumo, github, linkedin, foto_perfil, foto_banner, novo_exibir_dados):
-    perfil = Desenvolvedor.query.get(id_dev)
 
+
+def atualizar_perfil_dev(id_dev, nome, titulo, valor_hora, skills, resumo,
+                          github, linkedin, foto_perfil, foto_banner, novo_exibir_dados):
+    perfil = Desenvolvedor.query.get(id_dev)
     if not perfil:
         raise ValueError("Perfil de desenvolvedor não encontrado.")
 
@@ -80,7 +88,6 @@ def atualizar_perfil_dev(id_dev, nome, titulo, valor_hora, skills, resumo, githu
 
     if foto_perfil:
         perfil.foto_perfil = salvar_foto_perfil(id_dev, foto_perfil)
-
     if foto_banner:
         perfil.foto_banner = salvar_banner_perfil(id_dev, foto_banner)
 
@@ -91,164 +98,525 @@ def atualizar_perfil_dev(id_dev, nome, titulo, valor_hora, skills, resumo, githu
     except Exception:
         db.session.rollback()
         raise
-        
+
+
+def exibirSaldo(id_dev):
+    perfil = Desenvolvedor.query.get(id_dev)
+    if not perfil:
+        raise ValueError("Perfil de desenvolvedor não encontrado.")
+    return perfil.saldo
+
+
 def atualizar_perfil_cliente(id_cliente, novo_email, nova_senha, nova_descricao, arquivo_foto):
     perfil = Cliente.query.get(id_cliente)
-
     if not perfil:
         raise ValueError("Usuário não encontrado.")
-    
+
     if perfil.email != novo_email:
         if Cliente.query.filter_by(email=novo_email).first():
             raise ValueError("Este e-mail já está associado a outra conta.")
         perfil.email = novo_email
-        
+
     if nova_senha:
         senha_bytes = nova_senha.encode('utf-8')
         salt = bcrypt.gensalt()
         perfil.senha = bcrypt.hashpw(senha_bytes, salt).decode('utf-8')
-        
+
     if arquivo_foto:
-        nome_da_foto = salvar_foto_perfil(id_cliente, arquivo_foto)
-        perfil.foto_perfil = nome_da_foto
+        perfil.foto_perfil = salvar_foto_perfil(id_cliente, arquivo_foto)
 
     perfil.descricao = nova_descricao
-    
+
     try:
         db.session.commit()
     except Exception:
         db.session.rollback()
         raise
 
+
 def salvar_foto_perfil(id_usuario, arquivo_foto):
-    
-    #Extrai a extensão
     _, extensao = os.path.splitext(arquivo_foto.filename)
     nome_arquivo = f"{id_usuario}{extensao}"
     pasta_uploads = os.path.join(BASE_DIR, 'static', 'uploads', 'perfil')
     os.makedirs(pasta_uploads, exist_ok=True)
-    caminho_completo = os.path.join(pasta_uploads, nome_arquivo)
-    arquivo_foto.save(caminho_completo)
-    
+    arquivo_foto.save(os.path.join(pasta_uploads, nome_arquivo))
     return nome_arquivo
+
 
 def salvar_banner_perfil(id_usuario, arquivo_banner):
     _, extensao = os.path.splitext(arquivo_banner.filename)
     nome_arquivo = f"{id_usuario}{extensao}"
     pasta_uploads = os.path.join(BASE_DIR, 'static', 'uploads', 'banner')
     os.makedirs(pasta_uploads, exist_ok=True)
-    caminho_completo = os.path.join(pasta_uploads, nome_arquivo)
-    arquivo_banner.save(caminho_completo)
-
+    arquivo_banner.save(os.path.join(pasta_uploads, nome_arquivo))
     return nome_arquivo
 
+
 def solicitar_recuperacao_senha(email):
-    usuario = Cliente.query.filter_by(email=email).first() or Desenvolvedor.query.filter_by(email=email).first()
+    usuario = (
+        Cliente.query.filter_by(email=email).first() or
+        Desenvolvedor.query.filter_by(email=email).first()
+    )
     if not usuario:
         raise ValueError("Usuário não encontrado")
-    
     enviar_instrucoes(email)
-    print(f"Instruções de recuperação de senha enviadas para {email}")
     return True
 
-#link direto
+
 def enviar_instrucoes(email):
-    msg = Message(
-        subject="Instruções para Recuperação de Senha - 99Dev",
-        recipients=[email],
-    )
+    msg = Message(subject="Instruções para Recuperação de Senha - 99Dev", recipients=[email])
     token = gerar_token(email)
     msg.html = f"""
         <p>Olá, {email}.</p>
-
         <p>Recebemos uma solicitação para redefinir a senha da sua conta.</p>
-
         <p>Para criar uma nova senha, clique no botão abaixo:</p>
-
         <p>
-        <a href="http://127.0.0.1:3001/nova-senha/{token}" style="padding:10px 16px;background:#2563eb;color:#fff;text-decoration:none;border-radius:6px;">
+        <a href="http://127.0.0.1:3001/nova-senha/{token}"
+           style="padding:10px 16px;background:#2563eb;color:#fff;text-decoration:none;border-radius:6px;">
             Redefinir senha
         </a>
         </p>
-
-        <p>Se você não solicitou essa alteração, pode ignorar este e-mail com segurança. Sua senha atual continuará funcionando normalmente.</p>
-
+        <p>Se você não solicitou essa alteração, pode ignorar este e-mail com segurança.</p>
         <p>Por motivos de segurança, este link expirará em 30 minutos.</p>
-
         <p>Atenciosamente,<br>Equipe 99Dev</p>
     """
     mail.send(msg)
-    print(f"Email de recuperação de senha enviado para {email}")
-
     return "email enviado com sucesso"
 
+
 def atualizar_senha(email, nova_senha):
-    usuario = Cliente.query.filter_by(email=email).first() or Desenvolvedor.query.filter_by(email=email).first()
+    usuario = (
+        Cliente.query.filter_by(email=email).first() or
+        Desenvolvedor.query.filter_by(email=email).first()
+    )
     if not usuario:
         raise ValueError("Usuário não encontrado")
-    
-    #Criptografia redefinição de senha
+
     senha_bytes = nova_senha.encode('utf-8')
     salt = bcrypt.gensalt()
-    senha_hash = bcrypt.hashpw(senha_bytes, salt)
-    
-    usuario.senha = senha_hash.decode('utf-8')
+    usuario.senha = bcrypt.hashpw(senha_bytes, salt).decode('utf-8')
+
     try:
         db.session.commit()
     except Exception:
         db.session.rollback()
         raise
-    
+
+
 def gerar_token(email):
     return serializer.dumps(email, salt='recuperar-senha')
 
+
 def validar_token(token, expiracao=1800):
     try:
-        email = serializer.loads(
-            token,
-            salt='recuperar-senha',
-            max_age=expiracao
-        )
-        return email
-    except:
+        return serializer.loads(token, salt='recuperar-senha', max_age=expiracao)
+    except Exception:
         return None
 
+
+# ─── UUID helper ──────────────────────────────────────────────────────────────
+
+def _uuid_legado(titulo, id_cliente):
+    """UUID determinístico para linhas antigas do CSV (sem coluna uuid)."""
+    return hashlib.md5(f"{titulo}{id_cliente}".encode()).hexdigest()
+
+
+# ─── Demandas (CSV) ───────────────────────────────────────────────────────────
+
 def salvarDemanda(titulo, tecnologia, descricao, orcamento, status, id):
+    demanda_uuid = str(uuid.uuid4())
     DEMANDAS_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
     with DEMANDAS_CSV_PATH.open('a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file, delimiter='\t')
-        writer.writerow([titulo, tecnologia, descricao, orcamento, status, id])
+        writer.writerow([titulo, tecnologia, descricao, orcamento, status, id, demanda_uuid])
 
-def lerDemandas(busca=None, filtro_status=None):
+
+def lerDemandas(tipo_usuario="cliente", id_usuario=None, busca=None, filtro_status=None):
     demandas = []
-    id_usuario = session.get("id_usuario")
-    busca_normalizada = busca.lower().strip() if busca else None
+    if DEMANDAS_CSV_PATH.exists():
+        with DEMANDAS_CSV_PATH.open('r', encoding='utf-8') as f:
+            reader = csv.reader(f, delimiter='\t')
+            for row in reader:
+                # Garante que a linha tem o número mínimo de colunas
+                if len(row) >= 6:
+                    demanda = {
+                        'titulo': row[0],
+                        'tecnologia': row[1],
+                        'descricao': row[2],
+                        'orcamento': row[3],
+                        'status': row[4].strip(),
+                        'id': row[5].strip(),
+                        'uuid': row[6].strip() if len(row) > 6 else _uuid_legado(row[0], row[5].strip())
+                    }
+                    
+                    # 1. Aplica o Filtro de Busca (barra de pesquisa)
+                    if busca:
+                        termo = busca.lower()
+                        # Se o termo não estiver no título nem na tecnologia, pula esta linha
+                        if termo not in demanda['titulo'].lower() and termo not in demanda['tecnologia'].lower():
+                            continue
+                            
+                    # 2. Aplica o Filtro de Status (dropdown de categorias)
+                    if filtro_status and filtro_status != 'Todos':
+                        if demanda['status'] != filtro_status:
+                            continue
 
+                    # 3. Regras de Exibição por Tipo de Perfil
+                    if tipo_usuario == "dev":
+                        # O Dev vê as disponíveis e as que estão no fluxo de trabalho dele
+                        if demanda['status'] in ["Aberta", "Em Andamento", "Aguardando Aprovação"]:
+                            demandas.append(demanda)
+                    else:
+                        # O Cliente vê tudo (filtrado pela busca, se houver)
+                        demandas.append(demanda)
+                        
+    return demandas
+
+def atualizar_status_demanda(demanda_uuid, novo_status):
+    """Atualiza o status de uma demanda no CSV pelo seu UUID."""
+    if not DEMANDAS_CSV_PATH.exists():
+        return False
+
+    rows = []
+    atualizado = False
+
+    with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as file:
+        reader = csv.reader(file, delimiter='\t')
+        for row in reader:
+            if len(row) >= 6:
+                row_uuid = (
+                    row[6].strip()
+                    if len(row) > 6 and row[6].strip()
+                    else _uuid_legado(row[0], row[5])
+                )
+                if row_uuid == demanda_uuid:
+                    row[4] = novo_status
+                    if len(row) < 7:
+                        row.append(row_uuid)
+                    atualizado = True
+            rows.append(row)
+
+    if atualizado:
+        with DEMANDAS_CSV_PATH.open('w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file, delimiter='\t')
+            writer.writerows(rows)
+
+    return atualizado
+
+
+# ─── Candidaturas ─────────────────────────────────────────────────────────────
+
+def candidatar_dev(dev_id, demanda_uuid, demanda_titulo, id_cliente, proposta):
+    from app.models import Candidatura
+
+    existente = Candidatura.query.filter_by(
+        dev_id=dev_id, demanda_uuid=demanda_uuid
+    ).first()
+    if existente:
+        raise ValueError("Você já se candidatou a esta demanda.")
+
+    nova = Candidatura(
+        dev_id=dev_id,
+        demanda_uuid=demanda_uuid,
+        demanda_titulo=demanda_titulo,
+        id_cliente=int(id_cliente),
+        proposta=proposta,
+        status='pendente',
+    )
+    db.session.add(nova)
+    db.session.commit()
+
+    atualizar_status_demanda(demanda_uuid, 'Pendente')
+
+    return nova
+
+
+def buscar_candidatura_aceita(demanda_uuid):
+    from app.models import Candidatura
+
+    return Candidatura.query.filter_by(
+        demanda_uuid=demanda_uuid,
+        status='aceita',
+    ).order_by(Candidatura.data.desc()).first()
+
+
+def ler_projetos_dev(dev_id):
+    """Retorna candidaturas aceitas do dev, enriquecidas com dados da demanda do CSV."""
+    from app.models import Candidatura
+
+    aceitas = Candidatura.query.filter_by(dev_id=dev_id, status='aceita').order_by(
+        Candidatura.data.desc()
+    ).all()
+
+    # Enriquecer com dados do CSV (orcamento, tecnologia, descricao)
+    demanda_map = {}
+    if DEMANDAS_CSV_PATH.exists():
+        with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as f:
+            reader = csv.reader(f, delimiter='\t')
+            for row in reader:
+                if len(row) < 6:
+                    continue
+                row_uuid = (
+                    row[6].strip()
+                    if len(row) > 6 and row[6].strip()
+                    else _uuid_legado(row[0], row[5])
+                )
+                demanda_map[row_uuid] = {
+                    'titulo':     row[0],
+                    'tecnologia': row[1],
+                    'descricao':  row[2],
+                    'orcamento':  row[3],
+                    'status':     row[4],
+                }
+
+    projetos = []
+    for c in aceitas:
+        info = demanda_map.get(c.demanda_uuid, {})
+        projetos.append({
+            'candidatura':  c,
+            'titulo':       info.get('titulo',     c.demanda_titulo),
+            'tecnologia':   info.get('tecnologia', '—'),
+            'descricao':    info.get('descricao',  ''),
+            'orcamento':    info.get('orcamento',  '—'),
+                    'status_demanda': info.get('status',   'Em Desenvolvimento'),
+                    'status':       info.get('status',     'Em Desenvolvimento'),
+                    'id_cliente':   c.id_cliente,
+        })
+
+    return projetos
+
+
+def ler_candidaturas_dev(dev_id):
+    from app.models import Candidatura
+    return Candidatura.query.filter_by(dev_id=dev_id).order_by(
+        Candidatura.data.desc()
+    ).all()
+
+
+def ler_candidaturas_cliente(id_cliente):
+    from app.models import Candidatura
+    return Candidatura.query.filter_by(id_cliente=id_cliente).order_by(
+        Candidatura.data.desc()
+    ).all()
+
+
+# ─── Chat ─────────────────────────────────────────────────────────────────────
+
+def enviar_mensagem_chat(candidatura_id, remetente_id, tipo_remetente, conteudo):
+    from app.models import MensagemChat
+
+    msg = MensagemChat(
+        candidatura_id=candidatura_id,
+        remetente_id=remetente_id,
+        tipo_remetente=tipo_remetente,
+        conteudo=conteudo,
+    )
+    db.session.add(msg)
+    db.session.commit()
+    return msg
+
+
+def ler_mensagens_chat(candidatura_id, ultimo_id=0):
+    from app.models import MensagemChat
+
+    return (
+        MensagemChat.query
+        .filter(
+            MensagemChat.candidatura_id == candidatura_id,
+            MensagemChat.id > ultimo_id,
+        )
+        .order_by(MensagemChat.data.asc())
+        .all()
+    )
+
+
+# ─── Saldo / Pagamentos ───────────────────────────────────────────────────────
+
+def adicionar_saldo_cliente(id_cliente, saldo):
+    perfil = Cliente.query.get(id_cliente)
+    if not perfil:
+        raise ValueError("Cliente não encontrado.")
+    perfil.saldo += saldo
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+
+
+def registrar_pagamento(id_cliente, titulo_demanda, valor, commit=True):
+    novo_pagamento = Pagamento(
+        id_cliente=id_cliente,
+        titulo_demanda=titulo_demanda,
+        valor=valor,
+    )
+    db.session.add(novo_pagamento)
+    if commit:
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            raise
+
+    return novo_pagamento
+
+
+def salvar_entrega(titulo, id_cliente, dev_id, arquivo):
+    if not arquivo or not arquivo.filename:
+        raise ValueError("Envie um arquivo válido para a entrega.")
+
+    nome_original = arquivo.filename
+    nome_base = secure_filename(os.path.splitext(nome_original)[0]) or "entrega"
+    extensao = os.path.splitext(nome_original)[1].lower() or ".zip"
+    nome_fisico = f"{nome_base}_{id_cliente}_{uuid.uuid4().hex}{extensao}"
+
+    pasta_entregas = BASE_DIR / 'uploads_privados' / 'entregas'
+    pasta_entregas.mkdir(parents=True, exist_ok=True)
+
+    caminho_fisico = pasta_entregas / nome_fisico
+    arquivo.save(caminho_fisico)
+
+    entrega = Entrega(
+        demanda_titulo=titulo,
+        id_cliente=id_cliente,
+        dev_id=dev_id,
+        nome_arquivo=nome_original,
+        caminho_arquivo=nome_fisico,
+    )
+    db.session.add(entrega)
+    return entrega
+
+
+def validar_saldo_suficiente(cliente, valor):
+    if cliente is None:
+        return False
+    return cliente.saldo >= valor
+
+
+def _formatar_moeda_brasileira(valor):
+    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+def ler_pagamentos_cliente(id_cliente):
+    pagamentos = Pagamento.query.filter_by(id_cliente=id_cliente).order_by(
+        Pagamento.data_pagamento.desc()
+    ).all()
+
+    return [{
+        "titulo_demanda": pagamento.titulo_demanda,
+        "valor": pagamento.valor,
+        "valor_formatado": _formatar_moeda_brasileira(pagamento.valor),
+        "data_pagamento": pagamento.data_pagamento,
+        "data_formatada": pagamento.data_pagamento.strftime('%d/%m/%Y') if pagamento.data_pagamento else '',
+    } for pagamento in pagamentos]
+
+
+def ler_pagamentos_dev(id_dev):
+    from app.models import Candidatura
+
+    candidaturas = Candidatura.query.filter_by(dev_id=id_dev, status='aceita').order_by(
+        Candidatura.data.desc()
+    ).all()
+
+    pagamentos = []
+    for candidatura in candidaturas:
+        pagamento = Pagamento.query.filter_by(
+            id_cliente=candidatura.id_cliente,
+            titulo_demanda=candidatura.demanda_titulo,
+        ).order_by(Pagamento.data_pagamento.desc()).first()
+
+        if not pagamento:
+            continue
+
+        cliente = Cliente.query.get(candidatura.id_cliente)
+        pagamentos.append({
+            "titulo_demanda": pagamento.titulo_demanda,
+            "valor": pagamento.valor,
+            "valor_formatado": _formatar_moeda_brasileira(pagamento.valor),
+            "data_pagamento": pagamento.data_pagamento,
+            "data_formatada": pagamento.data_pagamento.strftime('%d/%m/%Y') if pagamento.data_pagamento else '',
+            "cliente_nome": cliente.nome if cliente and cliente.nome else cliente.email if cliente else f"Cliente #{candidatura.id_cliente}",
+            "id_cliente": candidatura.id_cliente,
+        })
+
+    return pagamentos
+
+
+def ler_demandas_realizadas_cliente(id_cliente):
+    demandas_realizadas = []
     if DEMANDAS_CSV_PATH.exists():
         with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as file:
             reader = csv.reader(file, delimiter='\t')
             for row in reader:
                 if len(row) < 6:
                     continue
+                if row[5].strip().isdigit() and int(row[5]) == id_cliente:
+                    if row[4].strip() in ["Fechada", "Concluída"]:
+                        row_uuid = (
+                            row[6].strip()
+                            if len(row) > 6 and row[6].strip()
+                            else _uuid_legado(row[0], row[5].strip())
+                        )
+                        try:
+                            valor_orcamento = float(str(row[3]).replace(',', '.'))
+                        except (TypeError, ValueError):
+                            valor_orcamento = row[3]
+                        demandas_realizadas.append({
+                            'titulo': row[0],
+                            'tecnologia': row[1],
+                            'descricao': row[2],
+                            'orcamento': valor_orcamento,
+                            'status': row[4],
+                            'id': row[5],
+                            'uuid': row_uuid,
+                        })
+    return demandas_realizadas
 
-                if not row[5].strip().isdigit():
-                    continue
+def atualizar_status_por_titulo(titulo_demanda, id_cliente, novo_status):
+    linhas = []
+    atualizado = False
+    
+    if DEMANDAS_CSV_PATH.exists():
+        with DEMANDAS_CSV_PATH.open('r', newline='', encoding='utf-8') as file:
+            reader = csv.reader(file, delimiter='\t')
+            
+            for row in reader:
+                if len(row) >= 6:
+                    if row[0] == titulo_demanda and str(row[5]) == str(id_cliente):
+                        row[4] = novo_status  
+                        atualizado = True
+                linhas.append(row)
+                
+        if atualizado:
+            with DEMANDAS_CSV_PATH.open('w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file, delimiter='\t')
+                writer.writerows(linhas)
+                
+    return atualizado
 
-                if id_usuario is not None and int(row[5]) == id_usuario:
-                    if filtro_status is not None and row[4] != filtro_status:
-                        continue
+# ─── Suporte ──────────────────────────────────────────────────────────────────
 
-                    if busca_normalizada:
-                        texto_busca = " ".join([row[0], row[1], row[2], row[4]]).lower()
-                        if busca_normalizada not in texto_busca:
-                            continue
+def salvar_mensagem_suporte(id_usuario, tipo_usuario, assunto, mensagem):
+    import datetime
+    data_envio = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    with SUPORTE_CSV_PATH.open('a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file, delimiter='\t')
+        writer.writerow([data_envio, id_usuario, tipo_usuario, assunto, mensagem])
 
-                    demandas.append({
-                        'titulo': row[0],
-                        'tecnologia': row[1],
-                        'descricao': row[2],
-                        'orcamento': row[3],
-                        'status': row[4],
-                        'id': row[5]
-                    })
-    return demandas
+
+def salvar_mensagem_suporte_dev(id_dev, assunto, mensagem):
+    import datetime
+    data_envio = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    with SUPORTE_DEV_CSV_PATH.open('a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file, delimiter='\t')
+        writer.writerow([data_envio, id_dev, assunto, mensagem])
+        
+def salvar_avaliacao(titulo_demanda, id_avaliador, tipo_avaliador, id_avaliado, nota, comentario):
+    import datetime
+    data_registro = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    with AVALIACOES_CSV_PATH.open('a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file, delimiter='\t')
+        writer.writerow([data_registro, titulo_demanda, id_avaliador, tipo_avaliador, id_avaliado, nota, comentario])

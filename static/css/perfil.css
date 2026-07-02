@@ -1,66 +1,75 @@
+/* ============================================================
+   perfil.css  —  Perfil do desenvolvedor
+   ============================================================ */
+
 :root {
-    /* Cores principais */
-    --blue: #2664EB;
-    --dark-blue: #1E2636; /* Fundo do left panel */
-    --bg-color: #F8FAFC;  /* Fundo claro do right panel */
-    
-    /* Textos */
-    --text-dark: #1F2937;
-    --text-muted: #6B7280;
-    
-    /* Feedback e Status */
-    --green: #10B981;
-    --light-green: #D1FAE5;
-    --gold: #F59E0B;
-    
-    /* Bordas e Sombras */
+    --blue:         #2664EB;
+    --dark-blue:    #1E2636;
+    --bg-color:     #F8FAFC;
+    --text-dark:    #1F2937;
+    --text-muted:   #6B7280;
+    --green:        #10B981;
+    --light-green:  #D1FAE5;
+    --gold:         #F59E0B;
     --border-color: #E5E7EB;
-    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --card-shadow:  0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
-/* Header Superior */
+/* ============================================================
+   Header interno da página (barra "Tarefas Disponíveis")
+   ============================================================ */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: white;
-    padding: 16px 32px;
-    border-radius: 12px;
+    background-color: #fff;
+    padding: 14px 28px;
+    border-radius: 14px;
     box-shadow: var(--card-shadow);
-    margin-top: 20px;
-    margin-bottom: 32px;
-    margin-left: 32px;
-    margin-right: 32px;
+    margin: 20px 28px 24px;
 }
 
+.header h1 {
+    font-size: 1.35rem;
+    color: var(--text-dark);
+    letter-spacing: -0.02em;
+}
+
+/* ============================================================
+   Wrapper do conteúdo — responsivo com clamp
+   ============================================================ */
 .content-wrapper {
-    max-width: 70%;
+    width: min(94%, 1100px);
     margin: 0 auto;
+    padding: 0 0 40px;
 }
 
-/* Base dos Cards (Reutilizável) */
-.profile-card, 
-.about-me, 
-.skills-card, 
-.client-reviews, 
+/* ============================================================
+   Cards base (reutilizável)
+   ============================================================ */
+.profile-card,
+.about-me,
+.skills-card,
+.client-reviews,
 .available-tasks-card {
-    background-color: white;
+    background-color: #fff;
     border: 1px solid var(--border-color);
     border-radius: 16px;
     box-shadow: var(--card-shadow);
     overflow: hidden;
 }
 
-/* Profile Card Principal */
+/* ============================================================
+   Banner do perfil
+   ============================================================ */
 .banner {
     background-color: var(--blue);
-    height: 140px;
+    height: 130px;
     position: relative;
     border-radius: 16px 16px 0 0;
     overflow: hidden;
 }
 
-/* Imagem do banner */
 .banner-img {
     width: 100%;
     height: 100%;
@@ -70,60 +79,80 @@
 
 .btn-banner-edit {
     position: absolute;
-    top: 16px;
-    right: 16px;
-    background: rgba(255, 255, 255, 0.2);
+    top: 14px;
+    right: 14px;
+    background: rgba(255, 255, 255, 0.22);
     border: none;
-    color: white;
+    color: #fff;
     width: 36px;
     height: 36px;
     border-radius: 50%;
     cursor: pointer;
-    transition: 0.3s;
+    transition: background 0.25s;
     z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-banner-edit:hover {
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.42);
 }
 
+/* ============================================================
+   Informações gerais do card
+   ============================================================ */
 .general-info {
     display: flex;
     align-items: center;
-    padding: 0 32px 24px 32px;
+    flex-wrap: wrap;           /* permite quebrar linha em telas pequenas */
+    gap: 16px;
+    padding: 0 24px 20px;
     position: relative;
 }
 
 .avatar {
-    margin-top: -50px;
-    margin-right: 24px;
+    margin-top: -44px;
+    flex-shrink: 0;
 }
 
 .avatar img {
-    width: 120px;
-    height: 120px;
-    border-radius: 16px;
-    border: 4px solid white;
+    width: 100px;
+    height: 100px;
+    border-radius: 14px;
+    border: 4px solid #fff;
     object-fit: cover;
-    background-color: white;
+    background-color: #fff;
+    display: block;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.user-details {
+    flex: 1;
+    min-width: 0;     /* evita overflow em flex */
 }
 
 .user-details h2 {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     margin-bottom: 4px;
     display: flex;
     align-items: center;
     gap: 8px;
     color: var(--text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .verified-badge {
     color: var(--blue);
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    flex-shrink: 0;
 }
 
 .user-details p {
     color: var(--text-muted);
+    font-size: 0.93rem;
 }
 
 .text-missing {
@@ -132,38 +161,52 @@
 }
 
 .general-info .btn-edit {
-    margin-left: auto;
     background-color: var(--blue);
-    color: white;
-    padding: 10px 24px;
-    border-radius: 8px;
+    color: #fff;
+    padding: 9px 20px;
+    border-radius: 10px;
     font-weight: 600;
-    transition: background 0.3s;
+    font-size: 0.93rem;
+    transition: background 0.25s;
     display: inline-block;
     text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .general-info .btn-edit:hover {
     background-color: #1d4ed8;
 }
 
+/* ============================================================
+   Info adicional (stats)
+   ============================================================ */
 .additional-info {
-    display: flex;
-    justify-content: space-between;
-    padding: 24px 32px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border-color);   /* linha entre itens */
     border-top: 1px solid var(--border-color);
 }
 
+.info-item {
+    background: #fff;
+    padding: 20px 16px;
+    text-align: center;
+}
+
 .info-item h3 {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
     font-weight: 500;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 .info-item p {
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: 700;
     color: var(--text-dark);
 }
 
@@ -174,6 +217,7 @@
 .info-item:nth-child(4) p {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
 }
 
@@ -182,52 +226,63 @@
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
     color: var(--gold);
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 }
 
-/* Profile Grid Inferior */
+/* ============================================================
+   Grid de perfil (sidebar + main)
+   ============================================================ */
 .profile-content {
     display: grid;
-    grid-template-columns: 1fr 2fr; 
-    gap: 24px;
-    margin-top: 24px;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+    margin-top: 20px;
 }
 
 .profile-sidebar {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
 }
 
-.about-me, 
+.about-me,
 .skills-card {
-    padding: 24px;
+    padding: 20px;
 }
 
-.about-me h3, 
-.skills-card h3, 
+.about-me h3,
+.skills-card h3,
 .client-reviews h3 {
-    font-size: 1.1rem;
-    margin-bottom: 16px;
+    font-size: 1rem;
+    margin-bottom: 14px;
     color: var(--text-dark);
+    font-weight: 700;
 }
 
 .about-me p {
     color: var(--text-muted);
-    line-height: 1.6;
-    margin-bottom: 24px;
-    font-size: 0.95rem;
+    line-height: 1.65;
+    margin-bottom: 16px;
+    font-size: 0.92rem;
 }
 
 .contact-info p {
     color: var(--text-muted);
-    margin-bottom: 12px;
-    font-size: 0.9rem;
+    margin-bottom: 10px;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .contact-info a {
     text-decoration: none;
-    color: inherit;
+    color: var(--blue);
+    font-weight: 500;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
 }
 
 .skills-list {
@@ -237,26 +292,30 @@
 }
 
 .skill {
-    background-color: #F3F4F6;
-    color: var(--text-dark);
-    padding: 6px 12px;
-    border-radius: 16px;
-    font-size: 0.85rem;
-    font-weight: 500;
+    background-color: #EFF6FF;
+    color: var(--blue);
+    border: 1px solid #BFDBFE;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
 }
 
+/* ============================================================
+   Coluna principal do perfil
+   ============================================================ */
 .profile-main {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
 }
 
 .client-reviews {
-    padding: 24px;
+    padding: 20px;
 }
 
 .review-item {
-    padding: 16px 0;
+    padding: 14px 0;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -270,77 +329,91 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 4px;
+    gap: 12px;
 }
 
 .review-header h4 {
     color: var(--text-dark);
     margin: 0;
+    font-size: 0.97rem;
 }
 
 .review-rating {
     color: var(--gold);
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .client-name {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #9CA3AF;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .review-text {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: var(--text-muted);
-    line-height: 1.5;
+    line-height: 1.55;
 }
 
+/* ============================================================
+   Card: Disponível para tarefas
+   ============================================================ */
 .available-tasks-card {
-    padding: 20px 24px;
+    padding: 18px 22px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 16px;
 }
 
 .task-info-left {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
 }
 
 .icon-container {
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     background-color: var(--light-green);
     color: var(--green);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    flex-shrink: 0;
 }
 
 .task-text h3 {
-    margin-bottom: 4px;
-    font-size: 1.1rem;
+    margin-bottom: 3px;
+    font-size: 1rem;
     color: var(--text-dark);
 }
 
 .task-text p {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.87rem;
 }
 
-/* Botões Toggle */
+/* ============================================================
+   Toggle switches
+   ============================================================ */
 .toggle-checkbox {
     appearance: none;
-    width: 48px;
+    -webkit-appearance: none;
+    width: 46px;
     height: 26px;
     background-color: #D1D5DB;
     border-radius: 20px;
     position: relative;
     cursor: pointer;
     outline: none;
-    transition: background-color 0.3s;
+    transition: background-color 0.28s;
+    flex-shrink: 0;
 }
 
 .toggle-checkbox::before {
@@ -350,10 +423,10 @@
     left: 3px;
     width: 20px;
     height: 20px;
-    background-color: white;
+    background-color: #fff;
     border-radius: 50%;
-    transition: transform 0.3s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.28s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
 }
 
 .toggle-checkbox:checked {
@@ -361,34 +434,38 @@
 }
 
 .toggle-checkbox:checked::before {
-    transform: translateX(22px);
+    transform: translateX(20px);
 }
 
 .toggle-online {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .toggle-online .status {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 500;
 }
 
-/* Estilização do modal e do formulário */
+/* ============================================================
+   Modal de edição de perfil
+   ============================================================ */
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    padding: 20px;
+    transition: opacity 0.28s ease, visibility 0.28s ease;
+    padding: 16px;
 }
 
 .modal-overlay:target {
@@ -397,17 +474,18 @@
 }
 
 .modal-content {
-    background-color: white;
-    padding: 32px;
+    background-color: #fff;
+    padding: 28px 24px;
     border-radius: 16px;
     width: 100%;
-    max-width: 450px;
+    max-width: 460px;
     position: relative;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    transform: translateY(30px);
-    transition: transform 0.3s ease;
-    max-height: calc(100vh - 40px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    transform: translateY(24px);
+    transition: transform 0.28s ease;
+    max-height: calc(100dvh - 32px);
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .modal-overlay:target .modal-content {
@@ -416,13 +494,15 @@
 
 .close-btn {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 1.4rem;
+    top: 16px;
+    right: 16px;
+    font-size: 1.3rem;
     color: var(--text-muted);
-    transition: color 0.3s;
+    transition: color 0.2s;
     text-decoration: none;
     z-index: 10;
+    line-height: 1;
+    padding: 4px;
 }
 
 .close-btn:hover {
@@ -430,80 +510,97 @@
 }
 
 .modal-content h2 {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     color: var(--text-dark);
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
 }
 
 .input-group {
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .input-group label {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 600;
     color: var(--text-dark);
 }
 
 .input-group input,
 .input-group textarea {
-    padding: 12px;
+    padding: 10px 12px;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 10px;
     outline: none;
     font-family: inherit;
-    font-size: 0.95rem;
-    transition: border-color 0.3s;
+    font-size: 0.93rem;
+    color: var(--text-dark);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #fff;
+    width: 100%;
 }
 
 .input-group input:focus,
 .input-group textarea:focus {
     border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(38, 100, 235, 0.1);
+}
+
+.input-group textarea {
+    resize: vertical;
+    min-height: 80px;
 }
 
 .btn-save {
     width: 100%;
     background-color: var(--green);
-    color: white;
+    color: #fff;
     border: none;
-    padding: 14px;
-    border-radius: 8px;
-    font-weight: bold;
+    padding: 13px;
+    border-radius: 10px;
+    font-weight: 700;
     font-size: 1rem;
     cursor: pointer;
-    margin-top: 12px;
-    transition: background 0.3s;
+    margin-top: 8px;
+    transition: background 0.25s, transform 0.2s;
 }
 
 .btn-save:hover {
     background-color: #059669;
+    transform: translateY(-1px);
+}
+
+.btn-save:active {
+    transform: translateY(0);
 }
 
 .error-msg {
-    color: red;
-    font-size: 0.8em;
+    color: #dc2626;
+    font-size: 0.8rem;
     display: block;
-    margin-top: 2px;
 }
 
 .moldura-perfil-preview {
-    margin: 5px 0;
+    margin: 4px 0;
 }
 
 .preview-avatar {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     object-fit: cover;
+    border: 2px solid var(--border-color);
 }
 
 .preview-banner {
-    width: 100px;
-    height: 40px;
+    width: 120px;
+    height: 44px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
 }
 
 .input-group-checkbox {
@@ -511,19 +608,109 @@
     flex-direction: row;
     align-items: center;
     gap: 10px;
-    padding-top: 10px;
-    padding-bottom: 20px;
+    padding: 8px 0 16px;
 }
 
 .checkbox-custom {
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 1.15rem;
+    height: 1.15rem;
     cursor: pointer;
-    margin: 0;
+    accent-color: var(--blue);
+    flex-shrink: 0;
 }
 
 .checkbox-label {
-    font-weight: bold;
+    font-weight: 600;
     color: #475569;
-    font-size: 0.9em;
+    font-size: 0.88rem;
+}
+
+/* ============================================================
+   Responsividade — Perfil
+   ============================================================ */
+
+/* Tablet: sidebar e main ficam em coluna, profile-content ainda 2 colunas */
+@media (max-width: 900px) {
+    .profile-content {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-sidebar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Mobile grande */
+@media (max-width: 700px) {
+    .header {
+        margin: 14px 14px 18px;
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .header h1 {
+        font-size: 1.1rem;
+    }
+
+    .content-wrapper {
+        width: 100%;
+        padding: 0 14px 32px;
+    }
+
+    .profile-sidebar {
+        grid-template-columns: 1fr;  /* volta a 1 coluna em mobile */
+    }
+
+    .additional-info {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .general-info {
+        padding: 0 16px 18px;
+    }
+
+    .general-info .btn-edit {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+    .banner {
+        height: 100px;
+    }
+
+    .avatar img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .avatar {
+        margin-top: -36px;
+    }
+
+    .user-details h2 {
+        font-size: 1.1rem;
+    }
+
+    .additional-info {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .info-item p {
+        font-size: 1.25rem;
+    }
+
+    .available-tasks-card {
+        flex-wrap: wrap;
+    }
+
+    /* Modal ocupa mais espaço em telas muito pequenas */
+    .modal-content {
+        padding: 22px 16px;
+        border-radius: 12px;
+    }
 }

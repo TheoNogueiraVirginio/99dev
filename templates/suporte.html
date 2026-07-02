@@ -1,0 +1,36 @@
+{% extends "basePerfil.html" %}
+
+{% block title %}Suporte Técnico - 99dev{% endblock %}
+
+{% block head_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboardCliente.css') }}">
+{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, msg in messages %}
+            <div class="error-message {{ category }}" style="margin-bottom: 20px;">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<section class="novaTarefa">
+    <h2><i class="fa-solid fa-headset" style="margin-right: 8px; color: var(--sidebar-active);"></i> Central de Suporte Técnico</h2>
+    <p style="color: #6d7c92; font-size: 0.95rem; margin-bottom: 20px; line-height: 1.5;">
+        Está enfrentando alguma dificuldade ou encontrou um problema no sistema? Preencha os campos abaixo para abrir um chamado diretamente com o nosso time de atendimento.
+    </p>
+    
+    <form action="{{ url_for('suporte.suporte') }}" method="post">
+        {{ form.hidden_tag() }}
+        
+        <label for="assunto">Assunto da solicitação:</label>
+        {{ form.assunto(placeholder="Ex: Problema com depósito de saldo / Dúvida sobre demandas", id="assunto") }}
+        
+        <label for="mensagem">Descrição detalhada do ocorrido:</label>
+        {{ form.mensagem(placeholder="Descreva aqui, detalhadamente, o seu problema ou dúvida para que possamos ajudar...", id="mensagem") }}
+        
+        <button type="submit">Enviar Solicitação para o Suporte</button>
+    </form>
+</section>
+{% endblock %}
